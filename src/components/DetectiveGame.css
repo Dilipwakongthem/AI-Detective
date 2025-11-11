@@ -1,0 +1,637 @@
+.detective-game {
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Menu Screen */
+.menu-screen {
+  background: rgba(22, 33, 62, 0.95);
+  border: 3px solid #f39c12;
+  border-radius: 15px;
+  padding: 40px;
+  max-width: 600px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.game-title h1 {
+  font-size: 3em;
+  color: #f39c12;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.game-title h2 {
+  font-size: 1.5em;
+  color: #e4e4e4;
+  margin-bottom: 30px;
+}
+
+.player-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin: 30px 0;
+}
+
+.stat {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #f39c12;
+}
+
+.stat-label {
+  display: block;
+  color: #f39c12;
+  font-size: 0.9em;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  display: block;
+  color: #fff;
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
+.menu-btn {
+  background: #f39c12;
+  color: #1a1a2e;
+  border: none;
+  padding: 15px 40px;
+  font-size: 1.2em;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin: 20px 0;
+  font-family: 'Courier New', monospace;
+}
+
+.menu-btn:hover {
+  background: #e67e22;
+  transform: scale(1.05);
+  box-shadow: 0 5px 20px rgba(243, 156, 18, 0.5);
+}
+
+.menu-info {
+  margin-top: 20px;
+  color: #b0b0b0;
+  font-size: 0.95em;
+}
+
+/* Briefing Screen */
+.briefing-screen {
+  background: rgba(22, 33, 62, 0.95);
+  border: 3px solid #e74c3c;
+  border-radius: 15px;
+  padding: 40px;
+  max-width: 800px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.case-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.case-header h2 {
+  color: #e74c3c;
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+.case-type {
+  background: #e74c3c;
+  color: white;
+  padding: 5px 20px;
+  border-radius: 20px;
+  display: inline-block;
+  font-weight: bold;
+}
+
+.briefing-content {
+  display: grid;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.briefing-section {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #e74c3c;
+}
+
+.briefing-section h3 {
+  color: #f39c12;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+}
+
+.briefing-section p {
+  color: #e4e4e4;
+  line-height: 1.6;
+}
+
+.action-btn {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  font-size: 1.1em;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  width: 100%;
+}
+
+.action-btn:hover {
+  background: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+}
+
+/* Investigation Screen */
+.investigation-screen {
+  background: rgba(22, 33, 62, 0.95);
+  border: 3px solid #3498db;
+  border-radius: 15px;
+  padding: 30px;
+  max-width: 1200px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.investigation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #3498db;
+}
+
+.investigation-header h2 {
+  color: #3498db;
+  font-size: 1.8em;
+}
+
+.case-progress {
+  display: flex;
+  gap: 20px;
+  color: #f39c12;
+  font-weight: bold;
+}
+
+.investigation-main {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.suspects-panel,
+.actions-panel {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #3498db;
+}
+
+.suspects-panel h3,
+.actions-panel h3 {
+  color: #f39c12;
+  margin-bottom: 15px;
+  font-size: 1.2em;
+}
+
+.suspects-list {
+  display: grid;
+  gap: 15px;
+}
+
+.suspect-card {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 15px;
+  border-radius: 8px;
+  border: 2px solid #555;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.suspect-card:hover {
+  border-color: #f39c12;
+  transform: translateX(5px);
+  box-shadow: 0 3px 10px rgba(243, 156, 18, 0.3);
+}
+
+.suspect-name {
+  color: #fff;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.suspect-details {
+  color: #b0b0b0;
+  font-size: 0.9em;
+}
+
+.personality,
+.suspicion,
+.nervousness {
+  margin-top: 5px;
+}
+
+.actions-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.accusation-btn {
+  background: #e74c3c;
+  margin-top: 20px;
+}
+
+.accusation-btn:hover {
+  background: #c0392b;
+}
+
+.evidence-board {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid #f39c12;
+  margin-bottom: 20px;
+}
+
+.evidence-board h3 {
+  color: #f39c12;
+  margin-bottom: 15px;
+}
+
+.evidence-list {
+  display: grid;
+  gap: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.evidence-item {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 12px;
+  border-radius: 6px;
+  border-left: 3px solid #f39c12;
+}
+
+.evidence-type {
+  color: #f39c12;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.evidence-desc {
+  color: #e4e4e4;
+  margin-bottom: 5px;
+  font-size: 0.95em;
+}
+
+.evidence-location {
+  color: #b0b0b0;
+  font-size: 0.85em;
+}
+
+.critical-badge {
+  background: #e74c3c;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.8em;
+  margin-left: 10px;
+}
+
+.no-evidence {
+  color: #b0b0b0;
+  text-align: center;
+  padding: 20px;
+}
+
+.game-log {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #555;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.game-log h3 {
+  color: #f39c12;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+}
+
+.log-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.log-entry {
+  color: #e4e4e4;
+  font-size: 0.9em;
+  padding: 5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.log-time {
+  color: #f39c12;
+  margin-right: 10px;
+}
+
+/* Interrogation Screen */
+.interrogation-screen {
+  background: rgba(22, 33, 62, 0.95);
+  border: 3px solid #9b59b6;
+  border-radius: 15px;
+  padding: 40px;
+  max-width: 900px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.interrogation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #9b59b6;
+}
+
+.interrogation-header h2 {
+  color: #9b59b6;
+  font-size: 1.8em;
+}
+
+.back-btn {
+  background: #555;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  transition: all 0.3s;
+}
+
+.back-btn:hover {
+  background: #777;
+}
+
+.interrogation-content {
+  display: grid;
+  gap: 20px;
+}
+
+.suspect-profile {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid #9b59b6;
+}
+
+.suspect-profile h3 {
+  color: #f39c12;
+  font-size: 1.5em;
+  margin-bottom: 15px;
+}
+
+.profile-details p {
+  color: #e4e4e4;
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+.nervousness-bar {
+  width: 100%;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.nervousness-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #27ae60, #f39c12, #e74c3c);
+  transition: width 0.5s;
+}
+
+.interrogation-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.interrogation-log {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #9b59b6;
+  min-height: 200px;
+}
+
+/* Accusation Screen */
+.accusation-screen {
+  background: rgba(22, 33, 62, 0.95);
+  border: 3px solid #e74c3c;
+  border-radius: 15px;
+  padding: 40px;
+  max-width: 1000px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.accusation-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.accusation-header h2 {
+  color: #e74c3c;
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+.accusation-suspects {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.accusation-card {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid #555;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.accusation-card:hover {
+  border-color: #e74c3c;
+  transform: scale(1.05);
+  box-shadow: 0 5px 20px rgba(231, 76, 60, 0.4);
+}
+
+.accusation-card h3 {
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.accusation-details {
+  color: #b0b0b0;
+  margin: 15px 0;
+}
+
+.accuse-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  transition: all 0.3s;
+}
+
+.accuse-btn:hover {
+  background: #c0392b;
+}
+
+/* Result Screen */
+.result-screen {
+  background: rgba(22, 33, 62, 0.95);
+  border: 3px solid #2ecc71;
+  border-radius: 15px;
+  padding: 40px;
+  max-width: 900px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.result-header {
+  text-align: center;
+  padding: 30px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.result-header.success {
+  background: rgba(46, 204, 113, 0.2);
+  border: 2px solid #2ecc71;
+}
+
+.result-header.failure {
+  background: rgba(231, 76, 60, 0.2);
+  border: 2px solid #e74c3c;
+}
+
+.result-header.success h2 {
+  color: #2ecc71;
+  font-size: 2em;
+}
+
+.result-header.failure h2 {
+  color: #e74c3c;
+  font-size: 2em;
+}
+
+.stars {
+  font-size: 2em;
+  margin-top: 15px;
+}
+
+.result-content {
+  display: grid;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.result-section {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #f39c12;
+}
+
+.result-section h3 {
+  color: #f39c12;
+  margin-bottom: 15px;
+  font-size: 1.2em;
+}
+
+.result-section p {
+  color: #e4e4e4;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.result-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #f39c12;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e67e22;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .investigation-main {
+    grid-template-columns: 1fr;
+  }
+
+  .interrogation-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .accusation-suspects {
+    grid-template-columns: 1fr;
+  }
+
+  .result-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .player-stats {
+    grid-template-columns: 1fr;
+  }
+}

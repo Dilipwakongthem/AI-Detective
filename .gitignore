@@ -50,3 +50,10 @@ local.properties
 captures/
 .externalNativeBuild/
 .cxx/
+
+# Node/NPM
+node_modules/
+.parcel-cache/
+dist/
+.cache/
+package-lock.json

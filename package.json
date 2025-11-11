@@ -1,0 +1,20 @@
+{
+  "name": "crime-scene-detective-game",
+  "version": "1.0.0",
+  "description": "AI Detective Mystery Game - JSX/React Web Version",
+  "scripts": {
+    "start": "parcel public/index.html --no-cache",
+    "build": "parcel build public/index.html"
+  },
+  "keywords": ["detective", "game", "mystery", "react"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "parcel": "^2.11.0",
+    "process": "^0.11.10"
+  }
+}

@@ -15,8 +15,10 @@
 - 🔍 **Dynamic Investigation** - Explore crime scenes, collect evidence, and build theories
 - 💬 **Natural Language Interrogation** - Ask suspects anything and receive contextually appropriate responses
 - ⚖️ **Smart Accusation Evaluation** - AI evaluates your deductions based on evidence quality and reasoning
-- 📊 **Progression System** - Ranks, achievements, reputation, and unlockable detective tools
-- 🎲 **Difficulty Scaling** - Three difficulty levels from Rookie to Master Sleuth
+- 📊 **Rank-Based Progression System** - 6 ranks from Rookie Detective to Chief Detective with adaptive difficulty
+- 🎲 **10-Level Difficulty Scaling** - Cases automatically scale to your skill level (1-10)
+- 🏆 **Adaptive Difficulty** - System adjusts based on your success rate and performance
+- ⭐ **Special Case Types** - Unlock Cold Cases, Time-Sensitive cases, and more as you rank up
 - 💾 **Complete Game State Management** - Save/load system with case archives
 
 ---
@@ -121,35 +123,35 @@ The `AccusationEvaluator` judges player deductions:
 - Points out missed evidence and contradictions
 - Suggests what was overlooked
 
-### 6. Progression System
+### 6. Rank-Based Progression System
 
-**Detective Ranks:**
-- Cadet (0 reputation)
-- Rookie (500)
-- Detective (1,500)
-- Senior Detective (3,000)
-- Lieutenant (5,000)
-- Captain (8,000)
-- Commander (12,000)
-- Chief Detective (20,000)
+**Detective Ranks & Case Difficulty:**
+- **Rookie Detective** (0-500 reputation) - Level 1-2 difficulty cases
+- **Detective** (501-1,500 reputation) - Level 1-4 difficulty cases
+- **Senior Detective** (1,501-3,000 reputation) - Level 2-6 difficulty cases
+- **Lead Detective** (3,001-5,000 reputation) - Level 4-8 difficulty cases
+- **Detective Inspector** (5,001-8,000 reputation) - Level 6-9 difficulty cases
+- **Chief Detective** (8,001+ reputation) - Level 7-10 difficulty cases
 
-**Unlockable Tools:**
-- Basic Investigation Kit
-- Forensics Access
-- Background Check Database
-- Psychological Profiling
-- Advanced DNA Analysis
-- Phone Records Access
-- Financial Forensics
+**Difficulty Scaling:**
+- Cases automatically scale based on your rank and performance
+- Success rate affects difficulty assignment
+- Winning streaks unlock harder challenges
+- Failed streaks trigger adaptive assistance
 
-**Achievements:**
-- First Case Solved
-- Perfect Detective (5 five-star ratings)
-- Speed Solver
-- Master Interrogator
-- Evidence Expert
-- Case Streak
-- Reputation Milestones
+**Special Case Types (Unlocked by Rank):**
+- **Cold Cases** (Rank 2+) - 2x reputation, missing evidence
+- **Time-Sensitive Cases** (Rank 3+) - 3x reputation, real-time pressure
+- **Connected Cases** (Rank 4+) - Serial criminals with patterns
+- **Undercover Operations** (Rank 5+) - High-risk infiltration missions
+- **Impossible Cases** (Rank 6) - 5x reputation, legendary difficulty
+
+**Performance Tracking:**
+- Success rate monitoring
+- Winning/losing streak tracking
+- Perfect case count
+- Adaptive difficulty adjustments
+- Promotion notifications with new challenges
 
 ---
 

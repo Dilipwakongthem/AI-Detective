@@ -6,7 +6,12 @@
     "start": "parcel public/index.html --no-cache",
     "build": "parcel build public/index.html"
   },
-  "keywords": ["detective", "game", "mystery", "react"],
+  "keywords": [
+    "detective",
+    "game",
+    "mystery",
+    "react"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
@@ -14,6 +19,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "localtunnel": "^2.0.2",
     "parcel": "^2.11.0",
     "process": "^0.11.10"
   }

@@ -1,6 +1,37 @@
 // Game Logic Engine for Detective Game
 
-const crimeTypes = ['Murder', 'Theft', 'Fraud', 'Kidnapping', 'Arson'];
+// RANK SYSTEM
+export const RANKS = {
+  ROOKIE: { name: 'Rookie Detective', minRep: 0, maxRep: 500, minDifficulty: 1, maxDifficulty: 2 },
+  DETECTIVE: { name: 'Detective', minRep: 501, maxRep: 1500, minDifficulty: 1, maxDifficulty: 4 },
+  SENIOR: { name: 'Senior Detective', minRep: 1501, maxRep: 3000, minDifficulty: 2, maxDifficulty: 6 },
+  LEAD: { name: 'Lead Detective', minRep: 3001, maxRep: 5000, minDifficulty: 4, maxDifficulty: 8 },
+  INSPECTOR: { name: 'Detective Inspector', minRep: 5001, maxRep: 8000, minDifficulty: 6, maxDifficulty: 9 },
+  CHIEF: { name: 'Chief Detective', minRep: 8001, maxRep: Infinity, minDifficulty: 7, maxDifficulty: 10 }
+};
+
+// SPECIAL CASE TYPES
+export const SPECIAL_CASE_TYPES = {
+  COLD_CASE: { name: 'Cold Case', unlockRank: 'DETECTIVE', reputationMultiplier: 2 },
+  TIME_SENSITIVE: { name: 'Time-Sensitive', unlockRank: 'SENIOR', reputationMultiplier: 3 },
+  CONNECTED: { name: 'Connected Case', unlockRank: 'LEAD', reputationMultiplier: 2.5 },
+  UNDERCOVER: { name: 'Undercover Operation', unlockRank: 'INSPECTOR', reputationMultiplier: 3.5 },
+  IMPOSSIBLE: { name: 'Impossible Case', unlockRank: 'CHIEF', reputationMultiplier: 5 }
+};
+
+const crimeTypes = {
+  1: ['Petty Theft', 'Vandalism', 'Simple Burglary'],
+  2: ['Theft', 'Burglary'],
+  3: ['Grand Theft', 'Assault', 'Blackmail'],
+  4: ['Fraud', 'Assault'],
+  5: ['Fraud', 'Kidnapping', 'Manslaughter'],
+  6: ['Kidnapping', 'Arson'],
+  7: ['Murder', 'Organized Crime', 'Corruption'],
+  8: ['Murder', 'Organized Crime'],
+  9: ['Serial Crime', 'Conspiracy', 'Cold Case'],
+  10: ['High-Profile Murder', 'International Crime', 'Terrorism']
+};
+
 const locations = [
   'Mansion', 'Gallery', 'Office Building', 'Restaurant', 'Hotel',
   'Warehouse', 'Park', 'Theater', 'Museum', 'Casino'
@@ -45,7 +76,7 @@ export function generateCase(caseNumber, difficulty = 1, isLegendary = false) {
     age: 25 + Math.floor(Math.random() * 40),
     occupation: occupations[Math.floor(Math.random() * occupations.length)],
     personality: personalities[Math.floor(Math.random() * personalities.length)],
-    alibi: generateAlibi(location),
+    alibi: generateAlibi(location, difficulty),
     isGuilty: i === guiltyIndex,
     suspicionLevel: i === guiltyIndex ? baseSuspicion : Math.floor(Math.random() * baseSuspicion) + 1,
     nervousness: i === guiltyIndex ?
@@ -59,12 +90,15 @@ export function generateCase(caseNumber, difficulty = 1, isLegendary = false) {
   const evidence = Array.from({ length: numEvidence }, (_, i) => ({
     id: i,
     type: evidenceTypes[Math.floor(Math.random() * evidenceTypes.length)],
-    description: generateEvidenceDescription(i, suspects[guiltyIndex]),
+    description: generateEvidenceDescription(i, suspects[guiltyIndex], difficulty),
     location: i < 3 ? 'Crime Scene' : ['Office', 'Storage Room', 'Parking Lot', 'Nearby Street'][Math.floor(Math.random() * 4)],
     connectedTo: i % 3 === 0 ? guiltyIndex : null,
     discovered: false,
     critical: i < Math.max(2, Math.floor(difficulty / 3))
   }));
+
+  // Available hints based on difficulty
+  const hintsAvailable = Math.max(0, 6 - Math.ceil(difficulty / 2));
 
   return {
     caseNumber,
@@ -72,6 +106,7 @@ export function generateCase(caseNumber, difficulty = 1, isLegendary = false) {
     isLegendary,
     crimeType: isLegendary ? `⭐ LEGENDARY: ${crimeType}` : crimeType,
     location,
+    specialType,
     victim: {
       name: names[Math.floor(Math.random() * names.length)],
       occupation: occupations[Math.floor(Math.random() * occupations.length)]
@@ -81,36 +116,60 @@ export function generateCase(caseNumber, difficulty = 1, isLegendary = false) {
     guiltyIndex,
     startTime: new Date().toLocaleString(),
     cluesFound: 0,
-    interrogationCount: 0
+    interrogationCount: 0,
+    hintsAvailable,
+    hintsUsed: 0
   };
 }
 
-function generateAlibi(location) {
-  const alibis = [
+function generateAlibi(location, difficulty) {
+  const simpleAlibis = [
     `Claims to have been in the ${location} office at the time`,
     `Says they were outside making phone calls`,
-    `States they arrived late and found the victim`,
-    `Claims they were with another person`,
-    `Says they left early before the incident`,
-    `States they were in a different room entirely`
+    `States they arrived late and found the victim`
   ];
+
+  const complexAlibis = [
+    `Claims they were with another person who can verify their whereabouts`,
+    `Says they left early before the incident and has receipt to prove it`,
+    `States they were in a different room entirely with multiple witnesses`,
+    `Claims they were on a phone call that was logged at that exact time`,
+    `Says they have security footage showing them elsewhere`
+  ];
+
+  const alibis = difficulty <= 3 ? simpleAlibis : [...simpleAlibis, ...complexAlibis];
   return alibis[Math.floor(Math.random() * alibis.length)];
 }
 
-function generateEvidenceDescription(index, guiltySuspect) {
-  const descriptions = [
+function generateEvidenceDescription(index, guiltySuspect, difficulty) {
+  const obviousClues = [
     `Fingerprints found on key object - matches ${guiltySuspect.name}`,
     `Witness saw someone matching ${guiltySuspect.name}'s description`,
-    `Security footage shows suspicious activity`,
-    `Phone records indicate calls made around the time of incident`,
-    `Financial records show motive`,
-    `DNA evidence found at the scene`,
-    `Threatening message discovered`,
-    `Timeline contradicts alibi`,
-    `Physical evidence links to suspect`,
-    `Forensic analysis reveals crucial detail`
+    `${guiltySuspect.name}'s personal item found at the scene`
   ];
-  return descriptions[index % descriptions.length];
+
+  const subtleClues = [
+    `Security footage shows suspicious activity around the time of the incident`,
+    `Phone records indicate calls made around the time of incident`,
+    `Financial records show potential motive`,
+    `DNA evidence found at the scene (requires analysis)`,
+    `Threatening message discovered (author unclear)`,
+    `Timeline shows inconsistencies in statements`,
+    `Physical evidence with partial identification`,
+    `Forensic analysis reveals subtle detail`
+  ];
+
+  if (difficulty <= 3) {
+    // Easier cases - more obvious clues
+    return index < obviousClues.length
+      ? obviousClues[index]
+      : subtleClues[index % subtleClues.length];
+  } else {
+    // Harder cases - more subtle clues
+    return index < 2 && Math.random() > 0.5
+      ? obviousClues[index % obviousClues.length]
+      : subtleClues[index % subtleClues.length];
+  }
 }
 
 export function interrogateSuspect(suspect, caseData) {
@@ -149,6 +208,8 @@ export function evaluateAccusation(accusedId, caseData, hintsUsed = 0) {
 
   const evidenceFound = caseData.evidence.filter(e => e.discovered).length;
   const criticalEvidence = caseData.evidence.filter(e => e.critical && e.discovered).length;
+  const difficulty = caseData.difficulty || 1;
+  const hintsUsed = caseData.hintsUsed || 0;
 
   let stars = 0;
   if (correct) {
@@ -166,6 +227,9 @@ export function evaluateAccusation(accusedId, caseData, hintsUsed = 0) {
   return {
     correct,
     stars,
+    maxStars,
+    difficulty,
+    hintsUsed,
     message: correct ?
       `🎯 CORRECT! ${guiltyName} was indeed the culprit. Excellent detective work!` :
       `❌ WRONG! ${accusedName} was innocent. The real culprit was ${guiltyName}.`,
@@ -174,4 +238,5 @@ export function evaluateAccusation(accusedId, caseData, hintsUsed = 0) {
       `You missed key evidence. ${guiltyName} had the motive and opportunity.`,
     reputation: correct ? stars * 200 : 50
   };
+  return messages[rank.name] || '"Keep up the good work, Detective."';
 }

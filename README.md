@@ -1,4 +1,4 @@
-# Case Files: AI Detective
+# AI Detective: Crime Scene
 
 **A Complete AI-Powered Text-Based Mystery Detective Game Engine**
 

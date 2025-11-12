@@ -7,6 +7,8 @@ import {
   calculateCaseDifficulty,
   getDifficultyStars,
   checkPromotion,
+  calculateHintCost,
+  generateHint,
   RANKS
 } from '../gameLogic';
 import './DetectiveGame.css';
@@ -28,6 +30,9 @@ const DetectiveGame = () => {
   const [showEvidence, setShowEvidence] = useState(false);
   const [accusationResult, setAccusationResult] = useState(null);
   const [promotionData, setPromotionData] = useState(null);
+  const [showHintModal, setShowHintModal] = useState(false);
+  const [currentHint, setCurrentHint] = useState(null);
+  const [showHintPurchaseConfirm, setShowHintPurchaseConfirm] = useState(false);
 
   const startNewCase = () => {
     // Calculate difficulty based on player's stats
@@ -119,6 +124,58 @@ const DetectiveGame = () => {
 
   const addLog = (message) => {
     setGameLog(prev => [...prev, { text: message, timestamp: new Date().toLocaleTimeString() }]);
+  };
+
+  const requestHint = () => {
+    if (!currentCase) return;
+
+    const freeHintsRemaining = currentCase.hintsAvailable - currentCase.hintsUsed;
+    const totalHintsUsed = currentCase.hintsUsed + 1;
+
+    if (freeHintsRemaining > 0) {
+      // Use free hint
+      const hint = generateHint(currentCase, totalHintsUsed);
+      setCurrentHint(hint);
+      setShowHintModal(true);
+      setCurrentCase({
+        ...currentCase,
+        hintsUsed: totalHintsUsed
+      });
+      addLog(`💡 Hint ${totalHintsUsed} used (Free)`);
+    } else {
+      // Need to purchase hint
+      setShowHintPurchaseConfirm(true);
+    }
+  };
+
+  const purchaseHint = () => {
+    if (!currentCase) return;
+
+    const paidHintsUsed = currentCase.hintsUsed - currentCase.hintsAvailable;
+    const hintCost = calculateHintCost(Math.max(0, paidHintsUsed));
+
+    if (playerProfile.reputation < hintCost) {
+      addLog(`⚠️ Insufficient reputation. Need ${hintCost - playerProfile.reputation} more points.`);
+      setShowHintPurchaseConfirm(false);
+      return;
+    }
+
+    // Deduct reputation and provide hint
+    setPlayerProfile({
+      ...playerProfile,
+      reputation: playerProfile.reputation - hintCost
+    });
+
+    const totalHintsUsed = currentCase.hintsUsed + 1;
+    const hint = generateHint(currentCase, totalHintsUsed);
+    setCurrentHint(hint);
+    setShowHintModal(true);
+    setShowHintPurchaseConfirm(false);
+    setCurrentCase({
+      ...currentCase,
+      hintsUsed: totalHintsUsed
+    });
+    addLog(`💡 Hint ${totalHintsUsed} purchased for ${hintCost} reputation`);
   };
 
   const renderMenu = () => {
@@ -275,6 +332,30 @@ const DetectiveGame = () => {
           <button className="action-btn" onClick={() => setShowEvidence(!showEvidence)}>
             📋 {showEvidence ? 'Hide' : 'View'} Evidence Board
           </button>
+
+          {/* Hint Button */}
+          <div className="hint-section">
+            <div className="hint-info">
+              <span>💡 Hints: {Math.max(0, currentCase.hintsAvailable - currentCase.hintsUsed)} free</span>
+              {currentCase.hintsUsed > 0 && (
+                <span className="hint-used-warning">Used: {currentCase.hintsUsed} (Max: {currentCase.hintsUsed >= 3 ? '3★' : '4★'})</span>
+              )}
+            </div>
+            {currentCase.hintsAvailable > currentCase.hintsUsed ? (
+              <button className="action-btn hint-btn" onClick={requestHint}>
+                💡 REQUEST HINT (FREE)
+              </button>
+            ) : (
+              <button
+                className={`action-btn hint-btn purchase ${playerProfile.reputation < calculateHintCost(Math.max(0, currentCase.hintsUsed - currentCase.hintsAvailable)) ? 'disabled' : ''}`}
+                onClick={requestHint}
+                disabled={playerProfile.reputation < calculateHintCost(Math.max(0, currentCase.hintsUsed - currentCase.hintsAvailable))}
+              >
+                💰 PURCHASE HINT ({calculateHintCost(Math.max(0, currentCase.hintsUsed - currentCase.hintsAvailable))} REP)
+              </button>
+            )}
+          </div>
+
           <button className="action-btn accusation-btn" onClick={() => setGameState('accusation')}>
             ⚖️ MAKE ACCUSATION
           </button>
@@ -518,6 +599,76 @@ const DetectiveGame = () => {
       {gameState === 'accusation' && renderAccusation()}
       {gameState === 'result' && renderResult()}
       {gameState === 'promotion' && promotionData && renderPromotion()}
+
+      {/* Hint Display Modal */}
+      {showHintModal && currentHint && (
+        <div className="modal-overlay" onClick={() => setShowHintModal(false)}>
+          <div className="modal-content hint-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>{currentHint.title}</h2>
+            </div>
+            <div className="modal-body">
+              <pre className="hint-content">{currentHint.content}</pre>
+              {currentCase && (
+                <div className="hint-impact">
+                  <p><strong>Hints Used:</strong> {currentCase.hintsUsed}</p>
+                  <p><strong>Maximum Case Rating:</strong> {currentCase.hintsUsed >= 3 ? '⭐⭐⭐' : currentCase.hintsUsed >= 1 ? '⭐⭐⭐⭐' : '⭐⭐⭐⭐⭐'}</p>
+                </div>
+              )}
+            </div>
+            <div className="modal-actions">
+              <button className="action-btn" onClick={() => setShowHintModal(false)}>
+                CONTINUE INVESTIGATION
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Hint Purchase Confirmation Modal */}
+      {showHintPurchaseConfirm && currentCase && (
+        <div className="modal-overlay" onClick={() => setShowHintPurchaseConfirm(false)}>
+          <div className="modal-content purchase-confirm-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>PURCHASE HINT?</h2>
+            </div>
+            <div className="modal-body">
+              <p className="warning-text">⚠️ This will cost reputation points</p>
+
+              <div className="cost-info">
+                <div className="cost-row">
+                  <span>Hint Cost:</span>
+                  <span className="cost-value">{calculateHintCost(Math.max(0, currentCase.hintsUsed - currentCase.hintsAvailable))} Reputation</span>
+                </div>
+                <div className="cost-row">
+                  <span>Your Current Reputation:</span>
+                  <span>{playerProfile.reputation}</span>
+                </div>
+                <div className="cost-row">
+                  <span>After Purchase:</span>
+                  <span>{playerProfile.reputation - calculateHintCost(Math.max(0, currentCase.hintsUsed - currentCase.hintsAvailable))}</span>
+                </div>
+              </div>
+
+              <div className="impact-warning">
+                <h4>IMPACT ON CASE:</h4>
+                <p>• Using hints reduces maximum star rating</p>
+                <p>• Current max rating: {currentCase.hintsUsed >= 3 ? '⭐⭐⭐' : currentCase.hintsUsed >= 1 ? '⭐⭐⭐⭐' : '⭐⭐⭐⭐⭐'}</p>
+                <p>• After this hint: {currentCase.hintsUsed + 1 >= 3 ? '⭐⭐⭐' : '⭐⭐⭐⭐'}</p>
+                <p className="note">Reputation is recovered when you solve cases. Hints help solve difficult cases successfully.</p>
+              </div>
+            </div>
+            <div className="modal-actions">
+              <button className="action-btn confirm-btn" onClick={purchaseHint}>
+                CONFIRM PURCHASE
+              </button>
+              <button className="action-btn cancel-btn" onClick={() => setShowHintPurchaseConfirm(false)}>
+                CANCEL
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

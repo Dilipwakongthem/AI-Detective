@@ -257,6 +257,7 @@ export function evaluateAccusation(accusedId, caseData) {
   const evidenceFound = caseData.evidence.filter(e => e.discovered).length;
   const criticalEvidence = caseData.evidence.filter(e => e.critical && e.discovered).length;
   const difficulty = caseData.difficulty || 1;
+  const hintsUsed = caseData.hintsUsed || 0;
 
   let stars = 0;
   if (correct) {
@@ -267,7 +268,16 @@ export function evaluateAccusation(accusedId, caseData) {
     if (criticalEvidence >= Math.floor(caseData.evidence.length * 0.2)) stars++;
   }
 
-  // Base reputation adjusted by difficulty
+  // Apply hint penalty to star rating
+  let maxStars = 5;
+  if (hintsUsed >= 3) {
+    maxStars = 3;
+  } else if (hintsUsed >= 1) {
+    maxStars = 4;
+  }
+  stars = Math.min(stars, maxStars);
+
+  // Base reputation adjusted by difficulty (hints don't reduce reputation)
   const baseReputation = 100 + (difficulty * 50);
   const reputationMultiplier = caseData.specialType
     ? SPECIAL_CASE_TYPES[caseData.specialType]?.reputationMultiplier || 1
@@ -277,17 +287,89 @@ export function evaluateAccusation(accusedId, caseData) {
     ? Math.floor(stars * baseReputation * reputationMultiplier)
     : Math.floor(baseReputation * 0.2); // Small consolation for attempting
 
+  let hintFeedback = '';
+  if (hintsUsed > 0) {
+    hintFeedback = `\nHints Used: ${hintsUsed} (Max rating: ${maxStars} stars)`;
+  }
+
   return {
     correct,
     stars,
+    maxStars,
     difficulty,
+    hintsUsed,
     message: correct ?
       `🎯 CORRECT! ${guiltyName} was indeed the culprit. Excellent detective work!` :
       `❌ WRONG! ${accusedName} was innocent. The real culprit was ${guiltyName}.`,
     feedback: correct ?
-      `You successfully identified the perpetrator using ${evidenceFound} pieces of evidence. Difficulty: Level ${difficulty}` :
-      `You missed key evidence. ${guiltyName} had the motive and opportunity. Study the case to improve.`,
+      `You successfully identified the perpetrator using ${evidenceFound} pieces of evidence. Difficulty: Level ${difficulty}${hintFeedback}` :
+      `You missed key evidence. ${guiltyName} had the motive and opportunity. Study the case to improve.${hintFeedback}`,
     reputation
+  };
+}
+
+// Calculate hint cost based on how many paid hints already used
+export function calculateHintCost(paidHintsUsed) {
+  const costs = [25, 50, 100, 200];
+  return paidHintsUsed < costs.length ? costs[paidHintsUsed] : 200;
+}
+
+// Generate contextual hint based on case progress
+export function generateHint(caseData, hintNumber) {
+  const guiltyIndex = caseData.guiltyIndex;
+  const guiltySuspect = caseData.suspects[guiltyIndex];
+  const discoveredEvidence = caseData.evidence.filter(e => e.discovered);
+  const questionedSuspects = caseData.suspects.filter(s => s.questioned);
+  const totalLocations = 3; // Crime Scene, Office, Storage
+
+  // Hint level 1: General direction
+  if (hintNumber === 1) {
+    if (discoveredEvidence.length < caseData.evidence.length * 0.5) {
+      return {
+        title: "INVESTIGATIVE GUIDANCE - HINT 1",
+        content: `💡 Consider the following:\n\nYou have ${discoveredEvidence.length} of ${caseData.evidence.length} pieces of evidence collected.\n\nGENERAL DIRECTION:\n• Have you thoroughly examined all locations?\n• Some evidence may be hidden in different areas\n• More evidence will help you build a stronger case`
+      };
+    } else if (questionedSuspects.length < caseData.suspects.length) {
+      return {
+        title: "INVESTIGATIVE GUIDANCE - HINT 1",
+        content: `💡 Consider the following:\n\nYou haven't interrogated all suspects yet.\n\nGENERAL DIRECTION:\n• Each suspect may provide crucial information\n• Pay attention to inconsistencies in their stories\n• Body language can reveal deception, but isn't always reliable`
+      };
+    } else {
+      return {
+        title: "INVESTIGATIVE GUIDANCE - HINT 1",
+        content: `💡 Consider the following:\n\nGENERAL DIRECTION:\n• Some suspects' alibis may conflict with the timeline\n• Physical evidence may contradict verbal statements\n• Review the evidence board for connections`
+      };
+    }
+  }
+
+  // Hint level 2: More specific
+  if (hintNumber === 2) {
+    const connectedEvidence = caseData.evidence.filter(e => e.connectedTo === guiltyIndex && e.discovered);
+    if (connectedEvidence.length > 0) {
+      return {
+        title: "INVESTIGATIVE GUIDANCE - HINT 2",
+        content: `💡 Focusing your investigation:\n\nEVIDENCE CONNECTION SUGGESTION:\n• Examine the evidence related to ${guiltySuspect.name} more carefully\n• Some evidence items seem to point in a specific direction\n• Cross-reference suspect statements with physical evidence`
+      };
+    } else {
+      return {
+        title: "INVESTIGATIVE GUIDANCE - HINT 2",
+        content: `💡 Focusing your investigation:\n\nBEHAVIORAL OBSERVATION:\n• One suspect showed unusual reactions during questioning\n• Consider who had both motive and opportunity\n• The guilty party's alibi may have inconsistencies`
+      };
+    }
+  }
+
+  // Hint level 3: Very specific
+  if (hintNumber === 3) {
+    return {
+      title: "INVESTIGATIVE GUIDANCE - HINT 3",
+      content: `💡 Critical Lead:\n\nSTRONG EVIDENCE PATTERN:\n• ${guiltySuspect.name} has several concerning factors\n• Their alibi: "${guiltySuspect.alibi}"\n• Their behavior during questioning was notable\n• Review evidence items that might contradict their claims\n\nRECOMMENDED ACTION:\n• Re-examine evidence connected to this suspect\n• Consider their motive and opportunity`
+    };
+  }
+
+  // Hint level 4+: Near-solution
+  return {
+    title: "INVESTIGATIVE GUIDANCE - HINT 4",
+    content: `💡 Case Solution Direction:\n\nPRIMARY SUSPECT: ${guiltySuspect.name}\n\nKEY FACTORS:\n• Suspicion level indicates involvement\n• Multiple evidence pieces point in this direction\n• Behavioral indicators suggest deception\n\nYou have enough evidence to make an accusation.\n\nNote: At this difficulty level (${caseData.difficulty}), trust the evidence over behavioral cues alone.`
   };
 }
 

@@ -142,7 +142,7 @@ export function interrogateSuspect(suspect, caseData) {
   };
 }
 
-export function evaluateAccusation(accusedId, caseData) {
+export function evaluateAccusation(accusedId, caseData, hintsUsed = 0) {
   const correct = accusedId === caseData.guiltyIndex;
   const guiltyName = caseData.suspects[caseData.guiltyIndex].name;
   const accusedName = caseData.suspects[accusedId].name;
@@ -157,6 +157,10 @@ export function evaluateAccusation(accusedId, caseData) {
     if (evidenceFound >= caseData.evidence.length * 0.6) stars++;
     if (caseData.interrogationCount >= caseData.suspects.length) stars++;
     if (criticalEvidence === 2) stars++;
+
+    // Reduce stars for using hints (max reduction of 2 stars)
+    const hintPenalty = Math.min(Math.floor(hintsUsed / 2), 2);
+    stars = Math.max(1, stars - hintPenalty);
   }
 
   return {
@@ -166,7 +170,7 @@ export function evaluateAccusation(accusedId, caseData) {
       `🎯 CORRECT! ${guiltyName} was indeed the culprit. Excellent detective work!` :
       `❌ WRONG! ${accusedName} was innocent. The real culprit was ${guiltyName}.`,
     feedback: correct ?
-      `You successfully identified the perpetrator using ${evidenceFound} pieces of evidence.` :
+      `You successfully identified the perpetrator using ${evidenceFound} pieces of evidence.${hintsUsed > 0 ? ` (${hintsUsed} hint${hintsUsed > 1 ? 's' : ''} used)` : ''}` :
       `You missed key evidence. ${guiltyName} had the motive and opportunity.`,
     reputation: correct ? stars * 200 : 50
   };

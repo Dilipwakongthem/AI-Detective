@@ -24,6 +24,9 @@ const DetectiveGame = () => {
   const [showEvidence, setShowEvidence] = useState(false);
   const [accusationResult, setAccusationResult] = useState(null);
   const [showRankUp, setShowRankUp] = useState(false);
+  const [hintsUsed, setHintsUsed] = useState(0);
+  const [hintLevel, setHintLevel] = useState(0);
+  const [showHintModal, setShowHintModal] = useState(false);
 
   const getRankInfo = (rankLevel) => {
     const ranks = [
@@ -56,6 +59,72 @@ const DetectiveGame = () => {
     return Math.min(playerProfile.rankLevel + Math.floor(Math.random() * 2), 10);
   };
 
+  const getFreeHints = (difficulty) => {
+    // Easier cases get more free hints
+    if (difficulty <= 2) return 3;
+    if (difficulty <= 4) return 2;
+    if (difficulty <= 6) return 1;
+    return 0; // Hard cases (7-10) get no free hints
+  };
+
+  const getHintCost = () => {
+    // Cost increases with each hint used beyond free hints
+    const freeHints = getFreeHints(currentCase?.difficulty || 1);
+    if (hintsUsed < freeHints) return 0;
+    return 100 * (hintsUsed - freeHints + 1); // 100, 200, 300, etc.
+  };
+
+  const generateHint = () => {
+    if (!currentCase) return '';
+
+    const guiltySuspect = currentCase.suspects[currentCase.guiltyIndex];
+    const evidenceFound = currentCase.evidence.filter(e => e.discovered).length;
+    const totalEvidence = currentCase.evidence.length;
+
+    // Progressive hints based on hint level
+    if (hintLevel === 0) {
+      return `💡 Hint: Focus on collecting more evidence. You've found ${evidenceFound}/${totalEvidence} pieces. Critical evidence can reveal important connections.`;
+    } else if (hintLevel === 1) {
+      return `💡 Hint: Pay attention to suspects with high nervousness levels during interrogation. The guilty party often shows signs of stress.`;
+    } else if (hintLevel === 2) {
+      return `💡 Hint: Look for contradictions in alibis. The perpetrator is someone with opportunity and motive. Check who was present at the crime scene.`;
+    } else if (hintLevel === 3) {
+      return `💡 Hint: The guilty party is ${guiltySuspect.age} years old and works as a ${guiltySuspect.occupation}. Look for evidence connecting them to the crime.`;
+    } else {
+      return `💡 Hint: All evidence points to ${guiltySuspect.name}. Review the clues carefully before making your accusation.`;
+    }
+  };
+
+  const requestHint = () => {
+    const cost = getHintCost();
+
+    if (cost > 0 && playerProfile.reputation < cost) {
+      alert(`⚠️ Insufficient Reputation!\n\nYou need ${cost} reputation to purchase this hint.\nYour current reputation: ${playerProfile.reputation}`);
+      return;
+    }
+
+    const freeHints = getFreeHints(currentCase?.difficulty || 1);
+    const hint = generateHint();
+
+    if (cost > 0) {
+      if (window.confirm(`💡 Purchase Hint?\n\nCost: ${cost} Reputation\nCurrent Reputation: ${playerProfile.reputation}\n\nThis will reduce your star rating for this case.\n\nProceed?`)) {
+        setPlayerProfile({
+          ...playerProfile,
+          reputation: playerProfile.reputation - cost
+        });
+        setHintsUsed(hintsUsed + 1);
+        setHintLevel(hintLevel + 1);
+        addLog(hint);
+        alert(hint);
+      }
+    } else {
+      setHintsUsed(hintsUsed + 1);
+      setHintLevel(hintLevel + 1);
+      addLog(hint);
+      alert(`${hint}\n\n(Free hint ${hintsUsed + 1}/${freeHints})`);
+    }
+  };
+
   const startNewCase = (isLegendary = false) => {
     const difficulty = isLegendary ? 10 : getCaseDifficulty();
     const newCase = generateCase(playerProfile.casesSolved + 1, difficulty, isLegendary);
@@ -63,6 +132,8 @@ const DetectiveGame = () => {
     setGameState('briefing');
     setGameLog([]);
     setAccusationResult(null);
+    setHintsUsed(0);
+    setHintLevel(0);
   };
 
   const startInvestigation = () => {
@@ -106,7 +177,7 @@ const DetectiveGame = () => {
   };
 
   const makeAccusation = (suspectId) => {
-    const result = evaluateAccusation(suspectId, currentCase);
+    const result = evaluateAccusation(suspectId, currentCase, hintsUsed);
     setAccusationResult(result);
 
     if (result.correct) {
@@ -310,20 +381,34 @@ const DetectiveGame = () => {
     </div>
   );
 
-  const renderInvestigation = () => (
-    <div className="investigation-screen">
-      <div className="investigation-header">
-        <button className="home-btn" onClick={handleReturnToMenu} title="Save & Return to Main Menu">
-          🏠 HOME
-        </button>
-        <div className="header-content">
-          <h2>🔍 INVESTIGATION - Case #{currentCase.caseNumber}</h2>
-          <div className="case-progress">
-            <span>Evidence: {currentCase.evidence.filter(e => e.discovered).length}/{currentCase.evidence.length}</span>
-            <span>Interrogations: {currentCase.interrogationCount}</span>
+  const renderInvestigation = () => {
+    const freeHints = getFreeHints(currentCase?.difficulty || 1);
+    const hintCost = getHintCost();
+    const hintsRemaining = Math.max(0, freeHints - hintsUsed);
+
+    return (
+      <div className="investigation-screen">
+        <div className="investigation-header">
+          <button className="home-btn" onClick={handleReturnToMenu} title="Save & Return to Main Menu">
+            🏠 HOME
+          </button>
+          <div className="header-content">
+            <h2>🔍 INVESTIGATION - Case #{currentCase.caseNumber}</h2>
+            <div className="case-progress">
+              <span>Evidence: {currentCase.evidence.filter(e => e.discovered).length}/{currentCase.evidence.length}</span>
+              <span>Interrogations: {currentCase.interrogationCount}</span>
+            </div>
           </div>
+          <button
+            className="hint-btn"
+            onClick={requestHint}
+            title={hintCost > 0 ? `Purchase hint for ${hintCost} reputation` : `Free hint (${hintsRemaining} remaining)`}
+          >
+            💡 HINT
+            {hintCost > 0 && <span className="hint-cost"> ({hintCost})</span>}
+            {hintsRemaining > 0 && <span className="hint-free"> (Free)</span>}
+          </button>
         </div>
-      </div>
 
       <div className="investigation-main">
         <div className="suspects-panel">
@@ -398,7 +483,8 @@ const DetectiveGame = () => {
         </div>
       </div>
     </div>
-  );
+    );
+  };
 
   const renderInterrogation = () => (
     <div className="interrogation-screen">

@@ -6,6 +6,13 @@
     "start": "parcel public/index.html --no-cache",
     "build": "parcel build public/index.html --dist-dir dist"
   },
+  "targets": {
+    "default": {
+      "engines": {
+        "browsers": "> 0.5%, last 2 versions, not dead"
+      }
+    }
+  },
   "keywords": [
     "detective",
     "game",
@@ -19,8 +26,9 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@parcel/transformer-react-refresh-wrap": "^2.12.0",
     "localtunnel": "^2.0.2",
-    "parcel": "^2.11.0",
+    "parcel": "^2.12.0",
     "process": "^0.11.10"
   }
 }

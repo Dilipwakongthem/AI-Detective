@@ -25,40 +25,52 @@ const evidenceTypes = [
   'Phone Records', 'Threatening Letter', 'Receipts', 'Toxicology Report'
 ];
 
-export function generateCase(caseNumber) {
+export function generateCase(caseNumber, difficulty = 1, isLegendary = false) {
   const crimeType = crimeTypes[Math.floor(Math.random() * crimeTypes.length)];
   const location = locations[Math.floor(Math.random() * locations.length)];
-  const numSuspects = 3 + Math.floor(Math.random() * 3); // 3-5 suspects
+
+  // Scale complexity based on difficulty (1-10)
+  const minSuspects = Math.min(3 + Math.floor(difficulty / 3), 8);
+  const maxSuspects = Math.min(minSuspects + 2, 10);
+  const numSuspects = minSuspects + Math.floor(Math.random() * (maxSuspects - minSuspects + 1));
 
   const shuffledNames = [...names].sort(() => Math.random() - 0.5);
   const guiltyIndex = Math.floor(Math.random() * numSuspects);
 
+  // Higher difficulty = harder to identify guilty party
+  const baseSuspicion = Math.max(1, 5 - Math.floor(difficulty / 2));
   const suspects = Array.from({ length: numSuspects }, (_, i) => ({
     id: i,
-    name: shuffledNames[i],
+    name: shuffledNames[i % shuffledNames.length] + (i >= shuffledNames.length ? ` ${String.fromCharCode(65 + Math.floor(i / shuffledNames.length))}` : ''),
     age: 25 + Math.floor(Math.random() * 40),
     occupation: occupations[Math.floor(Math.random() * occupations.length)],
     personality: personalities[Math.floor(Math.random() * personalities.length)],
     alibi: generateAlibi(location),
     isGuilty: i === guiltyIndex,
-    suspicionLevel: i === guiltyIndex ? 3 : Math.floor(Math.random() * 3) + 1,
-    nervousness: i === guiltyIndex ? 70 : Math.floor(Math.random() * 40) + 10,
+    suspicionLevel: i === guiltyIndex ? baseSuspicion : Math.floor(Math.random() * baseSuspicion) + 1,
+    nervousness: i === guiltyIndex ?
+      (70 - difficulty * 3) : // Guilty party calmer at higher difficulties
+      Math.floor(Math.random() * 40) + 10,
     questioned: false
   }));
 
-  const evidence = Array.from({ length: 8 + Math.floor(Math.random() * 5) }, (_, i) => ({
+  // More evidence at higher difficulty
+  const numEvidence = 8 + Math.floor(difficulty * 1.5) + Math.floor(Math.random() * 5);
+  const evidence = Array.from({ length: numEvidence }, (_, i) => ({
     id: i,
     type: evidenceTypes[Math.floor(Math.random() * evidenceTypes.length)],
     description: generateEvidenceDescription(i, suspects[guiltyIndex]),
     location: i < 3 ? 'Crime Scene' : ['Office', 'Storage Room', 'Parking Lot', 'Nearby Street'][Math.floor(Math.random() * 4)],
     connectedTo: i % 3 === 0 ? guiltyIndex : null,
     discovered: false,
-    critical: i < 2
+    critical: i < Math.max(2, Math.floor(difficulty / 3))
   }));
 
   return {
     caseNumber,
-    crimeType,
+    difficulty,
+    isLegendary,
+    crimeType: isLegendary ? `⭐ LEGENDARY: ${crimeType}` : crimeType,
     location,
     victim: {
       name: names[Math.floor(Math.random() * names.length)],

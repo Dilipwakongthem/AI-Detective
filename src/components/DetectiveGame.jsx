@@ -3,21 +3,62 @@ import { generateCase, interrogateSuspect, evaluateAccusation } from '../gameLog
 import './DetectiveGame.css';
 
 const DetectiveGame = () => {
-  const [gameState, setGameState] = useState('menu'); // menu, briefing, investigation, interrogation, accusation, result
+  const [gameState, setGameState] = useState('menu'); // menu, briefing, investigation, interrogation, accusation, result, profile
   const [currentCase, setCurrentCase] = useState(null);
   const [selectedSuspect, setSelectedSuspect] = useState(null);
   const [playerProfile, setPlayerProfile] = useState({
     rank: 'Detective',
+    rankLevel: 1,
     reputation: 1500,
     casesSolved: 0,
-    totalStars: 0
+    totalStars: 0,
+    perfectCases: 0,
+    wrongAccusations: 0,
+    eliteRating: 0,
+    currentStreak: 0,
+    longestStreak: 0,
+    legendaryCasesCompleted: 0,
+    totalPlayTime: 0
   });
   const [gameLog, setGameLog] = useState([]);
   const [showEvidence, setShowEvidence] = useState(false);
   const [accusationResult, setAccusationResult] = useState(null);
+  const [showRankUp, setShowRankUp] = useState(false);
 
-  const startNewCase = () => {
-    const newCase = generateCase(playerProfile.casesSolved + 1);
+  const getRankInfo = (rankLevel) => {
+    const ranks = [
+      { level: 1, name: 'Detective', minRep: 0, casesRequired: 0 },
+      { level: 2, name: 'Senior Detective', minRep: 3000, casesRequired: 5 },
+      { level: 3, name: 'Lead Investigator', minRep: 6000, casesRequired: 12 },
+      { level: 4, name: 'Detective Inspector', minRep: 10000, casesRequired: 20 },
+      { level: 5, name: 'Senior Inspector', minRep: 15000, casesRequired: 30 },
+      { level: 6, name: 'Chief Detective', minRep: 25000, casesRequired: 50 }
+    ];
+    return ranks.find(r => r.level === rankLevel) || ranks[0];
+  };
+
+  const checkRankUp = (profile) => {
+    if (profile.rankLevel >= 6) return null; // Max rank
+
+    const nextRank = getRankInfo(profile.rankLevel + 1);
+    if (profile.reputation >= nextRank.minRep && profile.casesSolved >= nextRank.casesRequired) {
+      return nextRank;
+    }
+    return null;
+  };
+
+  const getCaseDifficulty = () => {
+    // For Chief Detective (rank 6), always return elite difficulty (8-10)
+    if (playerProfile.rankLevel >= 6) {
+      return 8 + Math.floor(Math.random() * 3); // 8, 9, or 10
+    }
+    // For other ranks, scale difficulty based on rank
+    return Math.min(playerProfile.rankLevel + Math.floor(Math.random() * 2), 10);
+  };
+
+  const startNewCase = (isLegendary = false) => {
+    const difficulty = isLegendary ? 10 : getCaseDifficulty();
+    const newCase = generateCase(playerProfile.casesSolved + 1, difficulty, isLegendary);
     setCurrentCase(newCase);
     setGameState('briefing');
     setGameLog([]);
@@ -69,56 +110,176 @@ const DetectiveGame = () => {
     setAccusationResult(result);
 
     if (result.correct) {
-      setPlayerProfile({
+      const newStreak = playerProfile.currentStreak + 1;
+      const isPerfect = result.stars === 5;
+      const elitePoints = calculateElitePoints(result, currentCase);
+
+      const updatedProfile = {
         ...playerProfile,
         casesSolved: playerProfile.casesSolved + 1,
         reputation: playerProfile.reputation + result.reputation,
-        totalStars: playerProfile.totalStars + result.stars
+        totalStars: playerProfile.totalStars + result.stars,
+        perfectCases: isPerfect ? playerProfile.perfectCases + 1 : playerProfile.perfectCases,
+        currentStreak: newStreak,
+        longestStreak: Math.max(newStreak, playerProfile.longestStreak),
+        eliteRating: Math.min(playerProfile.eliteRating + elitePoints, 10000),
+        legendaryCasesCompleted: currentCase.isLegendary ? playerProfile.legendaryCasesCompleted + 1 : playerProfile.legendaryCasesCompleted
+      };
+
+      // Check for rank up
+      const rankUp = checkRankUp(updatedProfile);
+      if (rankUp) {
+        updatedProfile.rankLevel = rankUp.level;
+        updatedProfile.rank = rankUp.name;
+        setShowRankUp(rankUp);
+      }
+
+      setPlayerProfile(updatedProfile);
+    } else {
+      // Wrong accusation
+      setPlayerProfile({
+        ...playerProfile,
+        wrongAccusations: playerProfile.wrongAccusations + 1,
+        currentStreak: 0,
+        reputation: Math.max(0, playerProfile.reputation + result.reputation)
       });
     }
 
     setGameState('result');
   };
 
+  const calculateElitePoints = (result, caseData) => {
+    let points = 0;
+
+    // Deduction Accuracy (max 100 pts per case)
+    if (result.correct) points += 100;
+    if (result.stars === 5) points += 50;
+
+    // Evidence Analysis (max 40 pts)
+    const evidenceRatio = caseData.evidence.filter(e => e.discovered).length / caseData.evidence.length;
+    points += Math.floor(evidenceRatio * 40);
+
+    // Interrogation Skill (max 30 pts)
+    const interrogationRatio = caseData.suspects.filter(s => s.questioned).length / caseData.suspects.length;
+    points += Math.floor(interrogationRatio * 30);
+
+    // Speed bonus (max 30 pts) - assume average case takes 30 min
+    // This is simulated since we don't track real time
+    points += Math.floor(Math.random() * 30);
+
+    // Legendary case multiplier
+    if (caseData.isLegendary) {
+      points *= 2;
+    }
+
+    return points;
+  };
+
   const addLog = (message) => {
     setGameLog(prev => [...prev, { text: message, timestamp: new Date().toLocaleTimeString() }]);
   };
 
-  const renderMenu = () => (
-    <div className="menu-screen">
-      <div className="game-title">
-        <h1>🕵️ CASE FILES</h1>
-        <h2>AI Detective</h2>
+  const handleReturnToMenu = () => {
+    if (gameState === 'investigation' || gameState === 'interrogation' || gameState === 'accusation') {
+      // Show save & exit confirmation
+      if (window.confirm(`⚠️ SAVE & EXIT?\n\nYou have an investigation in progress.\n\nCurrent Case: Case #${currentCase.caseNumber}\nProgress: Evidence ${currentCase.evidence.filter(e => e.discovered).length}/${currentCase.evidence.length}\nSuspects Interviewed: ${currentCase.suspects.filter(s => s.questioned).length}/${currentCase.suspects.length}\n\nYour progress will be lost.\n\nReturn to Main Menu?`)) {
+        setGameState('menu');
+        setCurrentCase(null);
+        setSelectedSuspect(null);
+        setGameLog([]);
+      }
+    } else {
+      setGameState('menu');
+    }
+  };
+
+  const renderMenu = () => {
+    const currentRank = getRankInfo(playerProfile.rankLevel);
+    const nextRank = playerProfile.rankLevel < 6 ? getRankInfo(playerProfile.rankLevel + 1) : null;
+    const isChiefDetective = playerProfile.rankLevel >= 6;
+    const legendaryChance = Math.random() < 0.1; // 10% chance
+
+    return (
+      <div className="menu-screen">
+        <div className="game-title">
+          <h1>AI DETECTIVE</h1>
+          <h2>CRIME SCENE</h2>
+          <p className="tagline">Solve Crimes with AI-Powered Interrogation</p>
+        </div>
+        <div className="player-stats">
+          <div className="stat">
+            <span className="stat-label">Rank:</span>
+            <span className="stat-value">{playerProfile.rank}</span>
+          </div>
+          <div className="stat">
+            <span className="stat-label">Reputation:</span>
+            <span className="stat-value">{playerProfile.reputation}</span>
+          </div>
+          <div className="stat">
+            <span className="stat-label">Cases Solved:</span>
+            <span className="stat-value">{playerProfile.casesSolved}</span>
+          </div>
+          <div className="stat">
+            <span className="stat-label">Perfect Cases:</span>
+            <span className="stat-value">{playerProfile.perfectCases}</span>
+          </div>
+          {isChiefDetective && (
+            <>
+              <div className="stat">
+                <span className="stat-label">Elite Rating:</span>
+                <span className="stat-value">{playerProfile.eliteRating}/10,000</span>
+              </div>
+              <div className="stat">
+                <span className="stat-label">Current Streak:</span>
+                <span className="stat-value">{playerProfile.currentStreak} 🔥</span>
+              </div>
+            </>
+          )}
+        </div>
+
+        {!isChiefDetective && nextRank && (
+          <div className="rank-progress">
+            <p><strong>Next Rank: {nextRank.name}</strong></p>
+            <p>Progress: {playerProfile.casesSolved}/{nextRank.casesRequired} cases | {playerProfile.reputation}/{nextRank.minRep} reputation</p>
+          </div>
+        )}
+
+        {isChiefDetective && (
+          <div className="chief-badge">
+            🏆 CHIEF DETECTIVE - ELITE CASE MODE 🏆
+            <p style={{fontSize: '0.9em', marginTop: '5px'}}>Unlimited elite cases available</p>
+          </div>
+        )}
+
+        <button className="menu-btn" onClick={() => startNewCase(false)}>
+          {isChiefDetective ? '⭐ NEW ELITE CASE' : '🎯 START NEW CASE'}
+        </button>
+
+        {isChiefDetective && legendaryChance && (
+          <button className="legendary-btn" onClick={() => startNewCase(true)}>
+            🌟 LEGENDARY CASE AVAILABLE 🌟
+          </button>
+        )}
+
+        <button className="menu-btn-secondary" onClick={() => setGameState('profile')}>
+          👤 DETECTIVE PROFILE
+        </button>
+
+        <div className="menu-info">
+          <p>Your mission: Investigate crime scenes, interrogate suspects, and solve the case!</p>
+        </div>
+        <div className="version-info">
+          Version 1.0 | © 2025
+        </div>
       </div>
-      <div className="player-stats">
-        <div className="stat">
-          <span className="stat-label">Rank:</span>
-          <span className="stat-value">{playerProfile.rank}</span>
-        </div>
-        <div className="stat">
-          <span className="stat-label">Reputation:</span>
-          <span className="stat-value">{playerProfile.reputation}</span>
-        </div>
-        <div className="stat">
-          <span className="stat-label">Cases Solved:</span>
-          <span className="stat-value">{playerProfile.casesSolved}</span>
-        </div>
-        <div className="stat">
-          <span className="stat-label">Total Stars:</span>
-          <span className="stat-value">{'⭐'.repeat(Math.min(playerProfile.totalStars, 5))}</span>
-        </div>
-      </div>
-      <button className="menu-btn" onClick={startNewCase}>
-        🎯 START NEW CASE
-      </button>
-      <div className="menu-info">
-        <p>Your mission: Investigate crime scenes, interrogate suspects, and solve the case!</p>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const renderBriefing = () => (
     <div className="briefing-screen">
+      <button className="home-btn" onClick={handleReturnToMenu} title="Return to Main Menu">
+        🏠 HOME
+      </button>
       <div className="case-header">
         <h2>🗂️ CASE #{currentCase.caseNumber}</h2>
         <div className="case-type">{currentCase.crimeType}</div>
@@ -152,10 +313,15 @@ const DetectiveGame = () => {
   const renderInvestigation = () => (
     <div className="investigation-screen">
       <div className="investigation-header">
-        <h2>🔍 INVESTIGATION - Case #{currentCase.caseNumber}</h2>
-        <div className="case-progress">
-          <span>Evidence: {currentCase.evidence.filter(e => e.discovered).length}/{currentCase.evidence.length}</span>
-          <span>Interrogations: {currentCase.interrogationCount}</span>
+        <button className="home-btn" onClick={handleReturnToMenu} title="Save & Return to Main Menu">
+          🏠 HOME
+        </button>
+        <div className="header-content">
+          <h2>🔍 INVESTIGATION - Case #{currentCase.caseNumber}</h2>
+          <div className="case-progress">
+            <span>Evidence: {currentCase.evidence.filter(e => e.discovered).length}/{currentCase.evidence.length}</span>
+            <span>Interrogations: {currentCase.interrogationCount}</span>
+          </div>
         </div>
       </div>
 
@@ -237,6 +403,9 @@ const DetectiveGame = () => {
   const renderInterrogation = () => (
     <div className="interrogation-screen">
       <div className="interrogation-header">
+        <button className="home-btn" onClick={handleReturnToMenu} title="Save & Return to Main Menu">
+          🏠 HOME
+        </button>
         <h2>💬 INTERROGATION</h2>
         <button className="back-btn" onClick={() => setGameState('investigation')}>
           ← Back to Investigation
@@ -293,6 +462,9 @@ const DetectiveGame = () => {
 
   const renderAccusation = () => (
     <div className="accusation-screen">
+      <button className="home-btn" onClick={handleReturnToMenu} title="Save & Return to Main Menu">
+        🏠 HOME
+      </button>
       <div className="accusation-header">
         <h2>⚖️ MAKE YOUR ACCUSATION</h2>
         <p>Choose the suspect you believe is guilty:</p>
@@ -327,12 +499,32 @@ const DetectiveGame = () => {
             {'⭐'.repeat(accusationResult.stars)}{'☆'.repeat(5 - accusationResult.stars)}
           </div>
         )}
+        {currentCase.isLegendary && accusationResult.correct && (
+          <div className="legendary-complete">
+            🌟 LEGENDARY CASE COMPLETED! 🌟
+          </div>
+        )}
       </div>
+
+      {showRankUp && (
+        <div className="rank-up-notification">
+          <h3>🎖️ PROMOTION! 🎖️</h3>
+          <p>You've been promoted to <strong>{showRankUp.name}</strong>!</p>
+          <p>Continue solving cases to reach even higher ranks.</p>
+          {showRankUp.level === 6 && (
+            <div className="chief-unlock">
+              <p><strong>🏆 CHIEF DETECTIVE UNLOCKED 🏆</strong></p>
+              <p>You now have access to unlimited Elite Cases and Legendary Cases!</p>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="result-content">
         <div className="result-section">
           <h3>📊 CASE SUMMARY</h3>
           <p><strong>Crime:</strong> {currentCase.crimeType}</p>
+          {currentCase.difficulty && <p><strong>Difficulty:</strong> {'⭐'.repeat(Math.min(currentCase.difficulty, 10))}</p>}
           <p><strong>Location:</strong> {currentCase.location}</p>
           <p><strong>Evidence Collected:</strong> {currentCase.evidence.filter(e => e.discovered).length}/{currentCase.evidence.length}</p>
           <p><strong>Suspects Interrogated:</strong> {currentCase.suspects.filter(s => s.questioned).length}/{currentCase.suspects.length}</p>
@@ -345,9 +537,17 @@ const DetectiveGame = () => {
 
         <div className="result-section">
           <h3>🏆 REWARDS</h3>
-          <p><strong>Reputation Gained:</strong> +{accusationResult.reputation}</p>
+          <p><strong>Reputation Gained:</strong> {accusationResult.reputation > 0 ? '+' : ''}{accusationResult.reputation}</p>
           <p><strong>New Reputation:</strong> {playerProfile.reputation}</p>
-          {accusationResult.correct && <p><strong>Cases Solved:</strong> {playerProfile.casesSolved}</p>}
+          {accusationResult.correct && (
+            <>
+              <p><strong>Cases Solved:</strong> {playerProfile.casesSolved}</p>
+              <p><strong>Current Streak:</strong> {playerProfile.currentStreak} 🔥</p>
+              {playerProfile.rankLevel >= 6 && (
+                <p><strong>Elite Points Earned:</strong> +{calculateElitePoints(accusationResult, currentCase)}</p>
+              )}
+            </>
+          )}
         </div>
 
         <div className="result-section">
@@ -358,15 +558,128 @@ const DetectiveGame = () => {
       </div>
 
       <div className="result-actions">
-        <button className="action-btn" onClick={() => setGameState('menu')}>
+        <button className="action-btn" onClick={() => { setGameState('menu'); setShowRankUp(false); }}>
           🏠 Return to Menu
         </button>
-        <button className="action-btn" onClick={startNewCase}>
+        <button className="action-btn" onClick={() => { startNewCase(); setShowRankUp(false); }}>
           🎯 Next Case
         </button>
       </div>
     </div>
   );
+
+  const renderProfile = () => {
+    const currentRank = getRankInfo(playerProfile.rankLevel);
+    const isChiefDetective = playerProfile.rankLevel >= 6;
+
+    return (
+      <div className="profile-screen">
+        <button className="home-btn" onClick={() => setGameState('menu')} title="Return to Main Menu">
+          ← BACK
+        </button>
+        <div className="profile-header">
+          <h2>👤 DETECTIVE PROFILE</h2>
+          <div className="badge-display">
+            <span className="rank-badge">{playerProfile.rank}</span>
+            {isChiefDetective && <span className="chief-badge-icon">🏆</span>}
+          </div>
+        </div>
+
+        <div className="profile-content">
+          <div className="profile-section">
+            <h3>📊 CAREER STATISTICS</h3>
+            <div className="stat-grid">
+              <div className="stat-item">
+                <span className="stat-label">Total Cases Solved:</span>
+                <span className="stat-value">{playerProfile.casesSolved}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Perfect Cases:</span>
+                <span className="stat-value">{playerProfile.perfectCases} ⭐</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Success Rate:</span>
+                <span className="stat-value">
+                  {playerProfile.casesSolved > 0
+                    ? Math.round((playerProfile.casesSolved / (playerProfile.casesSolved + playerProfile.wrongAccusations)) * 100)
+                    : 100}%
+                </span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Total Reputation:</span>
+                <span className="stat-value">{playerProfile.reputation}</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Current Streak:</span>
+                <span className="stat-value">{playerProfile.currentStreak} 🔥</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-label">Longest Streak:</span>
+                <span className="stat-value">{playerProfile.longestStreak} 🔥</span>
+              </div>
+            </div>
+          </div>
+
+          {isChiefDetective && (
+            <div className="profile-section">
+              <h3>⭐ ELITE PERFORMANCE</h3>
+              <div className="elite-stats">
+                <div className="elite-rating-bar">
+                  <div className="elite-label">Elite Rating: {playerProfile.eliteRating}/10,000</div>
+                  <div className="rating-bar">
+                    <div className="rating-fill" style={{width: `${(playerProfile.eliteRating / 10000) * 100}%`}}></div>
+                  </div>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-label">Legendary Cases Completed:</span>
+                  <span className="stat-value">{playerProfile.legendaryCasesCompleted} 🌟</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="profile-section">
+            <h3>🎖️ RANK PROGRESSION</h3>
+            <div className="rank-list">
+              {[1, 2, 3, 4, 5, 6].map(level => {
+                const rank = getRankInfo(level);
+                const achieved = playerProfile.rankLevel >= level;
+                return (
+                  <div key={level} className={`rank-item ${achieved ? 'achieved' : 'locked'}`}>
+                    <span className="rank-number">{level}</span>
+                    <span className="rank-name">{rank.name}</span>
+                    {achieved ? '✅' : '🔒'}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {!isChiefDetective && (
+            <div className="profile-section next-rank-info">
+              <h3>🎯 NEXT RANK REQUIREMENTS</h3>
+              {(() => {
+                const nextRank = getRankInfo(playerProfile.rankLevel + 1);
+                return (
+                  <div className="requirements">
+                    <p><strong>{nextRank.name}</strong></p>
+                    <div className="requirement-item">
+                      <span>Cases Solved:</span>
+                      <span>{playerProfile.casesSolved}/{nextRank.casesRequired}</span>
+                    </div>
+                    <div className="requirement-item">
+                      <span>Reputation:</span>
+                      <span>{playerProfile.reputation}/{nextRank.minRep}</span>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="detective-game">
@@ -376,6 +689,7 @@ const DetectiveGame = () => {
       {gameState === 'interrogation' && renderInterrogation()}
       {gameState === 'accusation' && renderAccusation()}
       {gameState === 'result' && renderResult()}
+      {gameState === 'profile' && renderProfile()}
     </div>
   );
 };

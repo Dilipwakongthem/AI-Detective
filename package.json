@@ -2,12 +2,10 @@
   "name": "crime-scene-detective-game",
   "version": "1.0.0",
   "description": "AI Detective Mystery Game - JSX/React Web Version",
-  "source": "public/index.html",
   "scripts": {
     "start": "parcel public/index.html --no-cache",
-    "build": "parcel build public/index.html --public-url ./"
+    "build": "parcel build public/index.html --dist-dir dist"
   },
-  "browserslist": "> 0.5%, last 2 versions, not dead",
   "keywords": [
     "detective",
     "game",

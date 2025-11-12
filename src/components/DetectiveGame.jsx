@@ -1,23 +1,43 @@
-import React, { useState } from 'react';
-import { generateCase, interrogateSuspect, evaluateAccusation } from '../gameLogic';
+import React, { useState, useEffect } from 'react';
+import {
+  generateCase,
+  interrogateSuspect,
+  evaluateAccusation,
+  getCurrentRank,
+  calculateCaseDifficulty,
+  getDifficultyStars,
+  checkPromotion,
+  calculateHintCost,
+  generateHint,
+  RANKS
+} from '../gameLogic';
 import './DetectiveGame.css';
 
 const DetectiveGame = () => {
-  const [gameState, setGameState] = useState('menu'); // menu, briefing, investigation, interrogation, accusation, result
+  const [gameState, setGameState] = useState('menu'); // menu, briefing, investigation, interrogation, accusation, result, promotion
   const [currentCase, setCurrentCase] = useState(null);
   const [selectedSuspect, setSelectedSuspect] = useState(null);
   const [playerProfile, setPlayerProfile] = useState({
-    rank: 'Detective',
-    reputation: 1500,
+    reputation: 0,
     casesSolved: 0,
-    totalStars: 0
+    casesAttempted: 0,
+    totalStars: 0,
+    currentStreak: 0,
+    failedStreak: 0,
+    perfectCases: 0
   });
   const [gameLog, setGameLog] = useState([]);
   const [showEvidence, setShowEvidence] = useState(false);
   const [accusationResult, setAccusationResult] = useState(null);
+  const [promotionData, setPromotionData] = useState(null);
+  const [showHintModal, setShowHintModal] = useState(false);
+  const [currentHint, setCurrentHint] = useState(null);
+  const [showHintPurchaseConfirm, setShowHintPurchaseConfirm] = useState(false);
 
   const startNewCase = () => {
-    const newCase = generateCase(playerProfile.casesSolved + 1);
+    // Calculate difficulty based on player's stats
+    const difficulty = calculateCaseDifficulty(playerProfile);
+    const newCase = generateCase(playerProfile.casesSolved + 1, difficulty);
     setCurrentCase(newCase);
     setGameState('briefing');
     setGameLog([]);
@@ -68,13 +88,35 @@ const DetectiveGame = () => {
     const result = evaluateAccusation(suspectId, currentCase);
     setAccusationResult(result);
 
+    const oldReputation = playerProfile.reputation;
+    const newReputation = playerProfile.reputation + result.reputation;
+
+    // Update player stats
+    const updatedProfile = {
+      ...playerProfile,
+      casesAttempted: playerProfile.casesAttempted + 1,
+      reputation: newReputation,
+      totalStars: playerProfile.totalStars + (result.correct ? result.stars : 0)
+    };
+
     if (result.correct) {
-      setPlayerProfile({
-        ...playerProfile,
-        casesSolved: playerProfile.casesSolved + 1,
-        reputation: playerProfile.reputation + result.reputation,
-        totalStars: playerProfile.totalStars + result.stars
-      });
+      updatedProfile.casesSolved = playerProfile.casesSolved + 1;
+      updatedProfile.currentStreak = playerProfile.currentStreak + 1;
+      updatedProfile.failedStreak = 0;
+      if (result.stars === 5) {
+        updatedProfile.perfectCases = playerProfile.perfectCases + 1;
+      }
+    } else {
+      updatedProfile.currentStreak = 0;
+      updatedProfile.failedStreak = playerProfile.failedStreak + 1;
+    }
+
+    setPlayerProfile(updatedProfile);
+
+    // Check for promotion
+    const promotion = checkPromotion(oldReputation, newReputation);
+    if (promotion.promoted) {
+      setPromotionData(promotion);
     }
 
     setGameState('result');
@@ -84,44 +126,135 @@ const DetectiveGame = () => {
     setGameLog(prev => [...prev, { text: message, timestamp: new Date().toLocaleTimeString() }]);
   };
 
-  const renderMenu = () => (
-    <div className="menu-screen">
-      <div className="game-title">
-        <h1>🕵️ CASE FILES</h1>
-        <h2>AI Detective</h2>
+  const requestHint = () => {
+    if (!currentCase) return;
+
+    const freeHintsRemaining = currentCase.hintsAvailable - currentCase.hintsUsed;
+    const totalHintsUsed = currentCase.hintsUsed + 1;
+
+    if (freeHintsRemaining > 0) {
+      // Use free hint
+      const hint = generateHint(currentCase, totalHintsUsed);
+      setCurrentHint(hint);
+      setShowHintModal(true);
+      setCurrentCase({
+        ...currentCase,
+        hintsUsed: totalHintsUsed
+      });
+      addLog(`💡 Hint ${totalHintsUsed} used (Free)`);
+    } else {
+      // Need to purchase hint
+      setShowHintPurchaseConfirm(true);
+    }
+  };
+
+  const purchaseHint = () => {
+    if (!currentCase) return;
+
+    const paidHintsUsed = currentCase.hintsUsed - currentCase.hintsAvailable;
+    const hintCost = calculateHintCost(Math.max(0, paidHintsUsed));
+
+    if (playerProfile.reputation < hintCost) {
+      addLog(`⚠️ Insufficient reputation. Need ${hintCost - playerProfile.reputation} more points.`);
+      setShowHintPurchaseConfirm(false);
+      return;
+    }
+
+    // Deduct reputation and provide hint
+    setPlayerProfile({
+      ...playerProfile,
+      reputation: playerProfile.reputation - hintCost
+    });
+
+    const totalHintsUsed = currentCase.hintsUsed + 1;
+    const hint = generateHint(currentCase, totalHintsUsed);
+    setCurrentHint(hint);
+    setShowHintModal(true);
+    setShowHintPurchaseConfirm(false);
+    setCurrentCase({
+      ...currentCase,
+      hintsUsed: totalHintsUsed
+    });
+    addLog(`💡 Hint ${totalHintsUsed} purchased for ${hintCost} reputation`);
+  };
+
+  const renderMenu = () => {
+    const currentRank = getCurrentRank(playerProfile.reputation);
+    const successRate = playerProfile.casesAttempted > 0
+      ? Math.round((playerProfile.casesSolved / playerProfile.casesAttempted) * 100)
+      : 0;
+
+    return (
+      <div className="menu-screen">
+        <div className="game-title">
+          <h1>🕵️ CASE FILES</h1>
+          <h2>AI Detective</h2>
+        </div>
+        <div className="player-stats">
+          <div className="stat">
+            <span className="stat-label">Rank:</span>
+            <span className="stat-value">{currentRank.name}</span>
+          </div>
+          <div className="stat">
+            <span className="stat-label">Reputation:</span>
+            <span className="stat-value">{playerProfile.reputation}</span>
+          </div>
+          <div className="stat">
+            <span className="stat-label">Cases Solved:</span>
+            <span className="stat-value">{playerProfile.casesSolved}/{playerProfile.casesAttempted}</span>
+          </div>
+          <div className="stat">
+            <span className="stat-label">Success Rate:</span>
+            <span className="stat-value">{successRate}%</span>
+          </div>
+          <div className="stat">
+            <span className="stat-label">Current Streak:</span>
+            <span className="stat-value">{playerProfile.currentStreak > 0 ? `🔥 ${playerProfile.currentStreak}` : '0'}</span>
+          </div>
+          <div className="stat">
+            <span className="stat-label">Total Stars:</span>
+            <span className="stat-value">{'⭐'.repeat(Math.min(playerProfile.totalStars, 5))}</span>
+          </div>
+        </div>
+        <div className="rank-info">
+          <p>Available Difficulty: Level {currentRank.minDifficulty}-{currentRank.maxDifficulty}</p>
+          {currentRank.maxRep !== Infinity && (
+            <p>Next Rank: {currentRank.maxRep - playerProfile.reputation} reputation needed</p>
+          )}
+        </div>
+        <button className="menu-btn" onClick={startNewCase}>
+          🎯 START NEW CASE
+        </button>
+        {playerProfile.failedStreak >= 3 && (
+          <div className="performance-warning">
+            <p>⚠️ Having trouble? Consider reviewing easier cases to improve your skills.</p>
+          </div>
+        )}
+        {playerProfile.currentStreak >= 5 && (
+          <div className="performance-excellent">
+            <p>🌟 Exceptional performance! You're on fire, Detective!</p>
+          </div>
+        )}
+        <div className="menu-info">
+          <p>Your mission: Investigate crime scenes, interrogate suspects, and solve the case!</p>
+        </div>
       </div>
-      <div className="player-stats">
-        <div className="stat">
-          <span className="stat-label">Rank:</span>
-          <span className="stat-value">{playerProfile.rank}</span>
-        </div>
-        <div className="stat">
-          <span className="stat-label">Reputation:</span>
-          <span className="stat-value">{playerProfile.reputation}</span>
-        </div>
-        <div className="stat">
-          <span className="stat-label">Cases Solved:</span>
-          <span className="stat-value">{playerProfile.casesSolved}</span>
-        </div>
-        <div className="stat">
-          <span className="stat-label">Total Stars:</span>
-          <span className="stat-value">{'⭐'.repeat(Math.min(playerProfile.totalStars, 5))}</span>
-        </div>
-      </div>
-      <button className="menu-btn" onClick={startNewCase}>
-        🎯 START NEW CASE
-      </button>
-      <div className="menu-info">
-        <p>Your mission: Investigate crime scenes, interrogate suspects, and solve the case!</p>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const renderBriefing = () => (
     <div className="briefing-screen">
       <div className="case-header">
         <h2>🗂️ CASE #{currentCase.caseNumber}</h2>
         <div className="case-type">{currentCase.crimeType}</div>
+        <div className="case-difficulty">
+          Difficulty: {getDifficultyStars(currentCase.difficulty)} (Level {currentCase.difficulty})
+        </div>
+        {currentCase.specialType && (
+          <div className="special-case-badge">
+            🌟 {currentCase.specialType}
+          </div>
+        )}
       </div>
       <div className="briefing-content">
         <div className="briefing-section">
@@ -141,6 +274,10 @@ const DetectiveGame = () => {
         <div className="briefing-section">
           <h3>🎯 OBJECTIVE</h3>
           <p>Gather evidence, interrogate suspects, and make your accusation.</p>
+        </div>
+        <div className="briefing-section">
+          <h3>💡 HINTS AVAILABLE</h3>
+          <p>{currentCase.hintsAvailable} free hints for this case</p>
         </div>
       </div>
       <button className="action-btn" onClick={startInvestigation}>
@@ -195,6 +332,30 @@ const DetectiveGame = () => {
           <button className="action-btn" onClick={() => setShowEvidence(!showEvidence)}>
             📋 {showEvidence ? 'Hide' : 'View'} Evidence Board
           </button>
+
+          {/* Hint Button */}
+          <div className="hint-section">
+            <div className="hint-info">
+              <span>💡 Hints: {Math.max(0, currentCase.hintsAvailable - currentCase.hintsUsed)} free</span>
+              {currentCase.hintsUsed > 0 && (
+                <span className="hint-used-warning">Used: {currentCase.hintsUsed} (Max: {currentCase.hintsUsed >= 3 ? '3★' : '4★'})</span>
+              )}
+            </div>
+            {currentCase.hintsAvailable > currentCase.hintsUsed ? (
+              <button className="action-btn hint-btn" onClick={requestHint}>
+                💡 REQUEST HINT (FREE)
+              </button>
+            ) : (
+              <button
+                className={`action-btn hint-btn purchase ${playerProfile.reputation < calculateHintCost(Math.max(0, currentCase.hintsUsed - currentCase.hintsAvailable)) ? 'disabled' : ''}`}
+                onClick={requestHint}
+                disabled={playerProfile.reputation < calculateHintCost(Math.max(0, currentCase.hintsUsed - currentCase.hintsAvailable))}
+              >
+                💰 PURCHASE HINT ({calculateHintCost(Math.max(0, currentCase.hintsUsed - currentCase.hintsAvailable))} REP)
+              </button>
+            )}
+          </div>
+
           <button className="action-btn accusation-btn" onClick={() => setGameState('accusation')}>
             ⚖️ MAKE ACCUSATION
           </button>
@@ -318,51 +479,112 @@ const DetectiveGame = () => {
     </div>
   );
 
-  const renderResult = () => (
-    <div className="result-screen">
-      <div className={`result-header ${accusationResult.correct ? 'success' : 'failure'}`}>
-        <h2>{accusationResult.message}</h2>
-        {accusationResult.correct && (
-          <div className="stars">
-            {'⭐'.repeat(accusationResult.stars)}{'☆'.repeat(5 - accusationResult.stars)}
+  const renderResult = () => {
+    const handleNextAction = () => {
+      if (promotionData && promotionData.promoted) {
+        setGameState('promotion');
+      } else {
+        setGameState('menu');
+      }
+    };
+
+    return (
+      <div className="result-screen">
+        <div className={`result-header ${accusationResult.correct ? 'success' : 'failure'}`}>
+          <h2>{accusationResult.message}</h2>
+          {accusationResult.correct && (
+            <div className="stars">
+              {'⭐'.repeat(accusationResult.stars)}{'☆'.repeat(5 - accusationResult.stars)}
+            </div>
+          )}
+        </div>
+
+        <div className="result-content">
+          <div className="result-section">
+            <h3>📊 CASE SUMMARY</h3>
+            <p><strong>Crime:</strong> {currentCase.crimeType}</p>
+            <p><strong>Difficulty:</strong> Level {currentCase.difficulty} {getDifficultyStars(currentCase.difficulty)}</p>
+            <p><strong>Location:</strong> {currentCase.location}</p>
+            <p><strong>Evidence Collected:</strong> {currentCase.evidence.filter(e => e.discovered).length}/{currentCase.evidence.length}</p>
+            <p><strong>Suspects Interrogated:</strong> {currentCase.suspects.filter(s => s.questioned).length}/{currentCase.suspects.length}</p>
           </div>
-        )}
+
+          <div className="result-section">
+            <h3>💭 EVALUATION</h3>
+            <p>{accusationResult.feedback}</p>
+          </div>
+
+          <div className="result-section">
+            <h3>🏆 REWARDS</h3>
+            <p><strong>Reputation Gained:</strong> +{accusationResult.reputation}</p>
+            <p><strong>New Reputation:</strong> {playerProfile.reputation}</p>
+            {accusationResult.correct && <p><strong>Cases Solved:</strong> {playerProfile.casesSolved}</p>}
+            {playerProfile.currentStreak > 0 && <p><strong>Current Streak:</strong> 🔥 {playerProfile.currentStreak}</p>}
+          </div>
+
+          <div className="result-section">
+            <h3>🔍 THE TRUTH</h3>
+            <p>The guilty party was: <strong>{currentCase.suspects[currentCase.guiltyIndex].name}</strong></p>
+            <p>Motive: Professional rivalry and financial gain</p>
+          </div>
+        </div>
+
+        <div className="result-actions">
+          <button className="action-btn" onClick={handleNextAction}>
+            {promotionData && promotionData.promoted ? '🎖️ View Promotion' : '🏠 Return to Menu'}
+          </button>
+          <button className="action-btn" onClick={startNewCase}>
+            🎯 Next Case
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  const renderPromotion = () => (
+    <div className="promotion-screen">
+      <div className="promotion-header">
+        <h1>🎖️ PROMOTION! 🎖️</h1>
+        <h2>Congratulations!</h2>
       </div>
 
-      <div className="result-content">
-        <div className="result-section">
-          <h3>📊 CASE SUMMARY</h3>
-          <p><strong>Crime:</strong> {currentCase.crimeType}</p>
-          <p><strong>Location:</strong> {currentCase.location}</p>
-          <p><strong>Evidence Collected:</strong> {currentCase.evidence.filter(e => e.discovered).length}/{currentCase.evidence.length}</p>
-          <p><strong>Suspects Interrogated:</strong> {currentCase.suspects.filter(s => s.questioned).length}/{currentCase.suspects.length}</p>
+      <div className="promotion-content">
+        <div className="promotion-section">
+          <h3>You've been promoted to:</h3>
+          <div className="new-rank">{promotionData.newRank}</div>
         </div>
 
-        <div className="result-section">
-          <h3>💭 EVALUATION</h3>
-          <p>{accusationResult.feedback}</p>
+        <div className="promotion-section">
+          <h3>INCREASED CASE DIFFICULTY</h3>
+          <p>Your expertise is needed on more complex investigations.</p>
         </div>
 
-        <div className="result-section">
-          <h3>🏆 REWARDS</h3>
-          <p><strong>Reputation Gained:</strong> +{accusationResult.reputation}</p>
-          <p><strong>New Reputation:</strong> {playerProfile.reputation}</p>
-          {accusationResult.correct && <p><strong>Cases Solved:</strong> {playerProfile.casesSolved}</p>}
+        <div className="promotion-section">
+          <h3>You now have access to:</h3>
+          <ul>
+            <li>Level {promotionData.newMinDifficulty}-{promotionData.newMaxDifficulty} difficulty cases</li>
+            <li>More complex crimes requiring advanced deduction</li>
+            <li>More suspects with intricate relationships</li>
+            <li>Subtle evidence requiring expert analysis</li>
+          </ul>
         </div>
 
-        <div className="result-section">
-          <h3>🔍 THE TRUTH</h3>
-          <p>The guilty party was: <strong>{currentCase.suspects[currentCase.guiltyIndex].name}</strong></p>
-          <p>Motive: Professional rivalry and financial gain</p>
+        <div className="promotion-section">
+          <h3>Chief's Message:</h3>
+          <p className="chiefs-quote">{promotionData.message}</p>
+        </div>
+
+        <div className="promotion-section">
+          <p className="promotion-note">Your previous rank cases are still available for practice.</p>
         </div>
       </div>
 
-      <div className="result-actions">
-        <button className="action-btn" onClick={() => setGameState('menu')}>
-          🏠 Return to Menu
-        </button>
-        <button className="action-btn" onClick={startNewCase}>
-          🎯 Next Case
+      <div className="promotion-actions">
+        <button className="action-btn" onClick={() => {
+          setPromotionData(null);
+          setGameState('menu');
+        }}>
+          VIEW NEW CASES
         </button>
       </div>
     </div>
@@ -376,6 +598,77 @@ const DetectiveGame = () => {
       {gameState === 'interrogation' && renderInterrogation()}
       {gameState === 'accusation' && renderAccusation()}
       {gameState === 'result' && renderResult()}
+      {gameState === 'promotion' && promotionData && renderPromotion()}
+
+      {/* Hint Display Modal */}
+      {showHintModal && currentHint && (
+        <div className="modal-overlay" onClick={() => setShowHintModal(false)}>
+          <div className="modal-content hint-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>{currentHint.title}</h2>
+            </div>
+            <div className="modal-body">
+              <pre className="hint-content">{currentHint.content}</pre>
+              {currentCase && (
+                <div className="hint-impact">
+                  <p><strong>Hints Used:</strong> {currentCase.hintsUsed}</p>
+                  <p><strong>Maximum Case Rating:</strong> {currentCase.hintsUsed >= 3 ? '⭐⭐⭐' : currentCase.hintsUsed >= 1 ? '⭐⭐⭐⭐' : '⭐⭐⭐⭐⭐'}</p>
+                </div>
+              )}
+            </div>
+            <div className="modal-actions">
+              <button className="action-btn" onClick={() => setShowHintModal(false)}>
+                CONTINUE INVESTIGATION
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Hint Purchase Confirmation Modal */}
+      {showHintPurchaseConfirm && currentCase && (
+        <div className="modal-overlay" onClick={() => setShowHintPurchaseConfirm(false)}>
+          <div className="modal-content purchase-confirm-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>PURCHASE HINT?</h2>
+            </div>
+            <div className="modal-body">
+              <p className="warning-text">⚠️ This will cost reputation points</p>
+
+              <div className="cost-info">
+                <div className="cost-row">
+                  <span>Hint Cost:</span>
+                  <span className="cost-value">{calculateHintCost(Math.max(0, currentCase.hintsUsed - currentCase.hintsAvailable))} Reputation</span>
+                </div>
+                <div className="cost-row">
+                  <span>Your Current Reputation:</span>
+                  <span>{playerProfile.reputation}</span>
+                </div>
+                <div className="cost-row">
+                  <span>After Purchase:</span>
+                  <span>{playerProfile.reputation - calculateHintCost(Math.max(0, currentCase.hintsUsed - currentCase.hintsAvailable))}</span>
+                </div>
+              </div>
+
+              <div className="impact-warning">
+                <h4>IMPACT ON CASE:</h4>
+                <p>• Using hints reduces maximum star rating</p>
+                <p>• Current max rating: {currentCase.hintsUsed >= 3 ? '⭐⭐⭐' : currentCase.hintsUsed >= 1 ? '⭐⭐⭐⭐' : '⭐⭐⭐⭐⭐'}</p>
+                <p>• After this hint: {currentCase.hintsUsed + 1 >= 3 ? '⭐⭐⭐' : '⭐⭐⭐⭐'}</p>
+                <p className="note">Reputation is recovered when you solve cases. Hints help solve difficult cases successfully.</p>
+              </div>
+            </div>
+            <div className="modal-actions">
+              <button className="action-btn confirm-btn" onClick={purchaseHint}>
+                CONFIRM PURCHASE
+              </button>
+              <button className="action-btn cancel-btn" onClick={() => setShowHintPurchaseConfirm(false)}>
+                CANCEL
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

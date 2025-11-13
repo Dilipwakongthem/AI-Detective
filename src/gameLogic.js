@@ -106,7 +106,6 @@ export function generateCase(caseNumber, difficulty = 1, isLegendary = false) {
     isLegendary,
     crimeType: isLegendary ? `⭐ LEGENDARY: ${crimeType}` : crimeType,
     location,
-    specialType,
     victim: {
       name: names[Math.floor(Math.random() * names.length)],
       occupation: occupations[Math.floor(Math.random() * occupations.length)]
@@ -227,9 +226,6 @@ export function evaluateAccusation(accusedId, caseData, hintsUsed = 0) {
   return {
     correct,
     stars,
-    maxStars,
-    difficulty,
-    hintsUsed,
     message: correct ?
       `🎯 CORRECT! ${guiltyName} was indeed the culprit. Excellent detective work!` :
       `❌ WRONG! ${accusedName} was innocent. The real culprit was ${guiltyName}.`,
@@ -238,5 +234,4 @@ export function evaluateAccusation(accusedId, caseData, hintsUsed = 0) {
       `You missed key evidence. ${guiltyName} had the motive and opportunity.`,
     reputation: correct ? stars * 200 : 50
   };
-  return messages[rank.name] || '"Keep up the good work, Detective."';
 }

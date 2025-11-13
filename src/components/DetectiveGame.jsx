@@ -1,16 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import {
-  generateCase,
-  interrogateSuspect,
-  evaluateAccusation,
-  getCurrentRank,
-  calculateCaseDifficulty,
-  getDifficultyStars,
-  checkPromotion,
-  calculateHintCost,
-  generateHint,
-  RANKS
-} from '../gameLogic';
+import React, { useState } from 'react';
+import { generateCase, interrogateSuspect, evaluateAccusation } from '../gameLogic';
 import './DetectiveGame.css';
 
 const DetectiveGame = () => {
@@ -377,13 +366,8 @@ const DetectiveGame = () => {
         <h2>🗂️ CASE #{currentCase.caseNumber}</h2>
         <div className="case-type">{currentCase.crimeType}</div>
         <div className="case-difficulty">
-          Difficulty: {getDifficultyStars(currentCase.difficulty)} (Level {currentCase.difficulty})
+          Difficulty: {'⭐'.repeat(Math.min(currentCase.difficulty, 10))} (Level {currentCase.difficulty})
         </div>
-        {currentCase.specialType && (
-          <div className="special-case-badge">
-            🌟 {currentCase.specialType}
-          </div>
-        )}
       </div>
       <div className="briefing-content">
         <div className="briefing-section">
@@ -495,11 +479,11 @@ const DetectiveGame = () => {
               </button>
             ) : (
               <button
-                className={`action-btn hint-btn purchase ${playerProfile.reputation < calculateHintCost(Math.max(0, currentCase.hintsUsed - currentCase.hintsAvailable)) ? 'disabled' : ''}`}
+                className={`action-btn hint-btn purchase ${playerProfile.reputation < (100 * (Math.max(0, currentCase.hintsUsed - currentCase.hintsAvailable) + 1)) ? 'disabled' : ''}`}
                 onClick={requestHint}
-                disabled={playerProfile.reputation < calculateHintCost(Math.max(0, currentCase.hintsUsed - currentCase.hintsAvailable))}
+                disabled={playerProfile.reputation < (100 * (Math.max(0, currentCase.hintsUsed - currentCase.hintsAvailable) + 1))}
               >
-                💰 PURCHASE HINT ({calculateHintCost(Math.max(0, currentCase.hintsUsed - currentCase.hintsAvailable))} REP)
+                💰 PURCHASE HINT ({100 * (Math.max(0, currentCase.hintsUsed - currentCase.hintsAvailable) + 1)} REP)
               </button>
             )}
           </div>

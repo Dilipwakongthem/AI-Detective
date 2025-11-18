@@ -27,7 +27,7 @@ import {
 } from '../utils/storageManager';
 
 import { initializeNotebook } from '../utils/notebookManager';
-import { initializeTheme } from '../utils/themeManager';
+import { initializeTheme, getCurrentTheme } from '../utils/themeManager';
 
 import {
   initializeAds,
@@ -1304,7 +1304,16 @@ const DetectiveGame = () => {
               onClick={() => setShowThemeSelector(true)}
               data-tooltip="Customize your detective experience with themes"
             >
-              🎨 CHANGE THEME
+              <div className="theme-button-content">
+                <span className="theme-button-icon">🎨</span>
+                <div className="theme-button-text">
+                  <div className="theme-button-label">CHANGE THEME</div>
+                  <div className="theme-button-current">
+                    Current: <span className="current-theme-name">{getCurrentTheme().name}</span>
+                  </div>
+                </div>
+              </div>
+              <span className="theme-button-arrow">→</span>
             </button>
           </div>
 

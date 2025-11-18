@@ -3,6 +3,7 @@ import {
   getAvailableThemes,
   getCurrentTheme,
   setTheme,
+  applyTheme,
   isThemeUnlocked
 } from '../utils/themeManager';
 import { hasPremiumThemes } from '../utils/storageManager';
@@ -35,10 +36,16 @@ const ThemeSelectorModal = ({ onClose, showNotification, onThemeChange }) => {
       return;
     }
 
+    // Save theme to localStorage
     const success = setTheme(themeId);
 
     if (success) {
+      // Apply theme immediately to current page
+      applyTheme(themeId);
+
+      // Update selected state
       setSelectedTheme(themeId);
+
       showNotification(`✅ Theme changed to ${getThemeName(themeId)}!`, 'success');
 
       if (onThemeChange) {

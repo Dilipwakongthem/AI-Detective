@@ -22,6 +22,29 @@
     </style>
 </head>
 <body>
+    <!-- Authentication Check -->
+    <script>
+        // Check if user is authenticated before loading the game
+        (function() {
+            const guestId = localStorage.getItem('guestUserId');
+            const isGuest = localStorage.getItem('isGuestUser') === 'true';
+            const userEmail = localStorage.getItem('currentUserEmail');
+            const userType = localStorage.getItem('userType');
+
+            // Check if user is logged in (either as guest or email user)
+            const isAuthenticated = (guestId && isGuest && userType === 'guest') ||
+                                   (userEmail && userType === 'email');
+
+            if (!isAuthenticated) {
+                // Redirect to login page if not authenticated
+                console.log('No active session found. Redirecting to login...');
+                window.location.href = 'login.html';
+            } else {
+                console.log('Active session found. User type:', userType);
+            }
+        })();
+    </script>
+
     <div id="root"></div>
     <script type="module" src="../src/index.jsx"></script>
 </body>

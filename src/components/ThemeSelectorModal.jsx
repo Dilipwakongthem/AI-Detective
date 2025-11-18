@@ -15,7 +15,6 @@ import './ThemeSelectorModal.css';
 const ThemeSelectorModal = ({ onClose, showNotification, onThemeChange }) => {
   const [availableThemes, setAvailableThemes] = useState([]);
   const [selectedTheme, setSelectedTheme] = useState('default');
-  const [previewTheme, setPreviewTheme] = useState(null);
   const isPremiumUnlocked = hasPremiumThemes();
 
   /**
@@ -28,7 +27,7 @@ const ThemeSelectorModal = ({ onClose, showNotification, onThemeChange }) => {
   }, []);
 
   /**
-   * Handle theme selection
+   * Handle theme selection (Apply button click)
    */
   const handleSelectTheme = (themeId) => {
     if (!isThemeUnlocked(themeId)) {
@@ -59,20 +58,6 @@ const ThemeSelectorModal = ({ onClose, showNotification, onThemeChange }) => {
   };
 
   /**
-   * Handle mouse enter on theme card (preview)
-   */
-  const handleThemePreview = (theme) => {
-    setPreviewTheme(theme);
-  };
-
-  /**
-   * Handle mouse leave (stop preview)
-   */
-  const handleStopPreview = () => {
-    setPreviewTheme(null);
-  };
-
-  /**
    * Render theme card
    */
   const renderThemeCard = (theme) => {
@@ -83,9 +68,6 @@ const ThemeSelectorModal = ({ onClose, showNotification, onThemeChange }) => {
       <div
         key={theme.id}
         className={`theme-card ${isSelected ? 'selected' : ''} ${isLocked ? 'locked' : ''}`}
-        onClick={() => handleSelectTheme(theme.id)}
-        onMouseEnter={() => !isLocked && handleThemePreview(theme)}
-        onMouseLeave={handleStopPreview}
       >
         {/* Lock indicator */}
         {isLocked && (
@@ -131,6 +113,23 @@ const ThemeSelectorModal = ({ onClose, showNotification, onThemeChange }) => {
           <p className="theme-description">{theme.description}</p>
           {theme.isPremium && isPremiumUnlocked && (
             <span className="theme-premium-badge">✨ PREMIUM</span>
+          )}
+
+          {/* Apply button for unlocked themes */}
+          {!isLocked && !isSelected && (
+            <button
+              className="theme-apply-btn"
+              onClick={() => handleSelectTheme(theme.id)}
+            >
+              APPLY THEME
+            </button>
+          )}
+
+          {/* Already applied indicator */}
+          {isSelected && (
+            <div className="theme-applied-badge">
+              ✓ CURRENTLY ACTIVE
+            </div>
           )}
         </div>
       </div>
@@ -180,14 +179,6 @@ const ThemeSelectorModal = ({ onClose, showNotification, onThemeChange }) => {
         <div className="theme-selector-info">
           <p>Customize your detective experience! {isPremiumUnlocked ? 'All themes unlocked!' : 'Unlock premium themes in the store.'}</p>
         </div>
-
-        {/* Preview notification */}
-        {previewTheme && (
-          <div className="theme-preview-notice">
-            <span>👀 Previewing: {previewTheme.name}</span>
-            <span className="preview-hint">Click to apply</span>
-          </div>
-        )}
 
         {/* Themes grid */}
         <div className="themes-grid">

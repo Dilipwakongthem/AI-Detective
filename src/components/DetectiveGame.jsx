@@ -3,6 +3,7 @@ import { generateCase, interrogateSuspect, evaluateAccusation } from '../gameLog
 import StoreScreen from './StoreScreen';
 import NotebookModal from './NotebookModal';
 import ThemeSelectorModal from './ThemeSelectorModal';
+import ThemeWelcomeModal from './ThemeWelcomeModal';
 import './DetectiveGame.css';
 
 // Import monetization utilities
@@ -76,6 +77,7 @@ const DetectiveGame = () => {
   // Premium features state
   const [showNotebook, setShowNotebook] = useState(false);
   const [showThemeSelector, setShowThemeSelector] = useState(false);
+  const [showThemeWelcome, setShowThemeWelcome] = useState(false);
 
   // Initialize monetization systems on mount
   useEffect(() => {
@@ -1362,6 +1364,13 @@ const DetectiveGame = () => {
         <StoreScreen
           onBack={() => setGameState('menu')}
           onPurchaseComplete={(result) => {
+            // Check if premium themes were purchased
+            if (result.granted && result.granted.premium && result.granted.premium.includes('themes')) {
+              // Show welcome modal for theme selection
+              setTimeout(() => {
+                setShowThemeWelcome(true);
+              }, 500);
+            }
             // Refresh UI after purchase
             showNotification('Purchase complete! Thank you for your support!', 'success');
           }}
@@ -1392,6 +1401,14 @@ const DetectiveGame = () => {
           onThemeChange={(themeId) => {
             console.log('Theme changed to:', themeId);
           }}
+        />
+      )}
+
+      {/* Theme Welcome Modal (After Purchase) */}
+      {showThemeWelcome && (
+        <ThemeWelcomeModal
+          onClose={() => setShowThemeWelcome(false)}
+          showNotification={showNotification}
         />
       )}
 

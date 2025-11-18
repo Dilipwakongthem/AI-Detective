@@ -345,17 +345,35 @@ export const applyTheme = (themeId) => {
 
   const root = document.documentElement;
 
-  // Apply all color variables
+  console.log(`[ThemeManager] Applying theme: ${theme.name}`);
+
+  // Remove all existing theme classes first
+  document.body.className = document.body.className
+    .split(' ')
+    .filter(c => !c.startsWith('theme-'))
+    .join(' ');
+
+  // Apply all color variables to root
   Object.entries(theme.colors).forEach(([property, value]) => {
     root.style.setProperty(property, value);
   });
 
-  // Add theme class to body for additional styling
-  document.body.className = document.body.className
-    .split(' ')
-    .filter(c => !c.startsWith('theme-'))
-    .concat(`theme-${themeId}`)
-    .join(' ');
+  // Also set common aliases for easier CSS usage
+  root.style.setProperty('--primary-color', theme.colors['--color-primary']);
+  root.style.setProperty('--secondary-color', theme.colors['--color-accent']);
+  root.style.setProperty('--bg-color', theme.colors['--bg-primary']);
+  root.style.setProperty('--text-color', theme.colors['--text-primary']);
+
+  // Add theme class to body for theme-specific styling
+  document.body.classList.add(`theme-${themeId}`);
+
+  // Set data attribute for CSS targeting
+  document.body.setAttribute('data-theme', themeId);
+
+  // Trigger custom event for components that need to react to theme changes
+  window.dispatchEvent(new CustomEvent('themeChanged', {
+    detail: { themeId, theme }
+  }));
 
   console.log(`[ThemeManager] Applied theme: ${theme.name}`);
 };

@@ -69,6 +69,17 @@ const StoreScreen = ({ onBack, onPurchaseComplete, showNotification }) => {
         }
         if (result.granted.premium.length > 0) {
           message += `Premium features unlocked!\n`;
+
+          // Special messages for specific premium features
+          if (result.granted.premium.includes('notebook')) {
+            message += `\n📓 Detective's Notebook is now available during investigations!`;
+          }
+          if (result.granted.premium.includes('themes')) {
+            message += `\n🎨 Premium Themes unlocked! Visit your Profile to change themes.`;
+          }
+          if (result.granted.premium.includes('ad_removal')) {
+            message += `\n✨ Enjoy your ad-free experience!`;
+          }
         }
 
         showNotification(message, 'success');

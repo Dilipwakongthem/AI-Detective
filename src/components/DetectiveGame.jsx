@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { generateCase, interrogateSuspect, evaluateAccusation } from '../gameLogic';
 import StoreScreen from './StoreScreen';
+import NotebookModal from './NotebookModal';
+import ThemeSelectorModal from './ThemeSelectorModal';
 import './DetectiveGame.css';
 
 // Import monetization utilities
@@ -18,9 +20,13 @@ import {
   getAdCounter,
   canWatchAd,
   hasAdRemoval,
+  hasNotebook,
   savePlayerProfile,
   loadPlayerProfile
 } from '../utils/storageManager';
+
+import { initializeNotebook } from '../utils/notebookManager';
+import { initializeTheme } from '../utils/themeManager';
 
 import {
   initializeAds,
@@ -67,6 +73,10 @@ const DetectiveGame = () => {
   const [showReputationDoublerModal, setShowReputationDoublerModal] = useState(false);
   const [baseReputationEarned, setBaseReputationEarned] = useState(0);
 
+  // Premium features state
+  const [showNotebook, setShowNotebook] = useState(false);
+  const [showThemeSelector, setShowThemeSelector] = useState(false);
+
   // Initialize monetization systems on mount
   useEffect(() => {
     // Initialize storage
@@ -81,6 +91,10 @@ const DetectiveGame = () => {
     // Initialize ads and IAP
     initializeAds();
     initializeIAP();
+
+    // Initialize premium features
+    initializeNotebook();
+    initializeTheme();
 
     // Check and reset daily cases
     const resetResult = checkAndResetDailyCases();
@@ -994,6 +1008,15 @@ const DetectiveGame = () => {
             {hintsRemaining === 0 && hintTokens > 0 && <span className="hint-token"> ({hintTokens} 💡)</span>}
             {hintsRemaining === 0 && hintTokens === 0 && hintCost > 0 && <span className="hint-cost"> ({hintCost})</span>}
           </button>
+          {hasNotebook() && (
+            <button
+              className="action-btn notebook-btn"
+              onClick={() => setShowNotebook(true)}
+              data-tooltip="Open Detective's Notebook - Take notes during your investigation"
+            >
+              📓 DETECTIVE'S NOTEBOOK
+            </button>
+          )}
           <button className="action-btn accusation-btn" onClick={() => setGameState('accusation')} data-tooltip="Accuse a suspect of the crime">
             ⚖️ MAKE ACCUSATION
           </button>
@@ -1272,6 +1295,17 @@ const DetectiveGame = () => {
             </div>
           )}
 
+          <div className="profile-section profile-actions">
+            <h3>⚙️ CUSTOMIZATION</h3>
+            <button
+              className="theme-selector-button"
+              onClick={() => setShowThemeSelector(true)}
+              data-tooltip="Customize your detective experience with themes"
+            >
+              🎨 CHANGE THEME
+            </button>
+          </div>
+
           <div className="profile-section">
             <h3>🎖️ RANK PROGRESSION</h3>
             <div className="rank-list">
@@ -1340,6 +1374,26 @@ const DetectiveGame = () => {
 
       {/* Reputation Doubler Modal */}
       {renderReputationDoublerModal()}
+
+      {/* Detective's Notebook Modal */}
+      {showNotebook && currentCase && (
+        <NotebookModal
+          caseId={currentCase.caseNumber}
+          onClose={() => setShowNotebook(false)}
+          showNotification={showNotification}
+        />
+      )}
+
+      {/* Theme Selector Modal */}
+      {showThemeSelector && (
+        <ThemeSelectorModal
+          onClose={() => setShowThemeSelector(false)}
+          showNotification={showNotification}
+          onThemeChange={(themeId) => {
+            console.log('Theme changed to:', themeId);
+          }}
+        />
+      )}
 
       {/* Notification System */}
       {notification && (

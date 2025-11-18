@@ -28,6 +28,7 @@ import {
 
 import { initializeNotebook } from '../utils/notebookManager';
 import { initializeTheme, getCurrentThemeObject } from '../utils/themeManager';
+import soundEngine from '../utils/soundEngine';
 
 import {
   initializeAds,
@@ -128,6 +129,9 @@ const DetectiveGame = () => {
 
   // Notification system
   const showNotification = (message, type = 'info') => {
+    // Play sound effect based on notification type
+    soundEngine.play(type);
+
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 4000);
   };
@@ -253,6 +257,7 @@ const DetectiveGame = () => {
       setHintsUsed(hintsUsed + 1);
       setHintLevel(hintLevel + 1);
       addLog(hint);
+      soundEngine.play('hintUsed');
       showNotification(`${hint}\n\n(Free hint ${hintsUsed + 1}/${freeHints})`, 'info');
       return;
     }
@@ -266,6 +271,7 @@ const DetectiveGame = () => {
           setHintsUsed(hintsUsed + 1);
           setHintLevel(hintLevel + 1);
           addLog(hint);
+          soundEngine.play('hintUsed');
           showNotification(`${hint}\n\nHint tokens remaining: ${result.remaining}`, 'info');
         }
       }
@@ -285,6 +291,7 @@ const DetectiveGame = () => {
             setHintsUsed(hintsUsed + 1);
             setHintLevel(hintLevel + 1);
             addLog(hint);
+            soundEngine.play('hintUsed');
             showNotification(`✅ ${hint}\n\nHint earned via ad!`, 'success');
           },
           (error) => {
@@ -352,6 +359,9 @@ const DetectiveGame = () => {
     setAccusationResult(null);
     setHintsUsed(0);
     setHintLevel(0);
+
+    // Play case start sound
+    soundEngine.play('caseStart');
   };
 
   const startInvestigation = () => {
@@ -371,6 +381,7 @@ const DetectiveGame = () => {
       found.discovered = true;
       setCurrentCase({ ...currentCase, cluesFound: currentCase.cluesFound + 1 });
       addLog(`🔍 Found evidence: ${found.type} - ${found.description}`);
+      soundEngine.play('evidenceFound');
       showNotification(`✅ Evidence discovered!`, 'success');
     } else {
       addLog('🔍 No new evidence found in this location.');
@@ -408,6 +419,13 @@ const DetectiveGame = () => {
   const makeAccusation = (suspectId) => {
     const result = evaluateAccusation(suspectId, currentCase, hintsUsed);
     setAccusationResult(result);
+
+    // Play sound based on result
+    if (result.correct) {
+      soundEngine.play('correctAccusation');
+    } else {
+      soundEngine.play('wrongAccusation');
+    }
 
     if (result.correct) {
       const newStreak = playerProfile.currentStreak + 1;
@@ -1315,6 +1333,53 @@ const DetectiveGame = () => {
               </div>
               <span className="theme-button-arrow">→</span>
             </button>
+
+            <div className="sound-settings">
+              <h4>🔊 Sound Settings</h4>
+
+              {/* Sound Toggle */}
+              <div className="setting-row">
+                <span className="setting-label">Sound Effects</span>
+                <label className="toggle-switch">
+                  <input
+                    type="checkbox"
+                    checked={soundEngine.enabled}
+                    onChange={() => {
+                      const enabled = soundEngine.toggleEnabled();
+                      if (enabled) soundEngine.play('success');
+                      setPlayerProfile({...playerProfile}); // Force re-render
+                    }}
+                  />
+                  <span className="toggle-slider"></span>
+                </label>
+              </div>
+
+              {/* Volume Slider */}
+              <div className="setting-row">
+                <span className="setting-label">Volume</span>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={soundEngine.masterVolume * 100}
+                  onChange={(e) => {
+                    soundEngine.setVolume(e.target.value / 100);
+                    setPlayerProfile({...playerProfile}); // Force re-render
+                  }}
+                  onMouseUp={() => soundEngine.play('click')}
+                  className="volume-slider"
+                />
+                <span className="volume-value">{Math.round(soundEngine.masterVolume * 100)}%</span>
+              </div>
+
+              {/* Test Sound Button */}
+              <button
+                className="test-sound-btn"
+                onClick={() => soundEngine.play('success')}
+              >
+                🔊 Test Sound
+              </button>
+            </div>
           </div>
 
           <div className="profile-section">

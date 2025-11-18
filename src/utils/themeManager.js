@@ -289,7 +289,7 @@ export const THEMES = {
 };
 
 /**
- * Get currently selected theme
+ * Get currently selected theme ID
  */
 export const getCurrentTheme = () => {
   try {
@@ -299,6 +299,14 @@ export const getCurrentTheme = () => {
     console.error('[ThemeManager] Error loading theme:', error);
     return 'default';
   }
+};
+
+/**
+ * Get currently selected theme object
+ */
+export const getCurrentThemeObject = () => {
+  const themeId = getCurrentTheme();
+  return THEMES[themeId] || THEMES.default;
 };
 
 /**

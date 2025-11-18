@@ -27,7 +27,7 @@ import {
 } from '../utils/storageManager';
 
 import { initializeNotebook } from '../utils/notebookManager';
-import { initializeTheme, getCurrentTheme } from '../utils/themeManager';
+import { initializeTheme, getCurrentThemeObject } from '../utils/themeManager';
 
 import {
   initializeAds,
@@ -1309,7 +1309,7 @@ const DetectiveGame = () => {
                 <div className="theme-button-text">
                   <div className="theme-button-label">CHANGE THEME</div>
                   <div className="theme-button-current">
-                    Current: <span className="current-theme-name">{getCurrentTheme().name}</span>
+                    Current: <span className="current-theme-name">{getCurrentThemeObject().name}</span>
                   </div>
                 </div>
               </div>

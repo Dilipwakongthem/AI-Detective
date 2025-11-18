@@ -133,10 +133,13 @@ const ThemeSelectorModal = ({ onClose, showNotification, onThemeChange }) => {
         {/* Theme info */}
         <div className="theme-info">
           <h3 className="theme-name">{theme.name}</h3>
-          <p className="theme-description">{theme.description}</p>
+
+          {/* Premium badge appears right after name */}
           {theme.isPremium && isPremiumUnlocked && (
             <span className="theme-premium-badge">✨ PREMIUM</span>
           )}
+
+          <p className="theme-description">{theme.description}</p>
 
           {/* Apply button for unlocked themes */}
           {!isLocked && !isSelected && (
@@ -144,6 +147,8 @@ const ThemeSelectorModal = ({ onClose, showNotification, onThemeChange }) => {
               className="theme-apply-btn"
               onClick={(e) => {
                 e.stopPropagation();
+                e.preventDefault();
+                console.log('[ThemeSelector] Button clicked for:', theme.id);
                 handleSelectTheme(theme.id);
               }}
               type="button"

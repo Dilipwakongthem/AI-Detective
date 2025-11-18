@@ -86,7 +86,10 @@
   font-size: 3em;
   color: var(--color-primary, #f39c12);
   margin-bottom: 10px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow:
+    2px 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 10px rgba(0, 0, 0, 0.6),
+    0 0 20px rgba(0, 0, 0, 0.4);
   transition: color 0.3s ease;
 }
 
@@ -95,6 +98,9 @@
   color: var(--text-secondary, #e4e4e4);
   transition: color 0.3s ease;
   margin-bottom: 15px;
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 8px rgba(0, 0, 0, 0.5);
 }
 
 .tagline {
@@ -102,12 +108,14 @@
   color: var(--text-muted, #b0b0b0);
   font-style: italic;
   margin-bottom: 30px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 .version-info {
   margin-top: 30px;
   color: var(--text-muted, #777);
   font-size: 0.85em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 .player-stats {
@@ -1809,7 +1817,9 @@
   color: var(--color-warning, #f97316);
   font-size: 2em;
   margin: 0;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow:
+    2px 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 10px rgba(0, 0, 0, 0.6);
 }
 
 /* Store Tabs */
@@ -1859,6 +1869,9 @@
   font-size: 1.8em;
   margin-bottom: 12px;
   text-align: center;
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 8px rgba(0, 0, 0, 0.5);
 }
 
 .store-section-subtitle {
@@ -1866,6 +1879,7 @@
   font-size: 1em;
   margin-bottom: 20px;
   text-align: center;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 /* Store Item Cards */
@@ -1899,12 +1913,16 @@
   color: var(--color-warning, #f97316);
   font-size: 1.5em;
   margin-bottom: 8px;
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 6px rgba(0, 0, 0, 0.5);
 }
 
 .store-item-description {
   color: var(--text-secondary, rgba(255, 255, 255, 0.8));
   font-size: 1em;
   margin-bottom: 12px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
 }
 
 .store-item-contents {

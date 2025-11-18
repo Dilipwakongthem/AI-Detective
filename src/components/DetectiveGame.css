@@ -1723,6 +1723,7 @@
   gap: 8px;
   margin: 12px 0;
   font-size: 24px;
+  color: var(--text-primary, #ffffff);
 }
 
 .bonus-cases, .owned-cases {

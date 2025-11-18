@@ -1887,8 +1887,8 @@
   background: rgba(30, 41, 59, 0.6);
   border: 1px solid rgba(248, 113, 113, 0.3);
   border-radius: 12px;
-  padding: 20px;
-  margin: 16px 0;
+  padding: 28px 20px 20px 20px;
+  margin: 20px 0;
   transition: all 0.3s ease;
   position: relative;
 }
@@ -1981,13 +1981,15 @@
 /* Badges */
 .badge {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  padding: 6px 12px;
+  top: -10px;
+  right: 16px;
+  padding: 8px 16px;
   border-radius: 12px;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 10;
 }
 
 .badge-popular {

@@ -27,6 +27,25 @@ const DetectiveGame = () => {
   const [hintsUsed, setHintsUsed] = useState(0);
   const [hintLevel, setHintLevel] = useState(0);
   const [showHintModal, setShowHintModal] = useState(false);
+  const [caseDetailsExpanded, setCaseDetailsExpanded] = useState(false);
+
+  // Scroll utility functions
+  const scrollToElement = (elementId) => {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
   const getRankInfo = (rankLevel) => {
     const ranks = [
@@ -151,6 +170,8 @@ const DetectiveGame = () => {
     } else {
       addLog('🔍 No new evidence found in this location.');
     }
+    // Auto-scroll to investigation log
+    setTimeout(() => scrollToElement('investigation-log'), 100);
   };
 
   const selectSuspect = (suspect) => {
@@ -217,6 +238,8 @@ const DetectiveGame = () => {
     }
 
     setGameState('result');
+    // Auto-scroll to top to show result
+    setTimeout(() => scrollToTop(), 100);
   };
 
   const calculateElitePoints = (result, caseData) => {
@@ -388,10 +411,10 @@ const DetectiveGame = () => {
 
     return (
       <div className="investigation-screen">
+        <button className="home-btn" onClick={handleReturnToMenu} title="Save & Return to Main Menu">
+          🏠 HOME
+        </button>
         <div className="investigation-header">
-          <button className="home-btn" onClick={handleReturnToMenu} title="Save & Return to Main Menu">
-            🏠 HOME
-          </button>
           <div className="header-content">
             <h2>🔍 INVESTIGATION - Case #{currentCase.caseNumber}</h2>
             <div className="case-progress">
@@ -399,15 +422,25 @@ const DetectiveGame = () => {
               <span>Interrogations: {currentCase.interrogationCount}</span>
             </div>
           </div>
+        </div>
+
+        <div className="case-details-section">
           <button
-            className="hint-btn"
-            onClick={requestHint}
-            title={hintCost > 0 ? `Purchase hint for ${hintCost} reputation` : `Free hint (${hintsRemaining} remaining)`}
+            className="case-details-toggle"
+            onClick={() => setCaseDetailsExpanded(!caseDetailsExpanded)}
           >
-            💡 HINT
-            {hintCost > 0 && <span className="hint-cost"> ({hintCost})</span>}
-            {hintsRemaining > 0 && <span className="hint-free"> (Free)</span>}
+            {caseDetailsExpanded ? '▼' : '▶'} Case Details
           </button>
+          {caseDetailsExpanded && (
+            <div className="case-details-content">
+              <h3>Case #{currentCase.caseNumber}</h3>
+              <p><strong>Crime Type:</strong> {currentCase.crimeType}</p>
+              <p><strong>Location:</strong> {currentCase.location}</p>
+              <p><strong>Victim:</strong> {currentCase.victim.name} - {currentCase.victim.occupation}</p>
+              <p><strong>Situation:</strong> A {currentCase.crimeType.toLowerCase()} has occurred at {currentCase.location}. {currentCase.suspects.length} suspects are being held for questioning. Your task is to identify the perpetrator.</p>
+              <p><strong>Objective:</strong> Gather evidence, interrogate suspects, and make your accusation.</p>
+            </div>
+          )}
         </div>
 
       <div className="investigation-main">
@@ -443,8 +476,25 @@ const DetectiveGame = () => {
           <button className="action-btn" onClick={() => investigateLocation('Storage')}>
             🔍 Search Storage Room
           </button>
-          <button className="action-btn" onClick={() => setShowEvidence(!showEvidence)}>
+          <button
+            className="action-btn"
+            onClick={() => {
+              setShowEvidence(!showEvidence);
+              if (!showEvidence) {
+                setTimeout(() => scrollToElement('evidence-board'), 100);
+              }
+            }}
+          >
             📋 {showEvidence ? 'Hide' : 'View'} Evidence Board
+          </button>
+          <button
+            className="action-btn hint-btn-action"
+            onClick={requestHint}
+            title={hintCost > 0 ? `Purchase hint for ${hintCost} reputation` : `Free hint (${hintsRemaining} remaining)`}
+          >
+            💡 Request Hint
+            {hintCost > 0 && <span className="hint-cost"> ({hintCost})</span>}
+            {hintsRemaining > 0 && <span className="hint-free"> (Free)</span>}
           </button>
           <button className="action-btn accusation-btn" onClick={() => setGameState('accusation')}>
             ⚖️ MAKE ACCUSATION
@@ -453,7 +503,7 @@ const DetectiveGame = () => {
       </div>
 
       {showEvidence && (
-        <div className="evidence-board">
+        <div id="evidence-board" className="evidence-board">
           <h3>📋 EVIDENCE BOARD</h3>
           <div className="evidence-list">
             {currentCase.evidence.filter(e => e.discovered).map(evidence => (
@@ -471,7 +521,7 @@ const DetectiveGame = () => {
         </div>
       )}
 
-      <div className="game-log">
+      <div id="investigation-log" className="game-log">
         <h3>📜 INVESTIGATION LOG</h3>
         <div className="log-entries">
           {gameLog.map((entry, i) => (

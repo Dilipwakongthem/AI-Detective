@@ -167,7 +167,7 @@ export function evaluateAccusation(accusedId, caseData, hintsUsed = 0) {
     correct,
     stars,
     message: correct ?
-      `🎯 CORRECT! ${guiltyName} was indeed the culprit. Excellent detective work!` :
+      `🎯 CORRECT! ${guiltyName} was indeed the culprit. Excellent work, Detective!` :
       `❌ WRONG! ${accusedName} was innocent. The real culprit was ${guiltyName}.`,
     feedback: correct ?
       `You successfully identified the perpetrator using ${evidenceFound} pieces of evidence.${hintsUsed > 0 ? ` (${hintsUsed} hint${hintsUsed > 1 ? 's' : ''} used)` : ''}` :

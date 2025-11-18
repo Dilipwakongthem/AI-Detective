@@ -31,28 +31,44 @@ const ThemeSelectorModal = ({ onClose, showNotification, onThemeChange }) => {
    * Handle theme selection (Apply button click)
    */
   const handleSelectTheme = (themeId) => {
+    console.log('[ThemeSelector] Applying theme:', themeId);
+
     if (!isThemeUnlocked(themeId)) {
-      showNotification('This theme is locked. Purchase Premium Themes Pack to unlock!', 'info');
+      console.warn('[ThemeSelector] Theme locked:', themeId);
+      showNotification('🔒 This theme is locked. Purchase Premium Themes Pack to unlock!', 'info');
       return;
     }
 
-    // Save theme to localStorage
-    const success = setTheme(themeId);
+    try {
+      // Save theme to localStorage
+      const success = setTheme(themeId);
 
-    if (success) {
-      // Apply theme immediately to current page
-      applyTheme(themeId);
+      if (success) {
+        // Apply theme immediately to current page
+        applyTheme(themeId);
 
-      // Update selected state
-      setSelectedTheme(themeId);
+        // Update selected state
+        setSelectedTheme(themeId);
 
-      showNotification(`✅ Theme changed to ${getThemeName(themeId)}!`, 'success');
+        console.log('[ThemeSelector] Theme applied successfully:', themeId);
+        showNotification(`✅ Theme changed to ${getThemeName(themeId)}!`, 'success');
 
-      if (onThemeChange) {
-        onThemeChange(themeId);
+        // Notify parent component
+        if (onThemeChange) {
+          onThemeChange(themeId);
+        }
+
+        // Force a small delay to ensure theme CSS is applied
+        setTimeout(() => {
+          console.log('[ThemeSelector] Theme CSS variables updated');
+        }, 100);
+      } else {
+        console.error('[ThemeSelector] Failed to set theme:', themeId);
+        showNotification('❌ Failed to change theme. Please try again.', 'error');
       }
-    } else {
-      showNotification('Failed to change theme', 'error');
+    } catch (error) {
+      console.error('[ThemeSelector] Error applying theme:', error);
+      showNotification('❌ Error changing theme. Please try again.', 'error');
     }
   };
 
@@ -126,9 +142,13 @@ const ThemeSelectorModal = ({ onClose, showNotification, onThemeChange }) => {
           {!isLocked && !isSelected && (
             <button
               className="theme-apply-btn"
-              onClick={() => handleSelectTheme(theme.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSelectTheme(theme.id);
+              }}
+              type="button"
             >
-              APPLY THEME
+              🎨 APPLY THEME
             </button>
           )}
 

@@ -28,6 +28,14 @@ const DetectiveGame = () => {
   const [hintLevel, setHintLevel] = useState(0);
   const [showHintModal, setShowHintModal] = useState(false);
   const [caseDetailsExpanded, setCaseDetailsExpanded] = useState(false);
+  const [loadingAction, setLoadingAction] = useState('');
+  const [notification, setNotification] = useState(null);
+
+  // Notification system
+  const showNotification = (message, type = 'info') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 3000);
+  };
 
   // Scroll utility functions
   const scrollToElement = (elementId) => {
@@ -45,6 +53,23 @@ const DetectiveGame = () => {
       top: 0,
       behavior: 'smooth'
     });
+  };
+
+  // Calculate theory strength
+  const calculateTheoryStrength = () => {
+    if (!currentCase) return { label: 'Unknown', stars: 0, percentage: 0 };
+
+    const evidenceScore = (currentCase.evidence.filter(e => e.discovered).length / currentCase.evidence.length) * 40;
+    const interrogationScore = (currentCase.suspects.filter(s => s.questioned).length / currentCase.suspects.length) * 30;
+    const connectionScore = 30; // Simplified for now
+
+    const total = evidenceScore + interrogationScore + connectionScore;
+
+    if (total < 30) return { label: 'Weak', stars: 1, percentage: total };
+    if (total < 50) return { label: 'Developing', stars: 2, percentage: total };
+    if (total < 70) return { label: 'Moderate', stars: 3, percentage: total };
+    if (total < 90) return { label: 'Strong', stars: 4, percentage: total };
+    return { label: 'Very Strong', stars: 5, percentage: total };
   };
 
   const getRankInfo = (rankLevel) => {
@@ -160,16 +185,25 @@ const DetectiveGame = () => {
     addLog('🔍 Investigation started. Explore the crime scene and gather evidence.');
   };
 
-  const investigateLocation = (locationName) => {
+  const investigateLocation = async (locationName) => {
+    setLoadingAction(locationName);
+
+    // Simulate search delay for better UX
+    await new Promise(resolve => setTimeout(resolve, 800));
+
     const undiscoveredEvidence = currentCase.evidence.filter(e => !e.discovered);
     if (undiscoveredEvidence.length > 0) {
       const found = undiscoveredEvidence[Math.floor(Math.random() * undiscoveredEvidence.length)];
       found.discovered = true;
       setCurrentCase({ ...currentCase, cluesFound: currentCase.cluesFound + 1 });
       addLog(`🔍 Found evidence: ${found.type} - ${found.description}`);
+      showNotification(`✅ Evidence discovered!`, 'success');
     } else {
       addLog('🔍 No new evidence found in this location.');
+      showNotification(`⚠️ No new evidence found`, 'info');
     }
+
+    setLoadingAction('');
     // Auto-scroll to investigation log
     setTimeout(() => scrollToElement('investigation-log'), 100);
   };
@@ -270,7 +304,12 @@ const DetectiveGame = () => {
   };
 
   const addLog = (message) => {
-    setGameLog(prev => [...prev, { text: message, timestamp: new Date().toLocaleTimeString() }]);
+    setGameLog(prev => [...prev, { text: message, timestamp: new Date().toLocaleTimeString(), isNew: true }]);
+
+    // Remove "isNew" flag after animation completes
+    setTimeout(() => {
+      setGameLog(prev => prev.map(entry => ({ ...entry, isNew: false })));
+    }, 700);
   };
 
   const handleReturnToMenu = () => {
@@ -294,7 +333,7 @@ const DetectiveGame = () => {
     const legendaryChance = Math.random() < 0.1; // 10% chance
 
     return (
-      <div className="menu-screen">
+      <div className="menu-screen screen-enter">
         <div className="game-title">
           <h1>AI DETECTIVE</h1>
           <h2>CRIME SCENE</h2>
@@ -345,17 +384,17 @@ const DetectiveGame = () => {
           </div>
         )}
 
-        <button className="menu-btn" onClick={() => startNewCase(false)}>
+        <button className="menu-btn" onClick={() => startNewCase(false)} data-tooltip="Begin investigating a new case">
           {isChiefDetective ? '⭐ NEW ELITE CASE' : '🎯 START NEW CASE'}
         </button>
 
         {isChiefDetective && legendaryChance && (
-          <button className="legendary-btn" onClick={() => startNewCase(true)}>
+          <button className="legendary-btn" onClick={() => startNewCase(true)} data-tooltip="Take on an extremely difficult legendary case">
             🌟 LEGENDARY CASE AVAILABLE 🌟
           </button>
         )}
 
-        <button className="menu-btn-secondary" onClick={() => setGameState('profile')}>
+        <button className="menu-btn-secondary" onClick={() => setGameState('profile')} data-tooltip="View your detective statistics and progression">
           👤 DETECTIVE PROFILE
         </button>
 
@@ -370,8 +409,8 @@ const DetectiveGame = () => {
   };
 
   const renderBriefing = () => (
-    <div className="briefing-screen">
-      <button className="home-btn" onClick={handleReturnToMenu} title="Return to Main Menu">
+    <div className="briefing-screen screen-enter">
+      <button className="home-btn" onClick={handleReturnToMenu} data-tooltip="Return to Main Menu">
         🏠 HOME
       </button>
       <div className="case-header">
@@ -408,17 +447,24 @@ const DetectiveGame = () => {
     const freeHints = getFreeHints(currentCase?.difficulty || 1);
     const hintCost = getHintCost();
     const hintsRemaining = Math.max(0, freeHints - hintsUsed);
+    const evidenceCollected = currentCase.evidence.filter(e => e.discovered).length;
+    const totalEvidence = currentCase.evidence.length;
+    const suspectsInterrogated = currentCase.suspects.filter(s => s.questioned).length;
+    const totalSuspects = currentCase.suspects.length;
+    const evidencePercentage = Math.round((evidenceCollected / totalEvidence) * 100);
+    const interrogationPercentage = Math.round((suspectsInterrogated / totalSuspects) * 100);
+    const theoryStrength = calculateTheoryStrength();
 
     return (
-      <div className="investigation-screen">
-        <button className="home-btn" onClick={handleReturnToMenu} title="Save & Return to Main Menu">
+      <div className="investigation-screen screen-enter">
+        <button className="home-btn" onClick={handleReturnToMenu} data-tooltip="Save & Return to Main Menu">
           🏠 HOME
         </button>
         <div className="investigation-header">
           <div className="header-content">
             <h2>🔍 INVESTIGATION - Case #{currentCase.caseNumber}</h2>
             <div className="case-progress">
-              <span>Evidence: {currentCase.evidence.filter(e => e.discovered).length}/{currentCase.evidence.length}</span>
+              <span>Evidence: {evidenceCollected}/{totalEvidence}</span>
               <span>Interrogations: {currentCase.interrogationCount}</span>
             </div>
           </div>
@@ -443,12 +489,53 @@ const DetectiveGame = () => {
           )}
         </div>
 
+        <div className="progress-section">
+          <h3>📊 INVESTIGATION PROGRESS</h3>
+
+          <div className="progress-item">
+            <div className="progress-label">
+              <span>Evidence Collected</span>
+              <span className="progress-value">{evidenceCollected}/{totalEvidence} ({evidencePercentage}%)</span>
+            </div>
+            <div className="progress-bar">
+              <div className="progress-fill" style={{ width: `${evidencePercentage}%` }}></div>
+            </div>
+          </div>
+
+          <div className="progress-item">
+            <div className="progress-label">
+              <span>Suspects Interrogated</span>
+              <span className="progress-value">{suspectsInterrogated}/{totalSuspects} ({interrogationPercentage}%)</span>
+            </div>
+            <div className="progress-bar">
+              <div className="progress-fill" style={{ width: `${interrogationPercentage}%` }}></div>
+            </div>
+          </div>
+
+          <div className="progress-item">
+            <div className="progress-label">
+              <span>Theory Strength</span>
+              <span className="progress-stars">{'⭐'.repeat(theoryStrength.stars)}{'⚪'.repeat(5 - theoryStrength.stars)}</span>
+            </div>
+            <div className="progress-bar theory-strength">
+              <div className="progress-fill" style={{ width: `${theoryStrength.percentage}%` }}></div>
+            </div>
+          </div>
+        </div>
+
+        <div className="section-divider"></div>
+
       <div className="investigation-main">
         <div className="suspects-panel">
           <h3>👥 SUSPECTS</h3>
           <div className="suspects-list">
             {currentCase.suspects.map(suspect => (
-              <div key={suspect.id} className="suspect-card" onClick={() => selectSuspect(suspect)}>
+              <div
+                key={suspect.id}
+                className={`suspect-card ${suspect.questioned ? 'interrogated' : ''}`}
+                onClick={() => selectSuspect(suspect)}
+                data-tooltip={suspect.questioned ? 'View interrogation summary' : 'Click to interrogate'}
+              >
                 <div className="suspect-name">{suspect.name}</div>
                 <div className="suspect-details">
                   <div>{suspect.age} • {suspect.occupation}</div>
@@ -467,14 +554,29 @@ const DetectiveGame = () => {
 
         <div className="actions-panel">
           <h3>🎬 ACTIONS</h3>
-          <button className="action-btn" onClick={() => investigateLocation('Crime Scene')}>
-            🔍 Search Crime Scene
+          <button
+            className={`action-btn ${loadingAction === 'Crime Scene' ? 'loading' : ''}`}
+            onClick={() => investigateLocation('Crime Scene')}
+            disabled={loadingAction !== ''}
+            data-tooltip="Search the crime scene for evidence"
+          >
+            {loadingAction === 'Crime Scene' ? '🔄 Searching Crime Scene...' : '🔍 Search Crime Scene'}
           </button>
-          <button className="action-btn" onClick={() => investigateLocation('Office')}>
-            🔍 Search Office
+          <button
+            className={`action-btn ${loadingAction === 'Office' ? 'loading' : ''}`}
+            onClick={() => investigateLocation('Office')}
+            disabled={loadingAction !== ''}
+            data-tooltip="Search the victim's office for clues"
+          >
+            {loadingAction === 'Office' ? '🔄 Searching Office...' : '🔍 Search Office'}
           </button>
-          <button className="action-btn" onClick={() => investigateLocation('Storage')}>
-            🔍 Search Storage Room
+          <button
+            className={`action-btn ${loadingAction === 'Storage' ? 'loading' : ''}`}
+            onClick={() => investigateLocation('Storage')}
+            disabled={loadingAction !== ''}
+            data-tooltip="Search the storage room for hidden evidence"
+          >
+            {loadingAction === 'Storage' ? '🔄 Searching Storage Room...' : '🔍 Search Storage Room'}
           </button>
           <button
             className="action-btn"
@@ -484,19 +586,20 @@ const DetectiveGame = () => {
                 setTimeout(() => scrollToElement('evidence-board'), 100);
               }
             }}
+            data-tooltip="Review all collected evidence"
           >
             📋 {showEvidence ? 'Hide' : 'View'} Evidence Board
           </button>
           <button
             className="action-btn hint-btn-action"
             onClick={requestHint}
-            title={hintCost > 0 ? `Purchase hint for ${hintCost} reputation` : `Free hint (${hintsRemaining} remaining)`}
+            data-tooltip={hintCost > 0 ? `Purchase hint for ${hintCost} reputation` : `Get help with investigation (${hintsRemaining} free remaining)`}
           >
             💡 Request Hint
             {hintCost > 0 && <span className="hint-cost"> ({hintCost})</span>}
             {hintsRemaining > 0 && <span className="hint-free"> (Free)</span>}
           </button>
-          <button className="action-btn accusation-btn" onClick={() => setGameState('accusation')}>
+          <button className="action-btn accusation-btn" onClick={() => setGameState('accusation')} data-tooltip="Accuse a suspect of the crime">
             ⚖️ MAKE ACCUSATION
           </button>
         </div>
@@ -525,7 +628,7 @@ const DetectiveGame = () => {
         <h3>📜 INVESTIGATION LOG</h3>
         <div className="log-entries">
           {gameLog.map((entry, i) => (
-            <div key={i} className="log-entry">
+            <div key={i} className={`log-entry ${entry.isNew ? 'log-entry-new' : ''}`}>
               <span className="log-time">[{entry.timestamp}]</span>
               <span className="log-text">{entry.text}</span>
             </div>
@@ -537,7 +640,7 @@ const DetectiveGame = () => {
   };
 
   const renderInterrogation = () => (
-    <div className="interrogation-screen">
+    <div className="interrogation-screen screen-enter">
       <div className="interrogation-header">
         <button className="home-btn" onClick={handleReturnToMenu} title="Save & Return to Main Menu">
           🏠 HOME
@@ -597,8 +700,8 @@ const DetectiveGame = () => {
   );
 
   const renderAccusation = () => (
-    <div className="accusation-screen">
-      <button className="home-btn" onClick={handleReturnToMenu} title="Save & Return to Main Menu">
+    <div className="accusation-screen screen-enter">
+      <button className="home-btn" onClick={handleReturnToMenu} data-tooltip="Save & Return to Main Menu">
         🏠 HOME
       </button>
       <div className="accusation-header">
@@ -627,7 +730,7 @@ const DetectiveGame = () => {
   );
 
   const renderResult = () => (
-    <div className="result-screen">
+    <div className="result-screen screen-enter">
       <div className={`result-header ${accusationResult.correct ? 'success' : 'failure'}`}>
         <h2>{accusationResult.message}</h2>
         {accusationResult.correct && (
@@ -709,7 +812,7 @@ const DetectiveGame = () => {
     const isChiefDetective = playerProfile.rankLevel >= 6;
 
     return (
-      <div className="profile-screen">
+      <div className="profile-screen screen-enter">
         <button className="home-btn" onClick={() => setGameState('menu')} title="Return to Main Menu">
           ← BACK
         </button>
@@ -826,6 +929,13 @@ const DetectiveGame = () => {
       {gameState === 'accusation' && renderAccusation()}
       {gameState === 'result' && renderResult()}
       {gameState === 'profile' && renderProfile()}
+
+      {/* Notification System */}
+      {notification && (
+        <div className={`notification ${notification.type}`}>
+          {notification.message}
+        </div>
+      )}
     </div>
   );
 };

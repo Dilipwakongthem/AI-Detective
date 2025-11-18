@@ -980,17 +980,19 @@ const DetectiveGame = () => {
             className="action-btn hint-btn-action"
             onClick={requestHint}
             data-tooltip={
-              hintTokens > 0
-                ? `Use hint token (${hintTokens} available)`
-                : hintCost > 0
-                  ? `Purchase hint for ${hintCost} reputation`
-                  : `Get help with investigation (${hintsRemaining} free remaining)`
+              hintsRemaining > 0
+                ? `Get free hint (${hintsRemaining} remaining)`
+                : hintTokens > 0
+                  ? `Use hint token (${hintTokens} available)`
+                  : hintCost > 0
+                    ? `Purchase hint for ${hintCost} reputation`
+                    : `Get help with investigation`
             }
           >
             💡 Request Hint
-            {hintTokens > 0 && <span className="hint-token"> ({hintTokens} 💡)</span>}
-            {hintTokens === 0 && hintCost > 0 && <span className="hint-cost"> ({hintCost})</span>}
-            {hintTokens === 0 && hintsRemaining > 0 && <span className="hint-free"> (Free)</span>}
+            {hintsRemaining > 0 && <span className="hint-free"> (Free)</span>}
+            {hintsRemaining === 0 && hintTokens > 0 && <span className="hint-token"> ({hintTokens} 💡)</span>}
+            {hintsRemaining === 0 && hintTokens === 0 && hintCost > 0 && <span className="hint-cost"> ({hintCost})</span>}
           </button>
           <button className="action-btn accusation-btn" onClick={() => setGameState('accusation')} data-tooltip="Accuse a suspect of the crime">
             ⚖️ MAKE ACCUSATION

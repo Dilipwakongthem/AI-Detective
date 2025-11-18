@@ -311,19 +311,27 @@
   padding: 16px;
   background: rgba(0, 0, 0, 0.3);
   border-top: 1px solid rgba(99, 102, 241, 0.2);
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
 }
 
 .theme-name {
   color: #e5e7eb;
   font-size: 18px;
   margin: 0 0 8px 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .theme-description {
   color: #9ca3af;
   font-size: 13px;
-  margin: 0 0 8px 0;
+  margin: 0 0 12px 0;
   line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  flex: 1;
 }
 
 .theme-premium-badge {
@@ -335,6 +343,8 @@
   font-size: 10px;
   font-weight: bold;
   letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  white-space: nowrap;
 }
 
 /* Locked Themes Section */

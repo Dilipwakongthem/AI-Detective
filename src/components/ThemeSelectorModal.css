@@ -83,7 +83,7 @@
 }
 
 .theme-selector-info p {
-  color: #cbd5e1;
+  color: var(--text-secondary, #cbd5e1);
   margin: 0;
   font-size: 14px;
 }
@@ -399,7 +399,7 @@
 }
 
 .locked-themes-banner p {
-  color: #cbd5e1;
+  color: var(--text-secondary, #cbd5e1);
   margin: 0 0 16px 0;
   font-size: 14px;
 }
@@ -439,7 +439,7 @@
 }
 
 .theme-selector-footer-text {
-  color: #9ca3af;
+  color: var(--text-muted, #9ca3af);
   font-size: 13px;
   margin: 0;
   flex: 1;

@@ -80,7 +80,7 @@ Go to: https://developers.facebook.com/apps/1541137253706088/settings/basic/
 ### 2. **Test the Login Flow**
 
 **Testing Steps:**
-1. Open `login.html` in browser
+1. Open `index.html` in browser (login page)
 2. Click "CONTINUE WITH FACEBOOK" button
 3. Facebook login popup should appear
 4. Authorize the app

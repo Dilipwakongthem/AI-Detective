@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Files: AI Detective</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e4e4e4;
+            min-height: 100vh;
+        }
+        #root {
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <!-- Authentication Check - ENABLED -->
+    <script>
+        // Check for authentication - redirect to login if not authenticated
+        (function() {
+            const guestId = localStorage.getItem('guestUserId');
+            const userType = localStorage.getItem('userType');
+            const userEmail = localStorage.getItem('currentUserEmail');
+
+            // Check if user has any authentication session
+            const isAuthenticated = (guestId && userType === 'guest') ||
+                                   (userEmail && (userType === 'email' || userType === 'facebook'));
+
+            if (!isAuthenticated) {
+                // No session found - redirect to login page
+                console.log('No authentication found. Redirecting to login...');
+                window.location.href = 'index.html';
+            } else {
+                console.log('Authenticated user found. User type:', userType);
+            }
+        })();
+    </script>
+
+    <div id="root"></div>
+    <script type="module" src="../src/index.jsx"></script>
+</body>
+</html>

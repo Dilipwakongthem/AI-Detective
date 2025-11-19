@@ -288,7 +288,7 @@ function initializeGuestGameData(guestId) {
  * Navigate to main game
  */
 function navigateToGame() {
-  window.location.href = 'index.html';
+  window.location.href = 'game.html';
 }
 
 // ============================================

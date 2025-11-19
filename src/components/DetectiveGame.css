@@ -677,10 +677,10 @@
 }
 
 .game-log {
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--bg-secondary, rgba(0, 0, 0, 0.2));
   padding: 15px;
   border-radius: 8px;
-  border: 1px solid #555;
+  border: 1px solid var(--border-secondary, rgba(243, 156, 18, 0.3));
   max-height: 200px;
   overflow-y: auto;
 }

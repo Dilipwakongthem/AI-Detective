@@ -1,13 +1,31 @@
 # Testing Guide - Authentication Flow
 
-## 🧪 Manual Testing Instructions
+## ⚠️ CRITICAL: Before Testing
 
-### Clear State Before Each Test:
+### 1. Hard Refresh Browser (MANDATORY)
+After pulling new code or making changes, you MUST hard refresh:
+- **Windows/Linux**: `Ctrl + Shift + R`
+- **Mac**: `Cmd + Shift + R`
+- **Or**: Open DevTools → Right-click reload button → "Empty Cache and Hard Reload"
+
+**Why?** Browsers cache JavaScript files. Without hard refresh, you'll test OLD code!
+
+### 2. Verify Correct Code Version
+After hard refresh, open browser console and check:
+```javascript
+// You should see logs with [INIT], [CLICK], [SESSION CHECK] tags
+// If you see plain "Login page loaded" without [INIT], you have OLD cached code!
+```
+
+### 3. Clear State Before Each Test
 ```javascript
 // Open browser console (F12) and run:
 localStorage.clear();
 location.reload();
 ```
+
+### 4. If Tests Still Fail
+Try incognito/private window to bypass ALL cache.
 
 ---
 
@@ -185,6 +203,34 @@ Check console for:
 ---
 
 ## Common Issues & Solutions
+
+### Issue: Running Old Cached Code
+**Symptoms:**
+```
+login.js:597 Login page loaded
+(No [INIT] or [CLICK] tags in logs)
+```
+
+**Solution:**
+1. **Hard refresh**: Ctrl+Shift+R (Windows) or Cmd+Shift+R (Mac)
+2. Or use incognito/private window
+3. Verify you see `[INIT]` tags in console after refresh
+
+---
+
+### Issue: Conflicting Session Data
+**Symptoms:**
+```
+[SESSION CHECK] ⚠️ Conflicting session data detected!
+```
+
+**Solution:**
+1. Clear localStorage: `localStorage.clear()`
+2. Reload page
+3. Click your preferred login method
+4. The system will automatically clear conflicts on login
+
+---
 
 ### Issue: Redirect Loop (keeps going back to login)
 **Symptoms:**

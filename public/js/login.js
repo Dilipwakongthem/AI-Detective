@@ -144,11 +144,19 @@ function handleEmailLogin(event) {
  * Log user in (save session)
  */
 function loginUser(userData) {
+  // Clear any conflicting guest session data first
+  localStorage.removeItem('guestUserId');
+  localStorage.removeItem('isGuestUser');
+
   localStorage.setItem('currentUserId', userData.userId);
   localStorage.setItem('currentUserEmail', userData.email);
   localStorage.setItem('userType', userData.userType);
-  localStorage.setItem('isGuestUser', 'false');
   localStorage.setItem('displayName', userData.displayName);
+
+  // Store Facebook ID if present
+  if (userData.facebookId) {
+    localStorage.setItem('facebookId', userData.facebookId);
+  }
 }
 
 /**
@@ -254,6 +262,12 @@ function handleForgotPassword(event) {
  */
 function handleGuestLogin() {
   console.log('[GUEST LOGIN] Guest login initiated');
+
+  // Clear any conflicting session data first
+  console.log('[GUEST LOGIN] Clearing conflicting session data...');
+  localStorage.removeItem('currentUserId');
+  localStorage.removeItem('currentUserEmail');
+  localStorage.removeItem('facebookId');
 
   const existingGuestId = localStorage.getItem('guestUserId');
 
@@ -700,9 +714,23 @@ function checkExistingSession() {
   const guestId = localStorage.getItem('guestUserId');
   const isGuest = localStorage.getItem('isGuestUser') === 'true';
   const userEmail = localStorage.getItem('currentUserEmail');
+  const userType = localStorage.getItem('userType');
 
-  if (guestId && isGuest) {
-    console.log('Existing guest session found');
+  console.log('[SESSION CHECK] Current session state:', {
+    userType,
+    guestId: !!guestId,
+    isGuest,
+    userEmail: !!userEmail
+  });
+
+  // Check for conflicting session data
+  if (guestId && userEmail) {
+    console.warn('[SESSION CHECK] ⚠️ Conflicting session data detected! Guest and Email data both present.');
+    console.warn('[SESSION CHECK] Please click your preferred login method to clear conflicts.');
+  }
+
+  if (guestId && isGuest && userType === 'guest') {
+    console.log('[SESSION CHECK] ✓ Valid guest session found');
     const guestBtn = document.getElementById('guestLoginBtn');
     if (guestBtn) {
       const label = guestBtn.querySelector('.btn-label');
@@ -710,12 +738,16 @@ function checkExistingSession() {
       if (label) label.textContent = 'CONTINUE AS GUEST';
       if (sublabel) sublabel.textContent = 'Resume your investigation';
     }
-  } else if (userEmail) {
-    console.log('Existing email session found:', userEmail);
+  } else if (userEmail && (userType === 'email' || userType === 'facebook')) {
+    console.log('[SESSION CHECK] ✓ Valid user session found:', userType);
     // Auto-redirect disabled - user can manually click to continue
     // showNotification('🔍 Session found! Redirecting to game...', 'info');
     // setTimeout(() => {
     //   navigateToGame();
     // }, 1500);
+  } else if (userType) {
+    console.warn('[SESSION CHECK] ⚠️ userType exists but session data incomplete:', userType);
+  } else {
+    console.log('[SESSION CHECK] No existing session');
   }
 }

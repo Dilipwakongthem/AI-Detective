@@ -622,75 +622,75 @@ function showNotification(message, type = 'info') {
 document.addEventListener('DOMContentLoaded', () => {
   console.log('[INIT] Login page loaded - Attaching event listeners...');
 
-  // Guest Login Button - FUNCTIONAL
-  const guestBtn = document.getElementById('guestLoginBtn');
-  console.log('[INIT] Guest button found:', !!guestBtn);
-  if (guestBtn) {
-    guestBtn.addEventListener('click', function(e) {
-      console.log('[CLICK] Guest button clicked!');
+  // Use event delegation for more reliable click handling
+  document.body.addEventListener('click', function(e) {
+    const target = e.target;
+
+    // Check if click is on guest login button or its children
+    const guestBtn = target.closest('#guestLoginBtn');
+    if (guestBtn) {
+      console.log('[CLICK] Guest button clicked!', e.target);
       e.preventDefault();
       e.stopPropagation();
       handleGuestLogin();
-    });
-    console.log('[INIT] Guest button listener attached');
-  } else {
-    console.error('[INIT] Guest button NOT found!');
-  }
+      return;
+    }
 
-  // Email Login Button - FUNCTIONAL
-  const emailBtn = document.getElementById('emailLoginBtn');
-  console.log('[INIT] Email button found:', !!emailBtn);
-  if (emailBtn) {
-    emailBtn.addEventListener('click', function(e) {
-      console.log('[CLICK] Email button clicked!');
+    // Check if click is on email login button or its children
+    const emailBtn = target.closest('#emailLoginBtn');
+    if (emailBtn) {
+      console.log('[CLICK] Email button clicked!', e.target);
       e.preventDefault();
       e.stopPropagation();
       openEmailLoginModal();
-    });
-    console.log('[INIT] Email button listener attached');
-  } else {
-    console.error('[INIT] Email button NOT found!');
-  }
+      return;
+    }
 
-  // Show Signup Button
-  const showSignupBtn = document.getElementById('showSignupBtn');
-  console.log('[INIT] Signup link found:', !!showSignupBtn);
-  if (showSignupBtn) {
-    showSignupBtn.addEventListener('click', (e) => {
-      console.log('[CLICK] Signup link clicked!');
+    // Check if click is on signup link
+    const signupBtn = target.closest('#showSignupBtn');
+    if (signupBtn) {
+      console.log('[CLICK] Signup link clicked!', e.target);
       e.preventDefault();
+      e.stopPropagation();
       openEmailSignupModal();
-    });
-    console.log('[INIT] Signup link listener attached');
-  }
+      return;
+    }
 
-  // Facebook Login Button - FUNCTIONAL
-  const facebookBtn = document.getElementById('facebookLoginBtn');
-  console.log('[INIT] Facebook button found:', !!facebookBtn);
-  if (facebookBtn) {
-    facebookBtn.addEventListener('click', function(e) {
-      console.log('[CLICK] Facebook button clicked!');
+    // Check if click is on facebook button or its children
+    const facebookBtn = target.closest('#facebookLoginBtn');
+    if (facebookBtn) {
+      console.log('[CLICK] Facebook button clicked!', e.target);
       e.preventDefault();
       e.stopPropagation();
       handleFacebookLogin();
-    });
-    console.log('[INIT] Facebook button listener attached');
-  } else {
-    console.error('[INIT] Facebook button NOT found!');
-  }
+      return;
+    }
 
-  // Google Login Button - DUMMY
-  const googleBtn = document.getElementById('googleLoginBtn');
-  console.log('[INIT] Google button found:', !!googleBtn);
-  if (googleBtn) {
-    googleBtn.addEventListener('click', function(e) {
-      console.log('[CLICK] Google button clicked!');
+    // Check if click is on google button or its children
+    const googleBtn = target.closest('#googleLoginBtn');
+    if (googleBtn) {
+      console.log('[CLICK] Google button clicked!', e.target);
       e.preventDefault();
       e.stopPropagation();
       handleDummyButton('google');
-    });
-    console.log('[INIT] Google button listener attached');
-  }
+      return;
+    }
+  });
+
+  // Verify buttons exist
+  const guestBtn = document.getElementById('guestLoginBtn');
+  const emailBtn = document.getElementById('emailLoginBtn');
+  const facebookBtn = document.getElementById('facebookLoginBtn');
+  const googleBtn = document.getElementById('googleLoginBtn');
+  const showSignupBtn = document.getElementById('showSignupBtn');
+
+  console.log('[INIT] Buttons found:', {
+    guest: !!guestBtn,
+    email: !!emailBtn,
+    facebook: !!facebookBtn,
+    google: !!googleBtn,
+    signup: !!showSignupBtn
+  });
 
   // Check if already logged in
   console.log('[INIT] Checking for existing session...');
@@ -704,7 +704,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  console.log('[INIT] All event listeners attached successfully!');
+  console.log('[INIT] All event listeners attached successfully via event delegation!');
 
   // Diagnostic: Add test functions to global scope
   window.testGuestLogin = function() {

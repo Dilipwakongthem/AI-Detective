@@ -96,6 +96,11 @@
   transform: translateY(-1px);
 }
 
+/* Button Content - Ensure clicks pass through to button */
+.login-btn * {
+  pointer-events: none;
+}
+
 /* Button Icon */
 .btn-icon {
   font-size: 32px;

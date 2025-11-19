@@ -15,14 +15,26 @@ const SettingsModal = ({ onClose, playerProfile }) => {
   const [soundEnabled, setSoundEnabled] = useState(soundEngine.enabled);
   const [volume, setVolume] = useState(soundEngine.masterVolume * 100);
 
+  // Link Account form state (must be at top level for React hooks)
+  const [linkEmail, setLinkEmail] = useState('');
+  const [linkPassword, setLinkPassword] = useState('');
+  const [linkConfirmPassword, setLinkConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   /**
    * Handle Logout
    */
   const handleLogout = () => {
     if (confirm('🚪 Logout?\n\nYour progress is saved.\nYou can login again anytime.')) {
-      // Clear session
+      // Clear ALL session data to prevent auto-login
       localStorage.removeItem('currentUserId');
       localStorage.removeItem('currentUserEmail');
+      localStorage.removeItem('userType');
+      localStorage.removeItem('guestUserId');
+      localStorage.removeItem('isGuestUser');
+      localStorage.removeItem('facebookId');
+      localStorage.removeItem('displayName');
 
       // Play sound
       soundEngine.play('modalClose');
@@ -86,97 +98,95 @@ const SettingsModal = ({ onClose, playerProfile }) => {
   };
 
   /**
+   * Handle Link Account Form Submission
+   */
+  const handleLinkAccountSubmit = (e) => {
+    e.preventDefault();
+
+    // Validation
+    if (!linkEmail || !linkPassword) {
+      alert('❌ Email and password are required!');
+      return;
+    }
+
+    if (linkPassword.length < 6) {
+      alert('❌ Password must be at least 6 characters!');
+      return;
+    }
+
+    if (linkPassword !== linkConfirmPassword) {
+      alert('❌ Passwords do not match!');
+      return;
+    }
+
+    // Check if email already exists
+    const users = JSON.parse(localStorage.getItem('allUsers') || '{}');
+    if (users[linkEmail.toLowerCase()]) {
+      alert('❌ This email is already registered!');
+      return;
+    }
+
+    // Get current guest data
+    const guestUserId = localStorage.getItem('guestUserId');
+
+    // Create new email account with guest data
+    const userId = `user_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+    // Simple password hash (for demo - use proper backend in production)
+    let hash = 0;
+    for (let i = 0; i < linkPassword.length; i++) {
+      const char = linkPassword.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash;
+    }
+    const hashedPassword = hash.toString(36);
+
+    const userData = {
+      userId: userId,
+      email: linkEmail.toLowerCase(),
+      password: hashedPassword,
+      displayName: displayName,
+      userType: 'email',
+      linkedFrom: 'guest',
+      originalGuestId: guestUserId,
+      createdAt: new Date().toISOString(),
+      lastLogin: new Date().toISOString()
+    };
+
+    // Save user
+    users[linkEmail.toLowerCase()] = userData;
+    localStorage.setItem('allUsers', JSON.stringify(users));
+
+    // Update local storage
+    localStorage.setItem('currentUserId', userId);
+    localStorage.setItem('currentUserEmail', linkEmail.toLowerCase());
+    localStorage.setItem('userType', 'email');
+    localStorage.setItem('isGuestUser', 'false');
+
+    // Remove guest ID
+    localStorage.removeItem('guestUserId');
+
+    console.log('Guest account linked to email:', linkEmail);
+
+    // Play success sound
+    soundEngine.play('success');
+
+    alert('✅ Account linked successfully!\n\nYou can now login with your email from any device!');
+
+    // Close modals
+    setShowLinkAccount(false);
+    onClose();
+
+    // Force page reload to update UI
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  };
+
+  /**
    * Render Link Account Form
    */
   const renderLinkAccountForm = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-    const handleSubmit = (e) => {
-      e.preventDefault();
-
-      // Validation
-      if (!email || !password) {
-        alert('❌ Email and password are required!');
-        return;
-      }
-
-      if (password.length < 6) {
-        alert('❌ Password must be at least 6 characters!');
-        return;
-      }
-
-      if (password !== confirmPassword) {
-        alert('❌ Passwords do not match!');
-        return;
-      }
-
-      // Check if email already exists
-      const users = JSON.parse(localStorage.getItem('allUsers') || '{}');
-      if (users[email.toLowerCase()]) {
-        alert('❌ This email is already registered!');
-        return;
-      }
-
-      // Get current guest data
-      const guestUserId = localStorage.getItem('guestUserId');
-
-      // Create new email account with guest data
-      const userId = `user_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-
-      // Simple password hash (for demo - use proper backend in production)
-      let hash = 0;
-      for (let i = 0; i < password.length; i++) {
-        const char = password.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash;
-      }
-      const hashedPassword = hash.toString(36);
-
-      const userData = {
-        userId: userId,
-        email: email.toLowerCase(),
-        password: hashedPassword,
-        displayName: displayName,
-        userType: 'email',
-        linkedFrom: 'guest',
-        originalGuestId: guestUserId,
-        createdAt: new Date().toISOString(),
-        lastLogin: new Date().toISOString()
-      };
-
-      // Save user
-      users[email.toLowerCase()] = userData;
-      localStorage.setItem('allUsers', JSON.stringify(users));
-
-      // Update local storage
-      localStorage.setItem('currentUserId', userId);
-      localStorage.setItem('currentUserEmail', email.toLowerCase());
-      localStorage.setItem('userType', 'email');
-      localStorage.setItem('isGuestUser', 'false');
-
-      // Remove guest ID
-      localStorage.removeItem('guestUserId');
-
-      console.log('Guest account linked to email:', email);
-
-      // Play success sound
-      soundEngine.play('success');
-
-      alert('✅ Account linked successfully!\n\nYou can now login with your email from any device!');
-
-      // Close modals
-      setShowLinkAccount(false);
-      onClose();
-
-      // Force page reload to update UI
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    };
 
     return (
       <div className="link-account-form">
@@ -193,15 +203,15 @@ const SettingsModal = ({ onClose, playerProfile }) => {
           </ul>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleLinkAccountSubmit}>
           <div className="form-group">
             <label>Email Address *</label>
             <input
               type="email"
               className="form-input"
               placeholder="your.email@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={linkEmail}
+              onChange={(e) => setLinkEmail(e.target.value)}
               required
             />
           </div>
@@ -213,8 +223,8 @@ const SettingsModal = ({ onClose, playerProfile }) => {
                 type={showPassword ? 'text' : 'password'}
                 className="form-input"
                 placeholder="Create a password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={linkPassword}
+                onChange={(e) => setLinkPassword(e.target.value)}
                 minLength="6"
                 required
               />
@@ -235,8 +245,8 @@ const SettingsModal = ({ onClose, playerProfile }) => {
                 type={showConfirmPassword ? 'text' : 'password'}
                 className="form-input"
                 placeholder="Confirm your password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={linkConfirmPassword}
+                onChange={(e) => setLinkConfirmPassword(e.target.value)}
                 minLength="6"
                 required
               />
@@ -262,7 +272,12 @@ const SettingsModal = ({ onClose, playerProfile }) => {
             <button
               type="button"
               className="cancel-btn"
-              onClick={() => setShowLinkAccount(false)}
+              onClick={() => {
+                setShowLinkAccount(false);
+                setLinkEmail('');
+                setLinkPassword('');
+                setLinkConfirmPassword('');
+              }}
             >
               CANCEL
             </button>

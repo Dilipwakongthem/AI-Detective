@@ -1374,53 +1374,6 @@ const DetectiveGame = () => {
               </div>
               <span className="theme-button-arrow">→</span>
             </button>
-
-            <div className="sound-settings">
-              <h4>🔊 Sound Settings</h4>
-
-              {/* Sound Toggle */}
-              <div className="setting-row">
-                <span className="setting-label">Sound Effects</span>
-                <label className="toggle-switch">
-                  <input
-                    type="checkbox"
-                    checked={soundEngine.enabled}
-                    onChange={() => {
-                      const enabled = soundEngine.toggleEnabled();
-                      if (enabled) soundEngine.play('success');
-                      setPlayerProfile({...playerProfile}); // Force re-render
-                    }}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
-
-              {/* Volume Slider */}
-              <div className="setting-row">
-                <span className="setting-label">Volume</span>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={soundEngine.masterVolume * 100}
-                  onChange={(e) => {
-                    soundEngine.setVolume(e.target.value / 100);
-                    setPlayerProfile({...playerProfile}); // Force re-render
-                  }}
-                  onMouseUp={() => soundEngine.play('click')}
-                  className="volume-slider"
-                />
-                <span className="volume-value">{Math.round(soundEngine.masterVolume * 100)}%</span>
-              </div>
-
-              {/* Test Sound Button */}
-              <button
-                className="test-sound-btn"
-                onClick={() => soundEngine.play('success')}
-              >
-                🔊 Test Sound
-              </button>
-            </div>
           </div>
 
           <div className="profile-section">

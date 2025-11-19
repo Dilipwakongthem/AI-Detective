@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Features Test - AI Detective</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #fff;
+        }
+        .section {
+            background: rgba(0,0,0,0.5);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border: 2px solid #3498db;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .unlocked {
+            background: rgba(39, 174, 96, 0.3);
+            border: 1px solid #27ae60;
+            color: #2ecc71;
+        }
+        .locked {
+            background: rgba(231, 76, 60, 0.3);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+        }
+        h1 { color: #f39c12; }
+        h2 { color: #3498db; }
+        code {
+            background: rgba(0,0,0,0.5);
+            padding: 2px 6px;
+            border-radius: 3px;
+            color: #2ecc71;
+        }
+        .instructions {
+            background: rgba(52, 152, 219, 0.2);
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Premium Features Test Utility</h1>
+    <p>Use this page to test and unlock premium features for AI Detective</p>
+
+    <div class="section">
+        <h2>📊 Current Status</h2>
+        <div id="notebookStatus" class="status">Loading...</div>
+        <div id="themesStatus" class="status">Loading...</div>
+    </div>
+
+    <div class="section">
+        <h2>🔓 Unlock Features</h2>
+        <button onclick="unlockNotebook()">Unlock Detective's Notebook</button>
+        <button onclick="unlockThemes()">Unlock Premium Themes</button>
+        <button onclick="unlockBoth()">Unlock Both Features</button>
+    </div>
+
+    <div class="section">
+        <h2>🔒 Lock Features (For Testing)</h2>
+        <button onclick="lockNotebook()">Lock Notebook</button>
+        <button onclick="lockThemes()">Lock Themes</button>
+        <button onclick="lockBoth()">Lock Both</button>
+    </div>
+
+    <div class="section">
+        <h2>🧹 Reset</h2>
+        <button onclick="clearAll()" style="background: #e74c3c;">Clear All Storage (⚠️ Resets Everything)</button>
+    </div>
+
+    <div class="instructions">
+        <h3>📍 Where to Find the Features:</h3>
+        <ol>
+            <li><strong>Detective's Notebook:</strong>
+                <ul>
+                    <li>Start a new case from the main menu</li>
+                    <li>During investigation, look for the <code>📓 DETECTIVE'S NOTEBOOK</code> button</li>
+                    <li>It appears below the "Request Hint" button</li>
+                    <li><strong>Note:</strong> Only visible DURING an active investigation, not on the menu screen</li>
+                </ul>
+            </li>
+            <li><strong>Premium Themes:</strong>
+                <ul>
+                    <li>Go to <code>👤 DETECTIVE PROFILE</code> from main menu</li>
+                    <li>Scroll down to find <code>⚙️ CUSTOMIZATION</code> section</li>
+                    <li>Click <code>🎨 CHANGE THEME</code> button</li>
+                    <li>Select from 5 premium themes</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+
+    <div class="instructions" style="border-left-color: #f39c12; background: rgba(243, 156, 18, 0.2);">
+        <h3>💡 Testing Tips:</h3>
+        <ul>
+            <li>Click "Unlock Both Features" button above</li>
+            <li>Refresh the AI Detective game page</li>
+            <li>Start a new case to see the notebook</li>
+            <li>Visit Profile to see theme selector</li>
+            <li>Open browser console (F12) to see debug messages</li>
+        </ul>
+    </div>
+
+    <script>
+        // Storage keys
+        const KEYS = {
+            notebook: 'ai_detective_notebook_unlocked',
+            themes: 'ai_detective_premium_themes_unlocked'
+        };
+
+        // Check status
+        function checkStatus() {
+            const notebookUnlocked = localStorage.getItem(KEYS.notebook) === 'true';
+            const themesUnlocked = localStorage.getItem(KEYS.themes) === 'true';
+
+            const notebookEl = document.getElementById('notebookStatus');
+            const themesEl = document.getElementById('themesStatus');
+
+            if (notebookUnlocked) {
+                notebookEl.textContent = '✅ Detective\'s Notebook: UNLOCKED';
+                notebookEl.className = 'status unlocked';
+            } else {
+                notebookEl.textContent = '🔒 Detective\'s Notebook: LOCKED';
+                notebookEl.className = 'status locked';
+            }
+
+            if (themesUnlocked) {
+                themesEl.textContent = '✅ Premium Themes: UNLOCKED';
+                themesEl.className = 'status unlocked';
+            } else {
+                themesEl.textContent = '🔒 Premium Themes: LOCKED';
+                themesEl.className = 'status locked';
+            }
+
+            console.log('Status checked:', { notebookUnlocked, themesUnlocked });
+        }
+
+        // Unlock functions
+        function unlockNotebook() {
+            localStorage.setItem(KEYS.notebook, 'true');
+            console.log('✅ Notebook unlocked');
+            alert('✅ Detective\'s Notebook unlocked!\n\nTo see it:\n1. Refresh the game\n2. Start a new case\n3. Look for "📓 DETECTIVE\'S NOTEBOOK" button during investigation');
+            checkStatus();
+        }
+
+        function unlockThemes() {
+            localStorage.setItem(KEYS.themes, 'true');
+            console.log('✅ Themes unlocked');
+            alert('✅ Premium Themes unlocked!\n\nTo see it:\n1. Refresh the game\n2. Go to Profile\n3. Look for "🎨 CHANGE THEME" button');
+            checkStatus();
+        }
+
+        function unlockBoth() {
+            unlockNotebook();
+            unlockThemes();
+        }
+
+        // Lock functions
+        function lockNotebook() {
+            localStorage.setItem(KEYS.notebook, 'false');
+            console.log('🔒 Notebook locked');
+            alert('🔒 Notebook locked. Refresh the game to see changes.');
+            checkStatus();
+        }
+
+        function lockThemes() {
+            localStorage.setItem(KEYS.themes, 'false');
+            console.log('🔒 Themes locked');
+            alert('🔒 Themes locked. Refresh the game to see changes.');
+            checkStatus();
+        }
+
+        function lockBoth() {
+            lockNotebook();
+            lockThemes();
+        }
+
+        // Clear all
+        function clearAll() {
+            if (confirm('⚠️ This will clear ALL game data including cases, reputation, and progress. Continue?')) {
+                localStorage.clear();
+                alert('🧹 All storage cleared. Refresh the game to start fresh.');
+                checkStatus();
+            }
+        }
+
+        // Check status on load
+        checkStatus();
+    </script>
+</body>
+</html>

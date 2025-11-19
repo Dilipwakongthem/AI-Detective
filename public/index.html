@@ -22,6 +22,31 @@
     </style>
 </head>
 <body>
+    <!-- Authentication Check - DISABLED to allow direct game access -->
+    <!-- Login system is optional - accessible via login.html -->
+    <script>
+        // Optional: Auto-create guest session if none exists
+        (function() {
+            const guestId = localStorage.getItem('guestUserId');
+            const userType = localStorage.getItem('userType');
+
+            // If no session exists, create a default guest session
+            if (!guestId && !userType) {
+                const timestamp = Date.now();
+                const random = Math.random().toString(36).substring(2, 9);
+                const newGuestId = `guest_${timestamp}_${random}`;
+
+                localStorage.setItem('guestUserId', newGuestId);
+                localStorage.setItem('isGuestUser', 'true');
+                localStorage.setItem('userType', 'guest');
+
+                console.log('Auto-created guest session:', newGuestId);
+            } else {
+                console.log('Existing session found. User type:', userType);
+            }
+        })();
+    </script>
+
     <div id="root"></div>
     <script type="module" src="../src/index.jsx"></script>
 </body>

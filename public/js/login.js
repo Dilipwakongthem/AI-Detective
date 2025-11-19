@@ -348,16 +348,28 @@ function navigateToGame() {
  * Handle Facebook Login
  */
 function handleFacebookLogin() {
-  console.log('Facebook login initiated');
+  console.log('[FACEBOOK LOGIN] Facebook login initiated');
 
   // Check if FB SDK is loaded
   if (typeof FB === 'undefined') {
+    console.error('[FACEBOOK LOGIN] Facebook SDK not loaded!');
     showNotification('⚠️ Facebook SDK not loaded yet. Please wait a moment and try again.', 'warning');
     return;
   }
 
+  // HTTPS Requirement Check
+  if (window.location.protocol !== 'https:') {
+    console.error('[FACEBOOK LOGIN] Facebook requires HTTPS, current protocol:', window.location.protocol);
+    showNotification('⚠️ Facebook Login requires HTTPS.\n\nFor localhost testing:\n1. Use ngrok: ngrok http 1234\n2. Or use localtunnel: lt --port 1234\n3. Add the HTTPS URL to Facebook app settings\n\nSee FACEBOOK_LOCALHOST_FIX.md for details.', 'error');
+    return;
+  }
+
+  console.log('[FACEBOOK LOGIN] Starting Facebook OAuth flow...');
+
   // Initiate Facebook Login
   FB.login(function(response) {
+    console.log('[FACEBOOK LOGIN] FB.login response:', response);
+
     if (response.authResponse) {
       console.log('[FACEBOOK LOGIN] Facebook login successful');
       console.log('[FACEBOOK LOGIN] Auth response:', response.authResponse);
@@ -594,42 +606,80 @@ function showNotification(message, type = 'info') {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('Login page loaded');
+  console.log('[INIT] Login page loaded - Attaching event listeners...');
 
   // Guest Login Button - FUNCTIONAL
   const guestBtn = document.getElementById('guestLoginBtn');
+  console.log('[INIT] Guest button found:', !!guestBtn);
   if (guestBtn) {
-    guestBtn.addEventListener('click', handleGuestLogin);
+    guestBtn.addEventListener('click', function(e) {
+      console.log('[CLICK] Guest button clicked!');
+      e.preventDefault();
+      e.stopPropagation();
+      handleGuestLogin();
+    });
+    console.log('[INIT] Guest button listener attached');
+  } else {
+    console.error('[INIT] Guest button NOT found!');
   }
 
   // Email Login Button - FUNCTIONAL
   const emailBtn = document.getElementById('emailLoginBtn');
+  console.log('[INIT] Email button found:', !!emailBtn);
   if (emailBtn) {
-    emailBtn.addEventListener('click', openEmailLoginModal);
+    emailBtn.addEventListener('click', function(e) {
+      console.log('[CLICK] Email button clicked!');
+      e.preventDefault();
+      e.stopPropagation();
+      openEmailLoginModal();
+    });
+    console.log('[INIT] Email button listener attached');
+  } else {
+    console.error('[INIT] Email button NOT found!');
   }
 
   // Show Signup Button
   const showSignupBtn = document.getElementById('showSignupBtn');
+  console.log('[INIT] Signup link found:', !!showSignupBtn);
   if (showSignupBtn) {
     showSignupBtn.addEventListener('click', (e) => {
+      console.log('[CLICK] Signup link clicked!');
       e.preventDefault();
       openEmailSignupModal();
     });
+    console.log('[INIT] Signup link listener attached');
   }
 
   // Facebook Login Button - FUNCTIONAL
   const facebookBtn = document.getElementById('facebookLoginBtn');
+  console.log('[INIT] Facebook button found:', !!facebookBtn);
   if (facebookBtn) {
-    facebookBtn.addEventListener('click', handleFacebookLogin);
+    facebookBtn.addEventListener('click', function(e) {
+      console.log('[CLICK] Facebook button clicked!');
+      e.preventDefault();
+      e.stopPropagation();
+      handleFacebookLogin();
+    });
+    console.log('[INIT] Facebook button listener attached');
+  } else {
+    console.error('[INIT] Facebook button NOT found!');
   }
 
   // Google Login Button - DUMMY
   const googleBtn = document.getElementById('googleLoginBtn');
+  console.log('[INIT] Google button found:', !!googleBtn);
   if (googleBtn) {
-    googleBtn.addEventListener('click', () => handleDummyButton('google'));
+    googleBtn.addEventListener('click', function(e) {
+      console.log('[CLICK] Google button clicked!');
+      e.preventDefault();
+      e.stopPropagation();
+      handleDummyButton('google');
+    });
+    console.log('[INIT] Google button listener attached');
   }
 
   // Check if already logged in
+  console.log('[INIT] Checking for existing session...');
   checkExistingSession();
 
   // Close modals with Escape key
@@ -639,6 +689,8 @@ document.addEventListener('DOMContentLoaded', () => {
       closeEmailSignupModal();
     }
   });
+
+  console.log('[INIT] All event listeners attached successfully!');
 });
 
 /**

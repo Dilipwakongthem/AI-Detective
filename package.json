@@ -4,7 +4,7 @@
   "description": "AI Detective Mystery Game - JSX/React Web Version",
   "scripts": {
     "start": "parcel public/index.html --no-cache",
-    "build": "parcel build public/index.html && parcel build public/game.html --dist-dir dist --public-url ./"
+    "build": "parcel build public/index.html public/game.html --dist-dir dist --public-url ./"
   },
   "keywords": [
     "detective",

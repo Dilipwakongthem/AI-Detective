@@ -28,18 +28,8 @@
         (function() {
             console.log('[AUTH CHECK] Starting authentication check...');
 
-            // Immediate check first
-            const quickCheck = localStorage.getItem('userType');
-            console.log('[AUTH CHECK] Quick check - userType:', quickCheck);
-
-            if (!quickCheck) {
-                console.log('[AUTH CHECK] No userType found immediately, redirecting to login');
-                window.location.href = 'index.html';
-                return;
-            }
-
-            // More thorough check after delay
-            setTimeout(function() {
+            // Wait for localStorage to be fully ready before checking
+            function checkAuthentication() {
                 const guestId = localStorage.getItem('guestUserId');
                 const userType = localStorage.getItem('userType');
                 const userEmail = localStorage.getItem('currentUserEmail');
@@ -72,7 +62,18 @@
                 } else {
                     console.log('[AUTH CHECK] Authentication SUCCESS - Loading game for user type:', userType);
                 }
-            }, 50); // Reduced delay since we already did quick check
+            }
+
+            // Check immediately if userType exists, otherwise wait briefly for login redirect
+            const quickCheck = localStorage.getItem('userType');
+            if (quickCheck) {
+                console.log('[AUTH CHECK] userType found immediately:', quickCheck);
+                checkAuthentication();
+            } else {
+                console.log('[AUTH CHECK] No userType yet, waiting for localStorage sync...');
+                // Give localStorage time to sync after redirect from login page
+                setTimeout(checkAuthentication, 200);
+            }
         })();
     </script>
 

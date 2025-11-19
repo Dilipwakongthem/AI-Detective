@@ -58,6 +58,8 @@
 
                 if (!isAuthenticated) {
                     console.log('[AUTH CHECK] Authentication FAILED - Redirecting to login');
+                    // Set flag to prevent auto-redirect loop
+                    sessionStorage.setItem('fromGame', 'true');
                     window.location.href = 'index.html';
                 } else {
                     console.log('[AUTH CHECK] Authentication SUCCESS - Loading game for user type:', userType);
@@ -68,11 +70,13 @@
             const quickCheck = localStorage.getItem('userType');
             if (quickCheck) {
                 console.log('[AUTH CHECK] userType found immediately:', quickCheck);
+                // Clear fromGame flag since we have valid auth
+                sessionStorage.removeItem('fromGame');
                 checkAuthentication();
             } else {
                 console.log('[AUTH CHECK] No userType yet, waiting for localStorage sync...');
                 // Give localStorage time to sync after redirect from login page
-                setTimeout(checkAuthentication, 200);
+                setTimeout(checkAuthentication, 500);
             }
         })();
     </script>

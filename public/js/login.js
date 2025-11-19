@@ -754,6 +754,25 @@ function checkExistingSession() {
     console.warn('[SESSION CHECK] Please click your preferred login method to clear conflicts.');
   }
 
+  // Check if we were just redirected from game.html (prevent infinite loop)
+  const fromGame = sessionStorage.getItem('fromGame');
+  if (fromGame === 'true') {
+    console.log('[SESSION CHECK] Just redirected from game - NOT auto-redirecting to prevent loop');
+    sessionStorage.removeItem('fromGame'); // Clear flag
+    // Update button text but don't auto-redirect
+    if (guestId && isGuest && userType === 'guest') {
+      const guestBtn = document.getElementById('guestLoginBtn');
+      if (guestBtn) {
+        const label = guestBtn.querySelector('.btn-label');
+        const sublabel = guestBtn.querySelector('.btn-sublabel');
+        if (label) label.textContent = 'CONTINUE AS GUEST';
+        if (sublabel) sublabel.textContent = 'Click to resume investigation';
+      }
+      showNotification('⚠️ Session verification failed. Please click to login again.', 'warning');
+    }
+    return; // Stop here - don't auto-redirect
+  }
+
   if (guestId && isGuest && userType === 'guest') {
     console.log('[SESSION CHECK] ✓ Valid guest session found');
     const guestBtn = document.getElementById('guestLoginBtn');

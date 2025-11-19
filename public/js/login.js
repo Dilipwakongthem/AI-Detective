@@ -763,13 +763,22 @@ function checkExistingSession() {
       if (label) label.textContent = 'CONTINUE AS GUEST';
       if (sublabel) sublabel.textContent = 'Resume your investigation';
     }
+    // Auto-redirect guest to game
+    console.log('[SESSION CHECK] Auto-redirecting guest to game in 1 second...');
+    showNotification('🔍 Resuming your investigation...', 'success');
+    setTimeout(() => {
+      console.log('[SESSION CHECK] Navigating to game.html NOW');
+      navigateToGame();
+    }, 1000);
   } else if (userEmail && (userType === 'email' || userType === 'facebook')) {
     console.log('[SESSION CHECK] ✓ Valid user session found:', userType);
-    // Auto-redirect disabled - user can manually click to continue
-    // showNotification('🔍 Session found! Redirecting to game...', 'info');
-    // setTimeout(() => {
-    //   navigateToGame();
-    // }, 1500);
+    // Auto-redirect logged-in users to game
+    console.log('[SESSION CHECK] Auto-redirecting user to game in 1 second...');
+    showNotification('🔍 Welcome back! Loading game...', 'success');
+    setTimeout(() => {
+      console.log('[SESSION CHECK] Navigating to game.html NOW');
+      navigateToGame();
+    }, 1000);
   } else if (userType) {
     console.warn('[SESSION CHECK] ⚠️ userType exists but session data incomplete:', userType);
   } else {

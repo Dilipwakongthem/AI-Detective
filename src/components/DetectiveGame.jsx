@@ -4,6 +4,7 @@ import StoreScreen from './StoreScreen';
 import NotebookModal from './NotebookModal';
 import ThemeSelectorModal from './ThemeSelectorModal';
 import ThemeWelcomeModal from './ThemeWelcomeModal';
+import SettingsModal from './SettingsModal';
 import './DetectiveGame.css';
 
 // Import monetization utilities
@@ -79,6 +80,7 @@ const DetectiveGame = () => {
   const [showNotebook, setShowNotebook] = useState(false);
   const [showThemeSelector, setShowThemeSelector] = useState(false);
   const [showThemeWelcome, setShowThemeWelcome] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   // Initialize monetization systems on mount
   useEffect(() => {
@@ -851,6 +853,10 @@ const DetectiveGame = () => {
           🛍️ STORE
         </button>
 
+        <button className="menu-btn-secondary" onClick={() => setShowSettings(true)} data-tooltip="Account, Sound, and Game Settings">
+          ⚙️ SETTINGS
+        </button>
+
         <div className="menu-info">
           <p>Your mission: Investigate crime scenes, interrogate suspects, and solve the case!</p>
         </div>
@@ -1518,6 +1524,14 @@ const DetectiveGame = () => {
         <ThemeWelcomeModal
           onClose={() => setShowThemeWelcome(false)}
           showNotification={showNotification}
+        />
+      )}
+
+      {/* Settings Modal */}
+      {showSettings && (
+        <SettingsModal
+          onClose={() => setShowSettings(false)}
+          playerProfile={playerProfile}
         />
       )}
 

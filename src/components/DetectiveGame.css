@@ -148,7 +148,7 @@
 
 .menu-btn {
   background: var(--color-primary, #f39c12);
-  color: #1a1a2e;
+  color: white;
   border: none;
   padding: 15px 40px;
   font-size: 1.2em;
@@ -937,7 +937,7 @@
   top: 20px;
   left: 20px;
   background: var(--color-primary, #f39c12);
-  color: #1a1a2e;
+  color: white;
   border: none;
   padding: 10px 20px;
   border-radius: 6px;
@@ -1252,7 +1252,7 @@
 
 .rank-badge {
   background: var(--color-primary, #f39c12);
-  color: #1a1a2e;
+  color: white;
   padding: 10px 25px;
   border-radius: 25px;
   font-weight: bold;
@@ -1531,7 +1531,7 @@
 }
 
 .stat-item .stat-label {
-  color: var(--text-muted, #b0b0b0);
+  color: black;
   font-size: 0.95em;
 }
 

@@ -1531,8 +1531,14 @@
 }
 
 .stat-item .stat-label {
-  color: black;
+  color: var(--text-muted, #b0b0b0);
   font-size: 0.95em;
+}
+
+/* Theme-specific overrides for light background themes */
+body.theme-modern_minimalist .stat-item .stat-label,
+body.theme-vintage_typewriter .stat-item .stat-label {
+  color: black;
 }
 
 .stat-item .stat-value {

@@ -26,21 +26,31 @@
     <script>
         // Check for authentication - redirect to login if not authenticated
         (function() {
-            const guestId = localStorage.getItem('guestUserId');
-            const userType = localStorage.getItem('userType');
-            const userEmail = localStorage.getItem('currentUserEmail');
+            // Add small delay to ensure localStorage is fully written
+            setTimeout(function() {
+                const guestId = localStorage.getItem('guestUserId');
+                const userType = localStorage.getItem('userType');
+                const userEmail = localStorage.getItem('currentUserEmail');
+                const userId = localStorage.getItem('currentUserId');
 
-            // Check if user has any authentication session
-            const isAuthenticated = (guestId && userType === 'guest') ||
-                                   (userEmail && (userType === 'email' || userType === 'facebook'));
+                console.log('Authentication check:', { guestId, userType, userEmail, userId });
 
-            if (!isAuthenticated) {
-                // No session found - redirect to login page
-                console.log('No authentication found. Redirecting to login...');
-                window.location.href = 'index.html';
-            } else {
-                console.log('Authenticated user found. User type:', userType);
-            }
+                // Check if user has any authentication session
+                const isGuest = guestId && userType === 'guest';
+                const isEmail = (userEmail || userId) && userType === 'email';
+                const isFacebook = (userEmail || userId) && userType === 'facebook';
+                const isAuthenticated = isGuest || isEmail || isFacebook;
+
+                console.log('Auth status:', { isGuest, isEmail, isFacebook, isAuthenticated });
+
+                if (!isAuthenticated) {
+                    // No session found - redirect to login page
+                    console.log('No authentication found. Redirecting to login...');
+                    window.location.href = 'index.html';
+                } else {
+                    console.log('Authenticated user found. User type:', userType);
+                }
+            }, 100); // Small delay to ensure localStorage is ready
         })();
     </script>
 

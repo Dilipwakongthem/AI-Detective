@@ -165,22 +165,58 @@ npx localtunnel --port 1234
 ### 1. Verify You Have Latest Code
 ```bash
 git log -1 --oneline
-# Should show: "Fix conflicting session data..."
+# Should show: "Add diagnostic test functions..."
 ```
 
 ### 2. Check Browser Console
 You MUST see `[INIT]` tags. If not, hard refresh again!
 
-### 3. Test in Incognito Mode
+### 3. Run Diagnostic Tests
+**After hard refresh and clearing localStorage**, open browser console (F12) and run:
+
+**Test A: Direct login test (bypasses click)**
+```javascript
+window.testGuestLogin()
+```
+Expected output:
+```
+[TEST] Manual test function called
+[GUEST LOGIN] Guest login initiated
+[GUEST LOGIN] Clearing conflicting session data...
+[GUEST LOGIN] Creating new guest: guest_...
+```
+If this works, the login function is fine - issue is with click capture.
+
+**Test B: Click diagnostics**
+```javascript
+window.checkClickable()
+```
+This will:
+- Show button element details
+- Show what element is at the button's position (might reveal overlay blocking clicks)
+- Trigger a programmatic click
+- Show if `[CLICK]` log appears
+
+Expected output:
+```
+[TEST] Button element: <button>...</button>
+[TEST] Element at button position: <button id="guestLoginBtn">...
+[CLICK] Guest button clicked!
+[GUEST LOGIN] Guest login initiated...
+```
+
+If "Element at button position" shows something OTHER than the button (like a DIV or overlay), that's blocking your clicks!
+
+### 4. Test in Incognito Mode
 Eliminates all cache issues.
 
-### 4. Check Network Tab
+### 5. Check Network Tab
 Open DevTools → Network tab → Reload
 - Verify `login.js` is loaded
-- Check if file size matches (should be ~25KB)
+- Check if file size matches (should be ~27-30KB)
 - If size is different, cache issue
 
-### 5. Manual Cache Clear
+### 6. Manual Cache Clear
 Chrome: Settings → Privacy → Clear browsing data → All time
 
 ---

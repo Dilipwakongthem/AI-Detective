@@ -986,6 +986,19 @@
   box-shadow: 0 4px 12px var(--shadow-primary, rgba(243, 156, 18, 0.4));
 }
 
+/* Profile screen back button - move up to avoid overlapping with header */
+.profile-screen .home-btn {
+  top: 10px;
+}
+
+/* Store screen back button - position same as profile */
+.store-screen .home-btn {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  z-index: 10;
+}
+
 .back-btn {
   background: #555;
   color: white;
@@ -1990,10 +2003,12 @@ body.theme-vintage_typewriter .stat-item .stat-label {
 .store-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   margin-bottom: 24px;
   padding-bottom: 16px;
+  padding-top: 40px;
   border-bottom: 2px solid var(--border-secondary, rgba(249, 115, 22, 0.3));
+  position: relative;
 }
 
 .store-title {

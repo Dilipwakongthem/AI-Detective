@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { generateCase, interrogateSuspect, evaluateAccusation } from '../gameLogic';
 import './DetectiveGame.css';
+import soundEngine from '../soundEngine';
 
 const DetectiveGame = () => {
   const [gameState, setGameState] = useState('menu'); // menu, briefing, investigation, interrogation, accusation, result, profile
@@ -31,10 +32,58 @@ const DetectiveGame = () => {
   const [loadingAction, setLoadingAction] = useState('');
   const [notification, setNotification] = useState(null);
 
+  // Initialize sound engine and add universal button click sounds
+  useEffect(() => {
+    // Initialize audio context on first user interaction
+    const initAudio = () => {
+      soundEngine.init();
+      soundEngine.resume();
+    };
+
+    // Add soft click sounds to ALL interactive elements
+    const handleClick = (e) => {
+      // Initialize audio context on first click
+      initAudio();
+
+      // Check if the clicked element or its parent is a button/interactive element
+      const target = e.target;
+      const isInteractive = target.closest('button, .btn, .clickable, a[href], [role="button"], .suspect-card, .accusation-card, .evidence-item, input[type="submit"], input[type="button"]');
+
+      if (isInteractive) {
+        soundEngine.play('softClick');
+      }
+    };
+
+    // Add click listener to document
+    document.addEventListener('click', handleClick, { passive: true });
+
+    // Initialize on first interaction
+    document.addEventListener('click', initAudio, { once: true });
+
+    // Cleanup
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  }, []);
+
   // Notification system
   const showNotification = (message, type = 'info') => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 3000);
+
+    // Play sound based on notification type
+    switch(type) {
+      case 'success':
+        soundEngine.play('success');
+        break;
+      case 'error':
+        soundEngine.play('error');
+        break;
+      case 'info':
+      default:
+        soundEngine.play('notification');
+        break;
+    }
   };
 
   // Scroll utility functions
@@ -197,7 +246,10 @@ const DetectiveGame = () => {
       found.discovered = true;
       setCurrentCase({ ...currentCase, cluesFound: currentCase.cluesFound + 1 });
       addLog(`🔍 Found evidence: ${found.type} - ${found.description}`);
-      showNotification(`✅ Evidence discovered!`, 'success');
+      soundEngine.play('evidenceFound'); // Play discovery sound
+      // Show notification without sound (evidence sound already played)
+      setNotification({ message: `✅ Evidence discovered!`, type: 'success' });
+      setTimeout(() => setNotification(null), 3000);
     } else {
       addLog('🔍 No new evidence found in this location.');
       showNotification(`⚠️ No new evidence found`, 'info');
@@ -235,6 +287,13 @@ const DetectiveGame = () => {
     const result = evaluateAccusation(suspectId, currentCase, hintsUsed);
     setAccusationResult(result);
 
+    // Play sound based on result
+    if (result.correct) {
+      soundEngine.play('correctAccusation');
+    } else {
+      soundEngine.play('wrongAccusation');
+    }
+
     if (result.correct) {
       const newStreak = playerProfile.currentStreak + 1;
       const isPerfect = result.stars === 5;
@@ -258,6 +317,8 @@ const DetectiveGame = () => {
         updatedProfile.rankLevel = rankUp.level;
         updatedProfile.rank = rankUp.name;
         setShowRankUp(rankUp);
+        // Play rank up sound after a short delay
+        setTimeout(() => soundEngine.play('rankUp'), 500);
       }
 
       setPlayerProfile(updatedProfile);

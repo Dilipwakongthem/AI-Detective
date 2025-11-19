@@ -292,21 +292,135 @@ function navigateToGame() {
 }
 
 // ============================================
+// FACEBOOK LOGIN - FULLY FUNCTIONAL
+// ============================================
+
+/**
+ * Handle Facebook Login
+ */
+function handleFacebookLogin() {
+  console.log('Facebook login initiated');
+
+  // Check if FB SDK is loaded
+  if (typeof FB === 'undefined') {
+    showNotification('⚠️ Facebook SDK not loaded yet. Please wait a moment and try again.', 'warning');
+    return;
+  }
+
+  // Initiate Facebook Login
+  FB.login(function(response) {
+    if (response.authResponse) {
+      console.log('Facebook login successful');
+      console.log('Auth response:', response.authResponse);
+
+      // Get user info from Facebook
+      FB.api('/me', { fields: 'id,name,email' }, function(fbUser) {
+        console.log('Facebook user data:', fbUser);
+
+        // Create user data object
+        const userData = {
+          userId: `fb_${fbUser.id}`,
+          email: fbUser.email || `${fbUser.id}@facebook.com`,
+          displayName: fbUser.name,
+          userType: 'facebook',
+          facebookId: fbUser.id,
+          createdAt: new Date().toISOString(),
+          lastLogin: new Date().toISOString()
+        };
+
+        // Check if user already exists
+        const users = getAllUsers();
+        const existingUser = users[userData.email];
+
+        if (existingUser && existingUser.userType === 'facebook') {
+          // Existing Facebook user - update last login
+          existingUser.lastLogin = new Date().toISOString();
+          users[userData.email] = existingUser;
+          saveAllUsers(users);
+          loginUser(existingUser);
+          console.log('Existing Facebook user logged in:', userData.email);
+          showNotification(`✅ Welcome back, ${fbUser.name}!`, 'success');
+        } else if (existingUser && existingUser.userType !== 'facebook') {
+          // Email already exists with different login method
+          showNotification(`❌ This email is already registered with ${existingUser.userType} login.\nPlease use ${existingUser.userType} to sign in.`, 'error');
+          return;
+        } else {
+          // New Facebook user - create account
+          users[userData.email] = userData;
+          saveAllUsers(users);
+          loginUser(userData);
+          initializeFacebookUserGameData(userData);
+          console.log('New Facebook account created:', userData.email);
+          showNotification(`✅ Welcome, ${fbUser.name}!`, 'success');
+        }
+
+        // Navigate to game
+        setTimeout(() => {
+          navigateToGame();
+        }, 1000);
+      });
+
+    } else {
+      console.log('Facebook login cancelled or failed');
+      showNotification('ℹ️ Facebook login cancelled', 'info');
+    }
+  }, {
+    scope: 'public_profile,email',
+    return_scopes: true
+  });
+}
+
+/**
+ * Initialize game data for Facebook user
+ */
+function initializeFacebookUserGameData(userData) {
+  const initialData = {
+    userId: userData.userId,
+    userEmail: userData.email,
+    displayName: userData.displayName,
+    userType: 'facebook',
+    facebookId: userData.facebookId,
+    rank: 'Detective',
+    rankLevel: 1,
+    reputation: 1500,
+    casesSolved: 0,
+    totalStars: 0,
+    perfectCases: 0,
+    wrongAccusations: 0,
+    eliteRating: 0,
+    currentStreak: 0,
+    longestStreak: 0,
+    legendaryCasesCompleted: 0,
+    totalPlayTime: 0,
+    dailyCasesRemaining: 5,
+    bonusCasesRemaining: 3,
+    caseFilesOwned: 0,
+    hintTokensOwned: 0,
+    createdAt: new Date().toISOString(),
+    lastPlayed: new Date().toISOString()
+  };
+
+  // Save to localStorage
+  Object.entries(initialData).forEach(([key, value]) => {
+    localStorage.setItem(key, typeof value === 'object' ? JSON.stringify(value) : value);
+  });
+
+  console.log('Facebook user game data initialized');
+}
+
+// ============================================
 // DUMMY BUTTONS - SHOW "COMING SOON"
 // ============================================
 
 /**
- * Handle dummy button clicks (Facebook, Google)
+ * Handle dummy button clicks (Google, etc.)
  */
 function handleDummyButton(buttonType) {
   let message = '';
 
   switch(buttonType) {
-    case 'facebook':
-      message = '📘 Facebook Login coming soon!\n\nWe\'re integrating Facebook authentication.\nFor now, please use Email or Guest Login.';
-      break;
     case 'google':
-      message = '🔵 Google Login coming soon!\n\nWe\'re integrating Google authentication.\nFor now, please use Email or Guest Login.';
+      message = '🔵 Google Login coming soon!\n\nWe\'re integrating Google authentication.\nFor now, please use Email, Facebook, or Guest Login.';
       break;
     default:
       message = 'This feature is coming soon!';
@@ -439,10 +553,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Facebook Login Button - DUMMY
+  // Facebook Login Button - FUNCTIONAL
   const facebookBtn = document.getElementById('facebookLoginBtn');
   if (facebookBtn) {
-    facebookBtn.addEventListener('click', () => handleDummyButton('facebook'));
+    facebookBtn.addEventListener('click', handleFacebookLogin);
   }
 
   // Google Login Button - DUMMY

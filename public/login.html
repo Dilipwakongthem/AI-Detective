@@ -43,14 +43,13 @@
         </div>
       </button>
 
-      <!-- Facebook Login - DUMMY -->
-      <button class="login-btn btn-facebook btn-disabled" id="facebookLoginBtn">
+      <!-- Facebook Login - FUNCTIONAL -->
+      <button class="login-btn btn-facebook" id="facebookLoginBtn">
         <div class="btn-icon">📘</div>
         <div class="btn-content">
           <div class="btn-label">CONTINUE WITH FACEBOOK</div>
-          <div class="btn-coming-soon">Coming Soon</div>
+          <div class="btn-sublabel">Sign in with Facebook account</div>
         </div>
-        <div class="btn-lock">🔒</div>
       </button>
 
       <!-- Google Login - DUMMY -->
@@ -220,6 +219,28 @@
   <div id="notificationContainer"></div>
 
   <!-- Scripts -->
+  <script src="js/config.js"></script>
+
+  <!-- Facebook SDK -->
+  <script>
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId      : AUTH_CONFIG.facebook.appId,
+        cookie     : true,
+        xfbml      : true,
+        version    : AUTH_CONFIG.facebook.version
+      });
+
+      console.log('Facebook SDK initialized');
+
+      // Check login status on load
+      FB.getLoginStatus(function(response) {
+        console.log('Facebook login status:', response.status);
+      });
+    };
+  </script>
+  <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+
   <script src="js/login.js"></script>
 </body>
 </html>

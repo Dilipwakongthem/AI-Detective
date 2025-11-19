@@ -482,10 +482,10 @@ function checkExistingSession() {
     }
   } else if (userEmail) {
     console.log('Existing email session found:', userEmail);
-    // Auto-redirect to game if already logged in
-    showNotification('🔍 Session found! Redirecting to game...', 'info');
-    setTimeout(() => {
-      navigateToGame();
-    }, 1500);
+    // Auto-redirect disabled - user can manually click to continue
+    // showNotification('🔍 Session found! Redirecting to game...', 'info');
+    // setTimeout(() => {
+    //   navigateToGame();
+    // }, 1500);
   }
 }

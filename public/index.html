@@ -22,25 +22,27 @@
     </style>
 </head>
 <body>
-    <!-- Authentication Check -->
+    <!-- Authentication Check - DISABLED to allow direct game access -->
+    <!-- Login system is optional - accessible via login.html -->
     <script>
-        // Check if user is authenticated before loading the game
+        // Optional: Auto-create guest session if none exists
         (function() {
             const guestId = localStorage.getItem('guestUserId');
-            const isGuest = localStorage.getItem('isGuestUser') === 'true';
-            const userEmail = localStorage.getItem('currentUserEmail');
             const userType = localStorage.getItem('userType');
 
-            // Check if user is logged in (either as guest or email user)
-            const isAuthenticated = (guestId && isGuest && userType === 'guest') ||
-                                   (userEmail && userType === 'email');
+            // If no session exists, create a default guest session
+            if (!guestId && !userType) {
+                const timestamp = Date.now();
+                const random = Math.random().toString(36).substring(2, 9);
+                const newGuestId = `guest_${timestamp}_${random}`;
 
-            if (!isAuthenticated) {
-                // Redirect to login page if not authenticated
-                console.log('No active session found. Redirecting to login...');
-                window.location.href = 'login.html';
+                localStorage.setItem('guestUserId', newGuestId);
+                localStorage.setItem('isGuestUser', 'true');
+                localStorage.setItem('userType', 'guest');
+
+                console.log('Auto-created guest session:', newGuestId);
             } else {
-                console.log('Active session found. User type:', userType);
+                console.log('Existing session found. User type:', userType);
             }
         })();
     </script>

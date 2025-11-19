@@ -26,14 +26,32 @@
     <script>
         // Check for authentication - redirect to login if not authenticated
         (function() {
-            // Add small delay to ensure localStorage is fully written
+            console.log('[AUTH CHECK] Starting authentication check...');
+
+            // Immediate check first
+            const quickCheck = localStorage.getItem('userType');
+            console.log('[AUTH CHECK] Quick check - userType:', quickCheck);
+
+            if (!quickCheck) {
+                console.log('[AUTH CHECK] No userType found immediately, redirecting to login');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // More thorough check after delay
             setTimeout(function() {
                 const guestId = localStorage.getItem('guestUserId');
                 const userType = localStorage.getItem('userType');
                 const userEmail = localStorage.getItem('currentUserEmail');
                 const userId = localStorage.getItem('currentUserId');
 
-                console.log('Authentication check:', { guestId, userType, userEmail, userId });
+                console.log('[AUTH CHECK] Detailed check:', {
+                    guestId,
+                    userType,
+                    userEmail,
+                    userId,
+                    timestamp: new Date().toISOString()
+                });
 
                 // Check if user has any authentication session
                 const isGuest = guestId && userType === 'guest';
@@ -41,16 +59,20 @@
                 const isFacebook = (userEmail || userId) && userType === 'facebook';
                 const isAuthenticated = isGuest || isEmail || isFacebook;
 
-                console.log('Auth status:', { isGuest, isEmail, isFacebook, isAuthenticated });
+                console.log('[AUTH CHECK] Auth status:', {
+                    isGuest,
+                    isEmail,
+                    isFacebook,
+                    isAuthenticated
+                });
 
                 if (!isAuthenticated) {
-                    // No session found - redirect to login page
-                    console.log('No authentication found. Redirecting to login...');
+                    console.log('[AUTH CHECK] Authentication FAILED - Redirecting to login');
                     window.location.href = 'index.html';
                 } else {
-                    console.log('Authenticated user found. User type:', userType);
+                    console.log('[AUTH CHECK] Authentication SUCCESS - Loading game for user type:', userType);
                 }
-            }, 100); // Small delay to ensure localStorage is ready
+            }, 50); // Reduced delay since we already did quick check
         })();
     </script>
 

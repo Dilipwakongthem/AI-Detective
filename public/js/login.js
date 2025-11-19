@@ -15,6 +15,8 @@ function handleEmailSignup(event) {
   const password = document.getElementById('signupPassword').value;
   const confirmPassword = document.getElementById('signupPasswordConfirm').value;
 
+  console.log('[EMAIL SIGNUP] Signup attempt for:', email);
+
   // Validation
   if (!email || !password) {
     showNotification('❌ Email and password are required!', 'error');
@@ -43,12 +45,14 @@ function handleEmailSignup(event) {
   const userData = {
     userId: userId,
     email: email,
-    password: hashPassword(password), // Simple hash (NOT secure, but works locally)
+    password: hashPassword(password),
     displayName: name || 'Detective',
     userType: 'email',
     createdAt: new Date().toISOString(),
     lastLogin: new Date().toISOString()
   };
+
+  console.log('[EMAIL SIGNUP] Creating account:', email);
 
   // Save user
   users[email] = userData;
@@ -60,14 +64,21 @@ function handleEmailSignup(event) {
   // Log user in
   loginUser(userData);
 
-  console.log('Email account created:', email);
+  console.log('[EMAIL SIGNUP] Account created, verifying localStorage:', {
+    currentUserId: localStorage.getItem('currentUserId'),
+    currentUserEmail: localStorage.getItem('currentUserEmail'),
+    userType: localStorage.getItem('userType')
+  });
+
   showNotification('✅ Account created successfully!', 'success');
 
   // Close modal and navigate
   closeEmailSignupModal();
+  console.log('[EMAIL SIGNUP] Navigating to game in 1.5 seconds...');
   setTimeout(() => {
+    console.log('[EMAIL SIGNUP] Redirecting to game.html NOW');
     navigateToGame();
-  }, 1000);
+  }, 1500);
 }
 
 /**
@@ -78,6 +89,8 @@ function handleEmailLogin(event) {
 
   const email = document.getElementById('loginEmail').value.trim().toLowerCase();
   const password = document.getElementById('loginPassword').value;
+
+  console.log('[EMAIL LOGIN] Login attempt for:', email);
 
   // Validation
   if (!email || !password) {
@@ -100,6 +113,8 @@ function handleEmailLogin(event) {
     return;
   }
 
+  console.log('[EMAIL LOGIN] Login successful for:', email);
+
   // Update last login
   user.lastLogin = new Date().toISOString();
   users[email] = user;
@@ -108,14 +123,21 @@ function handleEmailLogin(event) {
   // Log user in
   loginUser(user);
 
-  console.log('User logged in:', email);
+  console.log('[EMAIL LOGIN] User logged in, verifying localStorage:', {
+    currentUserId: localStorage.getItem('currentUserId'),
+    currentUserEmail: localStorage.getItem('currentUserEmail'),
+    userType: localStorage.getItem('userType')
+  });
+
   showNotification(`✅ Welcome back, ${user.displayName}!`, 'success');
 
   // Close modal and navigate
   closeEmailLoginModal();
+  console.log('[EMAIL LOGIN] Navigating to game in 1.5 seconds...');
   setTimeout(() => {
+    console.log('[EMAIL LOGIN] Redirecting to game.html NOW');
     navigateToGame();
-  }, 1000);
+  }, 1500);
 }
 
 /**
@@ -231,26 +253,40 @@ function handleForgotPassword(event) {
  * Handle Guest Login
  */
 function handleGuestLogin() {
-  console.log('Guest login initiated');
+  console.log('[GUEST LOGIN] Guest login initiated');
 
   const existingGuestId = localStorage.getItem('guestUserId');
 
   if (existingGuestId) {
-    console.log('Continuing as existing guest:', existingGuestId);
+    console.log('[GUEST LOGIN] Continuing as existing guest:', existingGuestId);
+    // Ensure userType is set
+    localStorage.setItem('userType', 'guest');
+    localStorage.setItem('isGuestUser', 'true');
     showNotification('✅ Welcome back, Guest Detective!', 'success');
   } else {
     const guestId = generateGuestId();
+    console.log('[GUEST LOGIN] Creating new guest:', guestId);
     localStorage.setItem('guestUserId', guestId);
     localStorage.setItem('isGuestUser', 'true');
     localStorage.setItem('userType', 'guest');
     initializeGuestGameData(guestId);
-    console.log('New guest user created:', guestId);
+    console.log('[GUEST LOGIN] New guest user created:', guestId);
     showNotification('✅ Welcome, Guest Detective!', 'success');
   }
 
+  // Verify data was set
+  console.log('[GUEST LOGIN] Verifying localStorage:', {
+    guestUserId: localStorage.getItem('guestUserId'),
+    userType: localStorage.getItem('userType'),
+    isGuestUser: localStorage.getItem('isGuestUser')
+  });
+
+  // Navigate to game with longer delay
+  console.log('[GUEST LOGIN] Navigating to game in 1.5 seconds...');
   setTimeout(() => {
+    console.log('[GUEST LOGIN] Redirecting to game.html NOW');
     navigateToGame();
-  }, 1000);
+  }, 1500);
 }
 
 /**
@@ -323,12 +359,12 @@ function handleFacebookLogin() {
   // Initiate Facebook Login
   FB.login(function(response) {
     if (response.authResponse) {
-      console.log('Facebook login successful');
-      console.log('Auth response:', response.authResponse);
+      console.log('[FACEBOOK LOGIN] Facebook login successful');
+      console.log('[FACEBOOK LOGIN] Auth response:', response.authResponse);
 
       // Get user info from Facebook
       FB.api('/me', { fields: 'id,name,email' }, function(fbUser) {
-        console.log('Facebook user data:', fbUser);
+        console.log('[FACEBOOK LOGIN] Facebook user data:', fbUser);
 
         // Create user data object
         const userData = {
@@ -341,40 +377,55 @@ function handleFacebookLogin() {
           lastLogin: new Date().toISOString()
         };
 
+        console.log('[FACEBOOK LOGIN] Created user data:', userData);
+
         // Check if user already exists
         const users = getAllUsers();
         const existingUser = users[userData.email];
 
         if (existingUser && existingUser.userType === 'facebook') {
+          console.log('[FACEBOOK LOGIN] Existing Facebook user found');
           // Existing Facebook user - update last login
           existingUser.lastLogin = new Date().toISOString();
           users[userData.email] = existingUser;
           saveAllUsers(users);
           loginUser(existingUser);
-          console.log('Existing Facebook user logged in:', userData.email);
+          console.log('[FACEBOOK LOGIN] Existing Facebook user logged in:', userData.email);
           showNotification(`✅ Welcome back, ${fbUser.name}!`, 'success');
         } else if (existingUser && existingUser.userType !== 'facebook') {
+          console.log('[FACEBOOK LOGIN] Email already exists with different login method');
           // Email already exists with different login method
           showNotification(`❌ This email is already registered with ${existingUser.userType} login.\nPlease use ${existingUser.userType} to sign in.`, 'error');
           return;
         } else {
+          console.log('[FACEBOOK LOGIN] New Facebook user - creating account');
           // New Facebook user - create account
           users[userData.email] = userData;
           saveAllUsers(users);
           loginUser(userData);
           initializeFacebookUserGameData(userData);
-          console.log('New Facebook account created:', userData.email);
+          console.log('[FACEBOOK LOGIN] New Facebook account created:', userData.email);
           showNotification(`✅ Welcome, ${fbUser.name}!`, 'success');
         }
 
+        // Verify data was set
+        console.log('[FACEBOOK LOGIN] Verifying localStorage:', {
+          currentUserId: localStorage.getItem('currentUserId'),
+          currentUserEmail: localStorage.getItem('currentUserEmail'),
+          userType: localStorage.getItem('userType'),
+          facebookId: localStorage.getItem('facebookId')
+        });
+
         // Navigate to game
+        console.log('[FACEBOOK LOGIN] Navigating to game in 1.5 seconds...');
         setTimeout(() => {
+          console.log('[FACEBOOK LOGIN] Redirecting to game.html NOW');
           navigateToGame();
-        }, 1000);
+        }, 1500);
       });
 
     } else {
-      console.log('Facebook login cancelled or failed');
+      console.log('[FACEBOOK LOGIN] Facebook login cancelled or failed');
       showNotification('ℹ️ Facebook login cancelled', 'info');
     }
   }, {

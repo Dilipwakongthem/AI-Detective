@@ -705,6 +705,31 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   console.log('[INIT] All event listeners attached successfully!');
+
+  // Diagnostic: Add test functions to global scope
+  window.testGuestLogin = function() {
+    console.log('[TEST] Manual test function called');
+    handleGuestLogin();
+  };
+
+  window.checkClickable = function() {
+    const btn = document.getElementById('guestLoginBtn');
+    console.log('[TEST] Button element:', btn);
+    console.log('[TEST] Button computed style:', window.getComputedStyle(btn));
+    console.log('[TEST] Button bounding rect:', btn.getBoundingClientRect());
+    console.log('[TEST] Element at button position:', document.elementFromPoint(
+      btn.getBoundingClientRect().left + 10,
+      btn.getBoundingClientRect().top + 10
+    ));
+
+    // Try to manually trigger click
+    btn.click();
+    console.log('[TEST] Programmatic click triggered');
+  };
+
+  console.log('[INIT] Test functions available:');
+  console.log('[INIT]   - window.testGuestLogin() to test login function directly');
+  console.log('[INIT]   - window.checkClickable() to diagnose button click issues');
 });
 
 /**

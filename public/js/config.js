@@ -8,13 +8,16 @@ const AUTH_CONFIG = {
     version: 'v18.0'
   },
 
-  // Firebase Configuration (Optional - for future cloud sync)
+  // Firebase Configuration
+  // NOTE: Replace these placeholder values with your actual Firebase credentials
+  // Get these from Firebase Console > Project Settings > Your apps
   firebase: {
-    // Add your Firebase config here when ready
-    // apiKey: "...",
-    // authDomain: "...",
-    // projectId: "ai-detective-crime-scene",
-    // etc.
+    apiKey: "AIzaSyD_placeholder_replace_with_your_key",
+    authDomain: "your-project-id.firebaseapp.com",
+    projectId: "your-project-id",
+    storageBucket: "your-project-id.appspot.com",
+    messagingSenderId: "123456789012",
+    appId: "1:123456789012:web:abc123def456"
   }
 };
 

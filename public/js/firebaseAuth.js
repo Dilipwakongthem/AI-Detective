@@ -1,7 +1,7 @@
 // firebaseAuth.js
 // Firebase Authentication Module for AI Detective Game
 
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { initializeApp } from 'firebase/app';
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -13,7 +13,7 @@ import {
   FacebookAuthProvider,
   signInWithPopup,
   GoogleAuthProvider
-} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+} from 'firebase/auth';
 import {
   getFirestore,
   doc,
@@ -21,7 +21,7 @@ import {
   getDoc,
   updateDoc,
   serverTimestamp
-} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+} from 'firebase/firestore';
 
 // ============================================
 // FIREBASE INITIALIZATION

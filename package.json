@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "AI Detective Mystery Game - JSX/React Web Version",
   "scripts": {
-    "start": "parcel public/index.html --no-cache",
-    "build": "parcel build public/index.html"
+    "start": "parcel public/index.html public/game.html --no-cache",
+    "build": "parcel build public/index.html public/game.html --dist-dir dist --public-url ./"
   },
   "keywords": [
     "detective",

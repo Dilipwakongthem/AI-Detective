@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Files: AI Detective</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e4e4e4;
+            min-height: 100vh;
+        }
+        #root {
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <!-- Authentication Check - ENABLED -->
+    <script>
+        // Check for authentication - redirect to login if not authenticated
+        (function() {
+            console.log('[AUTH CHECK] Starting authentication check...');
+
+            // Wait for localStorage to be fully ready before checking
+            function checkAuthentication() {
+                const guestId = localStorage.getItem('guestUserId');
+                const userType = localStorage.getItem('userType');
+                const userEmail = localStorage.getItem('currentUserEmail');
+                const userId = localStorage.getItem('currentUserId');
+
+                console.log('[AUTH CHECK] Detailed check:', {
+                    guestId,
+                    userType,
+                    userEmail,
+                    userId,
+                    timestamp: new Date().toISOString()
+                });
+
+                // Check if user has any authentication session
+                const isGuest = guestId && userType === 'guest';
+                const isEmail = (userEmail || userId) && userType === 'email';
+                const isFacebook = (userEmail || userId) && userType === 'facebook';
+                const isAuthenticated = isGuest || isEmail || isFacebook;
+
+                console.log('[AUTH CHECK] Auth status:', {
+                    isGuest,
+                    isEmail,
+                    isFacebook,
+                    isAuthenticated
+                });
+
+                if (!isAuthenticated) {
+                    console.log('[AUTH CHECK] Authentication FAILED - Redirecting to login');
+                    // Set flag to prevent auto-redirect loop
+                    sessionStorage.setItem('fromGame', 'true');
+                    window.location.href = 'index.html';
+                } else {
+                    console.log('[AUTH CHECK] Authentication SUCCESS - Loading game for user type:', userType);
+                }
+            }
+
+            // Check immediately if userType exists, otherwise wait briefly for login redirect
+            const quickCheck = localStorage.getItem('userType');
+            if (quickCheck) {
+                console.log('[AUTH CHECK] userType found immediately:', quickCheck);
+                // Clear fromGame flag since we have valid auth
+                sessionStorage.removeItem('fromGame');
+                checkAuthentication();
+            } else {
+                console.log('[AUTH CHECK] No userType yet, waiting for localStorage sync...');
+                // Give localStorage time to sync after redirect from login page
+                setTimeout(checkAuthentication, 500);
+            }
+        })();
+    </script>
+
+    <div id="root"></div>
+    <script type="module" src="../src/index.jsx"></script>
+</body>
+</html>

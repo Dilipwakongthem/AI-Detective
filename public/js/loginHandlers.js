@@ -6,6 +6,9 @@
 // EMAIL AUTHENTICATION WITH FIREBASE
 // ============================================
 
+// Flag to prevent auto-redirect during signup/login
+let isAuthOperationInProgress = false;
+
 /**
  * Handle Email Signup with Firebase
  */
@@ -36,6 +39,9 @@ async function handleFirebaseEmailSignup(event) {
   }
 
   try {
+    // Set flag to prevent auth listener from redirecting
+    isAuthOperationInProgress = true;
+
     // Sign up with Firebase
     const result = await FirebaseAuth.signUpWithEmail(email, password, name || 'Detective');
 
@@ -47,13 +53,16 @@ async function handleFirebaseEmailSignup(event) {
       closeEmailSignupModal();
       setTimeout(() => {
         console.log('[Firebase Signup] Redirecting to game...');
+        isAuthOperationInProgress = false;
         navigateToGame();
       }, 1500);
     } else {
+      isAuthOperationInProgress = false;
       console.error('[Firebase Signup] Signup failed:', result.error);
       showNotification(`❌ ${result.error}`, 'error');
     }
   } catch (error) {
+    isAuthOperationInProgress = false;
     console.error('[Firebase Signup] Unexpected error:', error);
     showNotification('❌ An unexpected error occurred. Please try again.', 'error');
   }
@@ -77,6 +86,9 @@ async function handleFirebaseEmailLogin(event) {
   }
 
   try {
+    // Set flag to prevent auth listener from redirecting
+    isAuthOperationInProgress = true;
+
     // Sign in with Firebase
     const result = await FirebaseAuth.signInWithEmail(email, password);
 
@@ -88,13 +100,16 @@ async function handleFirebaseEmailLogin(event) {
       closeEmailLoginModal();
       setTimeout(() => {
         console.log('[Firebase Login] Redirecting to game...');
+        isAuthOperationInProgress = false;
         navigateToGame();
       }, 1500);
     } else {
+      isAuthOperationInProgress = false;
       console.error('[Firebase Login] Login failed:', result.error);
       showNotification(`❌ ${result.error}`, 'error');
     }
   } catch (error) {
+    isAuthOperationInProgress = false;
     console.error('[Firebase Login] Unexpected error:', error);
     showNotification('❌ An unexpected error occurred. Please try again.', 'error');
   }
@@ -224,10 +239,14 @@ function initializeAuthStateListener() {
       localStorage.setItem('displayName', user.displayName || 'Detective');
       localStorage.setItem('userType', 'firebase');
 
-      // If on login page, redirect to game
+      // If on login page, redirect to game (but not if auth operation is in progress)
       if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
-        console.log('[Firebase Auth] User logged in, redirecting to game...');
-        navigateToGame();
+        if (isAuthOperationInProgress) {
+          console.log('[Firebase Auth] Auth operation in progress, skipping auto-redirect');
+        } else {
+          console.log('[Firebase Auth] User logged in, redirecting to game...');
+          navigateToGame();
+        }
       }
     } else {
       console.log('[Firebase Auth] No Firebase user authenticated');

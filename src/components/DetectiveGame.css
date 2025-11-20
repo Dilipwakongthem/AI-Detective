@@ -1585,6 +1585,37 @@ body.theme-vintage_typewriter .stat-item .stat-label {
   color: black;
 }
 
+/* Dark Mode Deluxe theme-specific overrides - Avoid yellow/gold backgrounds with white text */
+body.theme-dark_deluxe .menu-btn {
+  background: linear-gradient(135deg, #f97316, #fb923c);
+}
+
+body.theme-dark_deluxe .menu-btn:hover {
+  background: linear-gradient(135deg, #fb923c, #f97316);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+}
+
+body.theme-dark_deluxe .home-btn {
+  background: rgba(30, 41, 59, 0.8);
+  border: 2px solid #00d4ff;
+}
+
+body.theme-dark_deluxe .home-btn:hover {
+  background: rgba(0, 212, 255, 0.15);
+  border-color: #66e0ff;
+  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.4);
+}
+
+body.theme-dark_deluxe .rank-badge {
+  background: rgba(30, 41, 59, 0.8);
+  border: 2px solid #00d4ff;
+}
+
+body.theme-dark_deluxe .chief-badge {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.3), rgba(0, 255, 136, 0.3));
+  border: 2px solid #00d4ff;
+}
+
 .stat-item .stat-value {
   color: var(--text-primary, #fff);
   font-weight: bold;

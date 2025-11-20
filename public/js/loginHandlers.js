@@ -218,7 +218,7 @@ function initializeAuthStateListener() {
 
   FirebaseAuth.onAuthChange((user) => {
     if (user) {
-      console.log('[Firebase Auth] User authenticated:', user.uid);
+      console.log('[Firebase Auth] Firebase user authenticated:', user.uid);
 
       // Cache user data in localStorage for offline access
       localStorage.setItem('currentUserId', user.uid);
@@ -232,13 +232,35 @@ function initializeAuthStateListener() {
         navigateToGame();
       }
     } else {
-      console.log('[Firebase Auth] No user authenticated');
+      console.log('[Firebase Auth] No Firebase user authenticated');
 
-      // Clear localStorage
+      // Check if there's an existing non-Firebase session (guest, email, facebook from old system)
+      const existingUserType = localStorage.getItem('userType');
+      const guestId = localStorage.getItem('guestUserId');
+      const userId = localStorage.getItem('currentUserId');
+
+      const hasExistingSession =
+        (existingUserType === 'guest' && guestId) ||
+        (existingUserType === 'email' && userId) ||
+        (existingUserType === 'facebook' && userId);
+
+      if (hasExistingSession) {
+        console.log('[Firebase Auth] Existing non-Firebase session found:', existingUserType);
+        // Don't clear localStorage or redirect - let the existing session continue
+        return;
+      }
+
+      // Only clear and redirect if there's NO valid session at all
+      console.log('[Firebase Auth] No valid session found');
+
+      // Clear only Firebase-related localStorage
       localStorage.removeItem('currentUserId');
       localStorage.removeItem('currentUserEmail');
       localStorage.removeItem('displayName');
-      localStorage.removeItem('userType');
+      // Don't clear userType if it's guest
+      if (localStorage.getItem('userType') !== 'guest') {
+        localStorage.removeItem('userType');
+      }
 
       // If on game page, redirect to login
       if (window.location.pathname.includes('game.html')) {

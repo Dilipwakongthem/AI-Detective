@@ -62,3 +62,9 @@ node_modules/
 dist/
 .cache/
 package-lock.json
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log

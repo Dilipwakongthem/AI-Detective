@@ -47,12 +47,14 @@
                 const isGuest = guestId && userType === 'guest';
                 const isEmail = (userEmail || userId) && userType === 'email';
                 const isFacebook = (userEmail || userId) && userType === 'facebook';
-                const isAuthenticated = isGuest || isEmail || isFacebook;
+                const isFirebase = (userEmail || userId) && userType === 'firebase';
+                const isAuthenticated = isGuest || isEmail || isFacebook || isFirebase;
 
                 console.log('[AUTH CHECK] Auth status:', {
                     isGuest,
                     isEmail,
                     isFacebook,
+                    isFirebase,
                     isAuthenticated
                 });
 

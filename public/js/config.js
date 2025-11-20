@@ -9,15 +9,14 @@ const AUTH_CONFIG = {
   },
 
   // Firebase Configuration
-  // NOTE: Replace these placeholder values with your actual Firebase credentials
-  // Get these from Firebase Console > Project Settings > Your apps
   firebase: {
-    apiKey: "AIzaSyD_placeholder_replace_with_your_key",
-    authDomain: "your-project-id.firebaseapp.com",
-    projectId: "your-project-id",
-    storageBucket: "your-project-id.appspot.com",
-    messagingSenderId: "123456789012",
-    appId: "1:123456789012:web:abc123def456"
+    apiKey: "AIzaSyBHO7eT_qpKS4H_Ws4igemFIKerdSAEkXs",
+    authDomain: "ai-detective-crime-scene.firebaseapp.com",
+    projectId: "ai-detective-crime-scene",
+    storageBucket: "ai-detective-crime-scene.firebasestorage.app",
+    messagingSenderId: "830519648794",
+    appId: "1:830519648794:web:75ec848913c67b4819e7a3",
+    measurementId: "G-3T0JLKNEWJ"
   }
 };
 

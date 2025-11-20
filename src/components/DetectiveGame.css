@@ -2073,7 +2073,7 @@ body.theme-vintage_typewriter .stat-item .stat-label {
 }
 
 .store-section-subtitle {
-  color: black;
+  color: var(--text-secondary, rgba(255, 255, 255, 0.7));
   font-size: 1em;
   margin-bottom: 20px;
   text-align: center;
@@ -2117,7 +2117,7 @@ body.theme-vintage_typewriter .stat-item .stat-label {
 }
 
 .store-item-description {
-  color: black;
+  color: var(--text-secondary, rgba(255, 255, 255, 0.8));
   font-size: 1em;
   margin-bottom: 12px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
@@ -2144,7 +2144,7 @@ body.theme-vintage_typewriter .stat-item .stat-label {
 }
 
 .store-item-contents li {
-  color: black;
+  color: var(--text-secondary, rgba(255, 255, 255, 0.9));
   padding: 4px 0;
   font-size: 0.95em;
 }
@@ -2332,7 +2332,7 @@ body.theme-vintage_typewriter .stat-item .stat-label {
 }
 
 .modal-content p {
-  color: black;
+  color: var(--text-secondary, rgba(255, 255, 255, 0.9));
   margin: 8px 0;
 }
 

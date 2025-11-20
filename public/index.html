@@ -86,7 +86,7 @@
       <div class="modal-body">
         <p class="welcome-text">👋 Welcome back, Detective!</p>
 
-        <form id="loginForm" onsubmit="handleEmailLogin(event)">
+        <form id="loginForm" onsubmit="FirebaseHandlers.login(event)">
           <div class="form-group">
             <label>Email Address</label>
             <input
@@ -115,7 +115,7 @@
           </div>
 
           <div class="form-actions">
-            <a href="#" class="forgot-password" onclick="handleForgotPassword(event)">
+            <a href="#" class="forgot-password" onclick="FirebaseHandlers.resetPassword()">
               Forgot Password?
             </a>
           </div>
@@ -145,7 +145,7 @@
       <div class="modal-body">
         <p class="welcome-text">🎯 Join the Investigation!</p>
 
-        <form id="signupForm" onsubmit="handleEmailSignup(event)">
+        <form id="signupForm" onsubmit="FirebaseHandlers.signUp(event)">
           <div class="form-group">
             <label>Detective Name (Optional)</label>
             <input

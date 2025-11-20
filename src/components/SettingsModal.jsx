@@ -25,8 +25,21 @@ const SettingsModal = ({ onClose, playerProfile }) => {
   /**
    * Handle Logout
    */
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (confirm('🚪 Logout?\n\nYour progress is saved.\nYou can login again anytime.')) {
+      const userType = localStorage.getItem('userType');
+
+      // If Firebase user, sign out from Firebase first
+      if (userType === 'firebase' && window.FirebaseHandlers) {
+        try {
+          await window.FirebaseHandlers.logout();
+          return; // FirebaseHandlers.logout already clears localStorage and redirects
+        } catch (error) {
+          console.error('[Logout] Firebase logout error:', error);
+          // Continue with manual logout if Firebase logout fails
+        }
+      }
+
       // Clear ALL session data to prevent auto-login
       localStorage.removeItem('currentUserId');
       localStorage.removeItem('currentUserEmail');

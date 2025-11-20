@@ -92,7 +92,12 @@ async function signUpWithEmail(email, password, displayName) {
     console.log('[Firebase Auth] User created:', user.uid);
 
     // Initialize user data in Firestore
-    await initializeUserData(user.uid, email, displayName || 'Detective');
+    const firestoreResult = await initializeUserData(user.uid, email, displayName || 'Detective');
+
+    if (!firestoreResult.success) {
+      console.error('[Firebase Auth] Failed to initialize Firestore data:', firestoreResult.error);
+      // Continue anyway - auth succeeded even if Firestore failed
+    }
 
     return {
       success: true,

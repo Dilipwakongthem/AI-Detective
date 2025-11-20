@@ -190,19 +190,17 @@ async function handleFirebaseLogout() {
 
     if (result.success) {
       console.log('[Firebase Logout] Logout successful');
-      showNotification('✅ Logged out successfully', 'success');
 
-      // Redirect to login page
-      setTimeout(() => {
-        window.location.href = 'index.html';
-      }, 1000);
+      // Don't show notification here - let the calling code handle UI feedback
+      // Just redirect immediately
+      window.location.href = 'index.html';
     } else {
       console.error('[Firebase Logout] Logout failed:', result.error);
-      showNotification('❌ Logout failed. Please try again.', 'error');
+      throw new Error(result.error);
     }
   } catch (error) {
     console.error('[Firebase Logout] Unexpected error:', error);
-    showNotification('❌ An unexpected error occurred.', 'error');
+    throw error;
   }
 }
 

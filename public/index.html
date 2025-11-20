@@ -221,6 +221,10 @@
   <!-- Scripts -->
   <script src="js/config.js"></script>
 
+  <!-- Firebase Authentication Modules -->
+  <script type="module" src="js/firebaseAuth.js"></script>
+  <script type="module" src="js/loginHandlers.js"></script>
+
   <!-- Facebook SDK -->
   <script>
     window.fbAsyncInit = function() {
@@ -241,6 +245,7 @@
   </script>
   <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
 
+  <!-- Keep original login.js for fallback/guest mode -->
   <script src="js/login.js"></script>
 </body>
 </html>

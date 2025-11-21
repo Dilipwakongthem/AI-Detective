@@ -2201,7 +2201,7 @@ body.theme-dark_deluxe .chief-badge {
 }
 
 .store-item-savings {
-  color: var(--color-warning, #f97316);
+  color: var(--color-accent, #3498db);
   font-weight: 600;
   text-align: center;
   margin: 8px 0;

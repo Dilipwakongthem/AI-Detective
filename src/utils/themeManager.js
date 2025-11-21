@@ -159,7 +159,7 @@ export const THEMES = {
       // Background colors - Aged paper
       '--bg-primary': 'linear-gradient(135deg, #f4e8d0 0%, #e8d5b7 100%)',
       '--bg-secondary': 'rgba(244, 232, 208, 0.95)',
-      '--bg-card': 'rgba(232, 213, 183, 0.8)',
+      '--bg-card': 'rgba(210, 180, 140, 0.9)',  // Darker tan for better contrast
       '--bg-overlay': 'rgba(139, 115, 85, 0.9)',
 
       // Primary colors - Ink brown
@@ -174,10 +174,10 @@ export const THEMES = {
       '--color-danger': '#8b4513',
       '--color-warning': '#d2691e',
 
-      // Text colors
-      '--text-primary': '#2a1810',
-      '--text-secondary': '#3d2817',
-      '--text-muted': '#8b7355',
+      // Text colors - Darker for better readability
+      '--text-primary': '#1a0f08',  // Much darker brown
+      '--text-secondary': '#2a1810',  // Dark brown
+      '--text-muted': '#5c4033',  // Medium brown instead of light
 
       // Border colors
       '--border-primary': '#3d2817',
@@ -205,7 +205,7 @@ export const THEMES = {
       // Background colors - Light minimalist
       '--bg-primary': 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
       '--bg-secondary': 'rgba(248, 249, 250, 0.95)',
-      '--bg-card': 'rgba(255, 255, 255, 0.9)',
+      '--bg-card': 'rgba(240, 243, 246, 0.95)',  // Slightly darker for contrast
       '--bg-overlay': 'rgba(233, 236, 239, 0.95)',
 
       // Primary colors - Blue accent
@@ -220,10 +220,10 @@ export const THEMES = {
       '--color-danger': '#ef4444',
       '--color-warning': '#f59e0b',
 
-      // Text colors
-      '--text-primary': '#1f2937',
-      '--text-secondary': '#4b5563',
-      '--text-muted': '#9ca3af',
+      // Text colors - Darker for better readability
+      '--text-primary': '#0f172a',  // Much darker gray-blue
+      '--text-secondary': '#334155',  // Dark gray
+      '--text-muted': '#64748b',  // Medium gray instead of light
 
       // Border colors
       '--border-primary': '#0066cc',

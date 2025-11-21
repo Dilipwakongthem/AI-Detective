@@ -15,44 +15,44 @@ export const THEMES = {
   default: {
     id: 'default',
     name: 'Default Detective',
-    description: 'Classic detective game theme',
+    description: 'Calming sky-blue and ocean theme',
     isPremium: false,
     colors: {
-      // Background colors
-      '--bg-primary': 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+      // Background colors - Orange and Blue gradient
+      '--bg-primary': 'linear-gradient(135deg, #1a2332 0%, #16213e 100%)',
       '--bg-secondary': 'rgba(22, 33, 62, 0.95)',
-      '--bg-card': 'rgba(0, 0, 0, 0.4)',
-      '--bg-overlay': 'rgba(0, 0, 0, 0.85)',
+      '--bg-card': 'rgba(30, 45, 70, 0.5)',
+      '--bg-overlay': 'rgba(15, 25, 40, 0.9)',
 
-      // Primary colors
-      '--color-primary': '#f39c12',
-      '--color-primary-light': '#f5b041',
-      '--color-primary-dark': '#d68910',
+      // Primary colors - Sky Blue / Azure
+      '--color-primary': '#5DADE2',
+      '--color-primary-light': '#85C1E9',
+      '--color-primary-dark': '#3498DB',
 
-      // Accent colors
-      '--color-accent': '#3498db',
-      '--color-accent-light': '#5dade2',
-      '--color-success': '#27ae60',
+      // Accent colors - Blue and Orange accents
+      '--color-accent': '#2E86C1',
+      '--color-accent-light': '#5DADE2',
+      '--color-success': '#52B788',
       '--color-danger': '#e74c3c',
-      '--color-warning': '#f39c12',
+      '--color-warning': '#FF8C42',
 
       // Text colors
       '--text-primary': '#ffffff',
       '--text-secondary': '#e4e4e4',
       '--text-muted': '#9ca3af',
 
-      // Border colors
-      '--border-primary': '#f39c12',
-      '--border-secondary': 'rgba(243, 156, 18, 0.3)',
+      // Border colors - Sky Blue
+      '--border-primary': '#5DADE2',
+      '--border-secondary': 'rgba(93, 173, 226, 0.3)',
 
-      // Button colors
-      '--btn-primary-bg': '#3498db',
-      '--btn-primary-hover': '#2980b9',
-      '--btn-secondary-bg': '#7f8c8d',
+      // Button colors - Blue primary
+      '--btn-primary-bg': '#2E86C1',
+      '--btn-primary-hover': '#2471A3',
+      '--btn-secondary-bg': '#5499C7',
       '--btn-danger-bg': '#e74c3c',
 
-      // Shadow
-      '--shadow-primary': 'rgba(243, 156, 18, 0.3)',
+      // Shadow - Sky Blue glow
+      '--shadow-primary': 'rgba(93, 173, 226, 0.3)',
       '--shadow-secondary': 'rgba(0, 0, 0, 0.3)'
     }
   },

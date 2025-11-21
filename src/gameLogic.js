@@ -1465,7 +1465,7 @@ export function interrogateSuspect(suspect, caseData, questionCategory = null) {
 // Helper: Calculate evidence matching for a suspect
 export function calculateEvidenceMatch(evidence, suspect) {
   if (!suspect.attributes || !evidence.description) {
-    return { percentage: 0, matchedTraits: [], confidence: 'NONE' };
+    return { percentage: 0, matchingTraits: [], confidence: 'NONE', traitCount: 0 };
   }
 
   const matchingTraits = [];

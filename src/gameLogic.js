@@ -1500,7 +1500,7 @@ export function calculateEvidenceMatch(evidence, suspect) {
 
   return {
     percentage: matchPercentage,
-    matchedTraits,
+    matchingTraits,
     confidence,
     traitCount: matchingTraits.length
   };

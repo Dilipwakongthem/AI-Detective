@@ -1464,7 +1464,16 @@ export function interrogateSuspect(suspect, caseData, questionCategory = null) {
 
 // Helper: Calculate evidence matching for a suspect
 export function calculateEvidenceMatch(evidence, suspect) {
-  if (!suspect.attributes || !evidence.description) {
+  // Comprehensive safety checks
+  if (!evidence || !suspect) {
+    return { percentage: 0, matchingTraits: [], confidence: 'NONE', traitCount: 0 };
+  }
+
+  if (!suspect.attributes || !suspect.attributes.physical || !suspect.attributes.behavioral) {
+    return { percentage: 0, matchingTraits: [], confidence: 'NONE', traitCount: 0 };
+  }
+
+  if (!evidence.description || typeof evidence.description !== 'string') {
     return { percentage: 0, matchingTraits: [], confidence: 'NONE', traitCount: 0 };
   }
 
@@ -1472,22 +1481,22 @@ export function calculateEvidenceMatch(evidence, suspect) {
   const attr = suspect.attributes;
   const desc = evidence.description.toLowerCase();
 
-  // Check physical attributes
-  if (desc.includes(attr.physical.height.toLowerCase())) matchingTraits.push('height');
-  if (desc.includes(attr.physical.build.toLowerCase())) matchingTraits.push('build');
-  if (desc.includes(attr.physical.hairColor.toLowerCase())) matchingTraits.push('hair color');
-  if (desc.includes(attr.physical.eyeColor.toLowerCase())) matchingTraits.push('eye color');
-  if (desc.includes(attr.physical.bloodType)) matchingTraits.push('blood type');
-  if (desc.includes(attr.physical.handedness.toLowerCase())) matchingTraits.push('handedness');
-  if (desc.includes(`size ${attr.physical.shoeSize}`)) matchingTraits.push('shoe size');
+  // Check physical attributes with null safety
+  if (attr.physical.height && desc.includes(attr.physical.height.toLowerCase())) matchingTraits.push('height');
+  if (attr.physical.build && desc.includes(attr.physical.build.toLowerCase())) matchingTraits.push('build');
+  if (attr.physical.hairColor && desc.includes(attr.physical.hairColor.toLowerCase())) matchingTraits.push('hair color');
+  if (attr.physical.eyeColor && desc.includes(attr.physical.eyeColor.toLowerCase())) matchingTraits.push('eye color');
+  if (attr.physical.bloodType && desc.includes(attr.physical.bloodType)) matchingTraits.push('blood type');
+  if (attr.physical.handedness && desc.includes(attr.physical.handedness.toLowerCase())) matchingTraits.push('handedness');
+  if (attr.physical.shoeSize && desc.includes(`size ${attr.physical.shoeSize}`)) matchingTraits.push('shoe size');
   if (attr.physical.hasLimp && desc.includes('limp')) matchingTraits.push('limp');
   if (attr.physical.hasGlasses && desc.includes('glasses')) matchingTraits.push('glasses');
   if (attr.physical.distinctiveMark && desc.includes(attr.physical.distinctiveMark)) matchingTraits.push('distinctive mark');
 
-  // Check behavioral attributes
-  if (desc.includes(attr.behavioral.phoneArea)) matchingTraits.push('phone area code');
-  if (desc.includes(attr.behavioral.voiceQuality.toLowerCase())) matchingTraits.push('voice');
-  if (desc.includes(attr.behavioral.shoeType.toLowerCase())) matchingTraits.push('shoe type');
+  // Check behavioral attributes with null safety
+  if (attr.behavioral.phoneArea && desc.includes(attr.behavioral.phoneArea)) matchingTraits.push('phone area code');
+  if (attr.behavioral.voiceQuality && desc.includes(attr.behavioral.voiceQuality.toLowerCase())) matchingTraits.push('voice');
+  if (attr.behavioral.shoeType && desc.includes(attr.behavioral.shoeType.toLowerCase())) matchingTraits.push('shoe type');
 
   // Calculate match percentage (more traits = higher match)
   const totalPossibleTraits = 13; // Total number of traits we check

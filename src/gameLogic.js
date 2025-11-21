@@ -1508,43 +1508,86 @@ export function calculateEvidenceMatch(evidence, suspect) {
 
 // Helper: Get evidence matching summary for all suspects
 export function getEvidenceMatchingSummary(caseData) {
+  // Safety checks
+  if (!caseData || !caseData.suspects || !caseData.evidence) {
+    console.error('Invalid caseData in getEvidenceMatchingSummary');
+    return [];
+  }
+
   const summary = caseData.suspects.map(suspect => {
-    const discoveredEvidence = caseData.evidence.filter(e => e.discovered);
+    if (!suspect) {
+      console.error('Invalid suspect in getEvidenceMatchingSummary');
+      return null;
+    }
+
+    const discoveredEvidence = caseData.evidence.filter(e => e && e.discovered);
     const matches = discoveredEvidence.map(evidence => calculateEvidenceMatch(evidence, suspect));
 
-    const totalMatches = matches.reduce((sum, m) => sum + m.traitCount, 0);
+    const totalMatches = matches.reduce((sum, m) => sum + (m.traitCount || 0), 0);
     const avgPercentage = matches.length > 0
-      ? Math.floor(matches.reduce((sum, m) => sum + m.percentage, 0) / matches.length)
+      ? Math.floor(matches.reduce((sum, m) => sum + (m.percentage || 0), 0) / matches.length)
       : 0;
 
     const directlyConnected = discoveredEvidence.filter(e => e.connectedTo === suspect.id).length;
 
     return {
       suspectId: suspect.id,
-      suspectName: suspect.name,
+      suspectName: suspect.name || 'Unknown',
       totalMatchingTraits: totalMatches,
       averageMatchPercentage: avgPercentage,
       directlyConnectedEvidence: directlyConnected,
       highConfidenceMatches: matches.filter(m => m.confidence === 'HIGH').length,
       mediumConfidenceMatches: matches.filter(m => m.confidence === 'MEDIUM').length
     };
-  });
+  }).filter(s => s !== null); // Remove null entries
 
   return summary.sort((a, b) => b.totalMatchingTraits - a.totalMatchingTraits);
 }
 
 // Helper: Check if player has sufficient evidence for accusation
 export function checkEvidenceStrength(suspectId, caseData) {
+  // Safety checks
+  if (!caseData || !caseData.evidence || !caseData.suspects) {
+    console.error('Invalid caseData in checkEvidenceStrength:', caseData);
+    return {
+      strength: 'unknown',
+      evidenceCount: 0,
+      totalEvidence: 0,
+      matchingTraits: 0,
+      warning: 'Unable to evaluate evidence',
+      shouldWarn: false
+    };
+  }
+
+  const suspect = caseData.suspects[suspectId];
+  if (!suspect) {
+    console.error('Suspect not found:', suspectId);
+    return {
+      strength: 'unknown',
+      evidenceCount: 0,
+      totalEvidence: 0,
+      matchingTraits: 0,
+      warning: 'Suspect not found',
+      shouldWarn: false
+    };
+  }
+
   const evidenceAgainstSuspect = caseData.evidence.filter(
     e => e.discovered && e.connectedTo === suspectId
   ).length;
 
   const totalEvidence = caseData.evidence.filter(e => e.discovered).length;
-  const suspect = caseData.suspects[suspectId];
 
   // Also check matching traits
-  const matchingSummary = getEvidenceMatchingSummary(caseData);
-  const suspectMatch = matchingSummary.find(s => s.suspectId === suspectId);
+  let matchingSummary = [];
+  let suspectMatch = null;
+  try {
+    matchingSummary = getEvidenceMatchingSummary(caseData);
+    suspectMatch = matchingSummary.find(s => s.suspectId === suspectId);
+  } catch (error) {
+    console.error('Error in getEvidenceMatchingSummary:', error);
+    // Continue without matching summary
+  }
 
   // Determine evidence strength
   let strength = 'none';

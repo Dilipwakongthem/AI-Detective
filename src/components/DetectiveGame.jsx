@@ -1216,48 +1216,81 @@ const DetectiveGame = () => {
     </div>
   );
 
-  const renderAccusation = () => (
-    <div className="accusation-screen screen-enter">
-      <button className="home-btn" onClick={handleReturnToMenu} data-tooltip="Save & Return to Main Menu">
-        🏠 HOME
-      </button>
-      <div className="accusation-header">
-        <h2>⚖️ MAKE YOUR ACCUSATION</h2>
-        <p>Choose the suspect you believe is guilty:</p>
-      </div>
+  const renderAccusation = () => {
+    // Safety check: ensure currentCase exists
+    if (!currentCase || !currentCase.suspects) {
+      return (
+        <div className="accusation-screen screen-enter">
+          <div className="error-message">
+            <h2>⚠️ Error</h2>
+            <p>Unable to load accusation screen. Please return to investigation.</p>
+            <button className="action-btn" onClick={() => setGameState('investigation')}>
+              ← Back to Investigation
+            </button>
+          </div>
+        </div>
+      );
+    }
 
-      <div className="accusation-suspects">
-        {currentCase.suspects.map(suspect => {
-          const evidenceCheck = checkEvidenceStrength(suspect.id, currentCase);
-          const strengthColor = evidenceCheck.strength === 'strong' ? '#22c55e' :
-                               evidenceCheck.strength === 'moderate' ? '#f59e0b' :
-                               evidenceCheck.strength === 'weak' ? '#ef4444' :
-                               '#94a3b8';
+    return (
+      <div className="accusation-screen screen-enter">
+        <button className="home-btn" onClick={handleReturnToMenu} data-tooltip="Save & Return to Main Menu">
+          🏠 HOME
+        </button>
+        <div className="accusation-header">
+          <h2>⚖️ MAKE YOUR ACCUSATION</h2>
+          <p>Choose the suspect you believe is guilty:</p>
+        </div>
 
-          return (
-            <div key={suspect.id} className="accusation-card" onClick={() => makeAccusation(suspect.id)}>
-              <h3>{suspect.name}</h3>
-              <p>{suspect.occupation}</p>
-              <div className="accusation-details">
-                <div>Suspicion: {'⭐'.repeat(suspect.suspicionLevel)}</div>
-                {suspect.questioned && <div>Nervousness: {suspect.nervousness}%</div>}
-                <div style={{ color: strengthColor, fontWeight: 'bold', marginTop: '8px' }}>
-                  Evidence: {evidenceCheck.evidenceCount > 0 ? `${evidenceCheck.evidenceCount} piece${evidenceCheck.evidenceCount !== 1 ? 's' : ''}` : 'None'}
-                  {evidenceCheck.strength === 'strong' && ' ✓'}
-                  {evidenceCheck.shouldWarn && ' ⚠️'}
+        <div className="accusation-suspects">
+          {currentCase.suspects.map(suspect => {
+            // Add try-catch to prevent render errors
+            let evidenceCheck;
+            try {
+              evidenceCheck = checkEvidenceStrength(suspect.id, currentCase);
+            } catch (error) {
+              console.error('Error checking evidence strength:', error);
+              // Fallback evidence check
+              evidenceCheck = {
+                strength: 'unknown',
+                evidenceCount: 0,
+                totalEvidence: 0,
+                matchingTraits: 0,
+                warning: 'Unable to evaluate evidence',
+                shouldWarn: false
+              };
+            }
+
+            const strengthColor = evidenceCheck.strength === 'strong' ? '#22c55e' :
+                                 evidenceCheck.strength === 'moderate' ? '#f59e0b' :
+                                 evidenceCheck.strength === 'weak' ? '#ef4444' :
+                                 '#94a3b8';
+
+            return (
+              <div key={suspect.id} className="accusation-card" onClick={() => makeAccusation(suspect.id)}>
+                <h3>{suspect.name}</h3>
+                <p>{suspect.occupation}</p>
+                <div className="accusation-details">
+                  <div>Suspicion: {'⭐'.repeat(suspect.suspicionLevel)}</div>
+                  {suspect.questioned && <div>Nervousness: {suspect.nervousness}%</div>}
+                  <div style={{ color: strengthColor, fontWeight: 'bold', marginTop: '8px' }}>
+                    Evidence: {evidenceCheck.evidenceCount > 0 ? `${evidenceCheck.evidenceCount} piece${evidenceCheck.evidenceCount !== 1 ? 's' : ''}` : 'None'}
+                    {evidenceCheck.strength === 'strong' && ' ✓'}
+                    {evidenceCheck.shouldWarn && ' ⚠️'}
+                  </div>
                 </div>
+                <button className="accuse-btn">ACCUSE</button>
               </div>
-              <button className="accuse-btn">ACCUSE</button>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
 
-      <button className="back-btn" onClick={() => setGameState('investigation')}>
-        ← Continue Investigation
-      </button>
-    </div>
-  );
+        <button className="back-btn" onClick={() => setGameState('investigation')}>
+          ← Continue Investigation
+        </button>
+      </div>
+    );
+  };
 
   const renderResult = () => (
     <div className="result-screen screen-enter">

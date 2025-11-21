@@ -159,7 +159,7 @@ export const THEMES = {
       // Background colors - Aged paper
       '--bg-primary': 'linear-gradient(135deg, #f4e8d0 0%, #e8d5b7 100%)',
       '--bg-secondary': 'rgba(244, 232, 208, 0.95)',
-      '--bg-card': 'rgba(210, 180, 140, 0.9)',  // Darker tan for better contrast
+      '--bg-card': 'rgba(252, 245, 230, 0.95)',  // Much lighter cream for better contrast
       '--bg-overlay': 'rgba(139, 115, 85, 0.9)',
 
       // Primary colors - Ink brown
@@ -205,7 +205,7 @@ export const THEMES = {
       // Background colors - Light minimalist
       '--bg-primary': 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
       '--bg-secondary': 'rgba(248, 249, 250, 0.95)',
-      '--bg-card': 'rgba(240, 243, 246, 0.95)',  // Slightly darker for contrast
+      '--bg-card': 'rgba(255, 255, 255, 0.98)',  // Lighter white for better contrast
       '--bg-overlay': 'rgba(233, 236, 239, 0.95)',
 
       // Primary colors - Blue accent

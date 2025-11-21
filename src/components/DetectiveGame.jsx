@@ -847,7 +847,7 @@ const DetectiveGame = () => {
         {isChiefDetective && (
           <div className="chief-badge">
             🏆 CHIEF DETECTIVE - ELITE CASE MODE 🏆
-            <p style={{fontSize: '0.9em', marginTop: '5px'}}>Unlimited elite cases available</p>
+            <p style={{fontSize: '0.9em', marginTop: '5px'}}>All cases are now elite difficulty (8-10 stars)</p>
           </div>
         )}
 
@@ -1283,7 +1283,7 @@ const DetectiveGame = () => {
           {showRankUp.level === 6 && (
             <div className="chief-unlock">
               <p><strong>🏆 CHIEF DETECTIVE UNLOCKED 🏆</strong></p>
-              <p>You now have access to unlimited Elite Cases and Legendary Cases!</p>
+              <p>You now have access to Elite Case Mode! All cases are now high-difficulty (8-10 stars) with a chance for Legendary Cases!</p>
             </div>
           )}
         </div>

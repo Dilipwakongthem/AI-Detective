@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { generateCase, interrogateSuspect, evaluateAccusation, checkEvidenceStrength } from '../gameLogic';
+import { generateCase, interrogateSuspect, evaluateAccusation, checkEvidenceStrength, calculateEvidenceMatch, getEvidenceMatchingSummary } from '../gameLogic';
 import StoreScreen from './StoreScreen';
 import NotebookModal from './NotebookModal';
 import ThemeSelectorModal from './ThemeSelectorModal';
@@ -446,9 +446,10 @@ const DetectiveGame = () => {
       interrogationCount: currentCase.interrogationCount + 1
     });
 
-    addLog(`❓ You: "Can you explain your whereabouts?"`);
+    // Log the actual question asked
+    addLog(`❓ You: "${result.question}"`);
     addLog(`💬 ${selectedSuspect.name}: "${result.response}"`);
-    addLog(`👁️ Body Language: ${result.bodyLanguage} | Nervousness: ${result.nervousness}%`);
+    addLog(`👁️ Body Language: ${result.bodyLanguage} | Nervousness: ${result.nervousness}%${result.nervousnessChange ? ` (${result.nervousnessChange > 0 ? '+' : ''}${result.nervousnessChange})` : ''}`);
   };
 
   const makeAccusation = (suspectId) => {
@@ -1154,6 +1155,22 @@ const DetectiveGame = () => {
               <p><strong>Occupation:</strong> {selectedSuspect.occupation}</p>
               <p><strong>Personality:</strong> {selectedSuspect.personality}</p>
               <p><strong>Alibi:</strong> {selectedSuspect.alibi}</p>
+
+              {selectedSuspect.attributes && (
+                <div className="attributes-section">
+                  <p className="attributes-header"><strong>📋 Observable Traits:</strong></p>
+                  <div className="attributes-grid">
+                    <span className="trait-badge">Height: {selectedSuspect.attributes.physical.height}</span>
+                    <span className="trait-badge">Build: {selectedSuspect.attributes.physical.build}</span>
+                    <span className="trait-badge">{selectedSuspect.attributes.physical.hairColor} hair</span>
+                    <span className="trait-badge">{selectedSuspect.attributes.physical.eyeColor} eyes</span>
+                    {selectedSuspect.attributes.physical.hasGlasses && <span className="trait-badge">👓 Wears glasses</span>}
+                    {selectedSuspect.attributes.physical.hasLimp && <span className="trait-badge">Walks with limp</span>}
+                    {selectedSuspect.attributes.physical.handedness && <span className="trait-badge">{selectedSuspect.attributes.physical.handedness}-handed</span>}
+                  </div>
+                </div>
+              )}
+
               <p><strong>Nervousness Level:</strong> {selectedSuspect.nervousness}%</p>
               <div className="nervousness-bar">
                 <div
@@ -1161,6 +1178,12 @@ const DetectiveGame = () => {
                   style={{ width: `${selectedSuspect.nervousness}%` }}
                 />
               </div>
+
+              {selectedSuspect.situationalReasons && selectedSuspect.situationalReasons.length > 0 && selectedSuspect.secretRevealed && (
+                <div className="situational-info">
+                  <p><em>💡 Revealed: "{selectedSuspect.situationalReasons[0].reveal}"</em></p>
+                </div>
+              )}
             </div>
           </div>
 

@@ -2545,3 +2545,69 @@ body.theme-dark_deluxe .chief-badge {
     font-size: 20px;
   }
 }
+
+/* Attributes Display */
+.attributes-section {
+  margin: 12px 0;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.attributes-header {
+  margin-bottom: 8px;
+  color: #93c5fd;
+}
+
+.attributes-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.trait-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  background: rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  border-radius: 12px;
+  font-size: 0.85em;
+  color: #93c5fd;
+}
+
+.situational-info {
+  margin-top: 12px;
+  padding: 10px;
+  background: rgba(234, 179, 8, 0.15);
+  border-left: 3px solid #eab308;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #fbbf24;
+}
+
+.evidence-match-indicator {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.75em;
+  font-weight: bold;
+}
+
+.evidence-match-indicator.high {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  border: 1px solid #22c55e;
+}
+
+.evidence-match-indicator.medium {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+  border: 1px solid #f59e0b;
+}
+
+.evidence-match-indicator.low {
+  background: rgba(148, 163, 184, 0.2);
+  color: #94a3b8;
+  border: 1px solid #94a3b8;
+}

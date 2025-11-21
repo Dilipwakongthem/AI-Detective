@@ -1402,9 +1402,9 @@ const DetectiveGame = () => {
               <div className="stat-item">
                 <span className="stat-label">Success Rate:</span>
                 <span className="stat-value">
-                  {playerProfile.casesSolved > 0
+                  {(playerProfile.casesSolved + playerProfile.wrongAccusations) > 0
                     ? Math.round((playerProfile.casesSolved / (playerProfile.casesSolved + playerProfile.wrongAccusations)) * 100)
-                    : 100}%
+                    : 0}%
                 </span>
               </div>
               <div className="stat-item">

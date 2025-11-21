@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { generateCase, interrogateSuspect, evaluateAccusation } from '../gameLogic';
+import { generateCase, interrogateSuspect, evaluateAccusation, checkEvidenceStrength } from '../gameLogic';
 import StoreScreen from './StoreScreen';
 import NotebookModal from './NotebookModal';
 import ThemeSelectorModal from './ThemeSelectorModal';
@@ -452,6 +452,21 @@ const DetectiveGame = () => {
   };
 
   const makeAccusation = (suspectId) => {
+    // Check evidence strength before allowing accusation
+    const evidenceCheck = checkEvidenceStrength(suspectId, currentCase);
+    const suspect = currentCase.suspects[suspectId];
+
+    // Show confirmation dialog with evidence strength warning
+    const confirmationMessage = `${evidenceCheck.warning}\n\n` +
+      `Accuse ${suspect.name} of the crime?\n` +
+      `Evidence against them: ${evidenceCheck.evidenceCount}\n` +
+      `Total evidence collected: ${evidenceCheck.totalEvidence}/${currentCase.evidence.length}\n\n` +
+      `This decision is final.`;
+
+    if (!confirm(confirmationMessage)) {
+      return; // Player cancelled
+    }
+
     const result = evaluateAccusation(suspectId, currentCase, hintsUsed);
     setAccusationResult(result);
 
@@ -1189,17 +1204,30 @@ const DetectiveGame = () => {
       </div>
 
       <div className="accusation-suspects">
-        {currentCase.suspects.map(suspect => (
-          <div key={suspect.id} className="accusation-card" onClick={() => makeAccusation(suspect.id)}>
-            <h3>{suspect.name}</h3>
-            <p>{suspect.occupation}</p>
-            <div className="accusation-details">
-              <div>Suspicion: {'⭐'.repeat(suspect.suspicionLevel)}</div>
-              {suspect.questioned && <div>Nervousness: {suspect.nervousness}%</div>}
+        {currentCase.suspects.map(suspect => {
+          const evidenceCheck = checkEvidenceStrength(suspect.id, currentCase);
+          const strengthColor = evidenceCheck.strength === 'strong' ? '#22c55e' :
+                               evidenceCheck.strength === 'moderate' ? '#f59e0b' :
+                               evidenceCheck.strength === 'weak' ? '#ef4444' :
+                               '#94a3b8';
+
+          return (
+            <div key={suspect.id} className="accusation-card" onClick={() => makeAccusation(suspect.id)}>
+              <h3>{suspect.name}</h3>
+              <p>{suspect.occupation}</p>
+              <div className="accusation-details">
+                <div>Suspicion: {'⭐'.repeat(suspect.suspicionLevel)}</div>
+                {suspect.questioned && <div>Nervousness: {suspect.nervousness}%</div>}
+                <div style={{ color: strengthColor, fontWeight: 'bold', marginTop: '8px' }}>
+                  Evidence: {evidenceCheck.evidenceCount > 0 ? `${evidenceCheck.evidenceCount} piece${evidenceCheck.evidenceCount !== 1 ? 's' : ''}` : 'None'}
+                  {evidenceCheck.strength === 'strong' && ' ✓'}
+                  {evidenceCheck.shouldWarn && ' ⚠️'}
+                </div>
+              </div>
+              <button className="accuse-btn">ACCUSE</button>
             </div>
-            <button className="accuse-btn">ACCUSE</button>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <button className="back-btn" onClick={() => setGameState('investigation')}>

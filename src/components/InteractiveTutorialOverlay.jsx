@@ -56,7 +56,11 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
           updateTargetRect(newRect);
         }, 400);
       } else {
-        updateTargetRect(rect);
+        // Don't set rect immediately - wait for layout to settle
+        setTimeout(() => {
+          const settledRect = target.getBoundingClientRect();
+          updateTargetRect(settledRect);
+        }, 100);
       }
 
       // Add highlight class to target element
@@ -303,11 +307,29 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
 
     const cleanup = attemptFind();
 
+    // Additional recalculations to ensure perfect alignment
+    const recalcTimers = [];
+    if (step.targetElement) {
+      // Keep recalculating position until it settles
+      [200, 350, 500].forEach(delay => {
+        const timer = setTimeout(() => {
+          const target = document.querySelector(step.targetElement);
+          if (target) {
+            const rect = target.getBoundingClientRect();
+            updateTargetRect(rect);
+            console.log('[Tutorial] Recalculated highlight position at', delay, 'ms');
+          }
+        }, delay);
+        recalcTimers.push(timer);
+      });
+    }
+
     return () => {
       if (cleanup) cleanup();
       if (retryTimeoutRef.current) {
         clearTimeout(retryTimeoutRef.current);
       }
+      recalcTimers.forEach(timer => clearTimeout(timer));
     };
   }, [step, findAndHighlightTarget]);
 

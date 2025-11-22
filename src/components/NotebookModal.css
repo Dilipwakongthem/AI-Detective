@@ -94,6 +94,116 @@
   transform: rotate(90deg);
 }
 
+/* Tabs */
+.notebook-tabs {
+  display: flex;
+  gap: 0;
+  padding: 0 24px;
+  background: rgba(30, 30, 46, 0.4);
+  border-bottom: 2px solid rgba(61, 61, 108, 0.3);
+}
+
+.notebook-tab {
+  background: transparent;
+  border: none;
+  color: #7f8c8d;
+  padding: 15px 25px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  border-bottom: 3px solid transparent;
+  position: relative;
+}
+
+.notebook-tab:hover {
+  color: #f39c12;
+  background: rgba(243, 156, 18, 0.05);
+}
+
+.notebook-tab.active {
+  color: #f39c12;
+  border-bottom-color: #f39c12;
+  background: rgba(243, 156, 18, 0.1);
+}
+
+/* Theory Actions */
+.theory-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 24px;
+  background: rgba(61, 61, 108, 0.1);
+  border-bottom: 1px solid rgba(61, 61, 108, 0.3);
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.theory-action-btn {
+  background: #3d3d5c;
+  color: #e4e4e4;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.theory-action-btn:hover:not(:disabled) {
+  background: #4d4d6c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.theory-action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.theory-action-btn-primary {
+  background: #f39c12;
+  color: #1e1e2e;
+}
+
+.theory-action-btn-primary:hover {
+  background: #e67e22;
+  box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4);
+}
+
+.theory-action-btn-secondary {
+  background: #e74c3c;
+  color: white;
+}
+
+.theory-action-btn-secondary:hover {
+  background: #c0392b;
+}
+
+.theory-selection-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(243, 156, 18, 0.1);
+  padding: 8px 15px;
+  border-radius: 8px;
+  border: 1px solid rgba(243, 156, 18, 0.3);
+}
+
+.theory-selection-info span {
+  color: #f39c12;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+/* Theories List */
+.theories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
 /* Filter Buttons */
 .notebook-filters {
   display: flex;

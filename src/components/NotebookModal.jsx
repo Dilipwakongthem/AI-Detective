@@ -8,13 +8,25 @@ import {
   sortNotes,
   formatNoteTimestamp
 } from '../utils/notebookManager';
+import {
+  getTheoriesForCase,
+  deleteTheory,
+  sortTheories
+} from '../utils/theoryManager';
+import TheoryBuilder from './TheoryBuilder';
+import TheoryCard from './TheoryCard';
+import TheoryComparison from './TheoryComparison';
 import './NotebookModal.css';
 
 /**
  * Detective's Notebook Modal Component
- * Premium feature for taking investigation notes
+ * Premium feature for taking investigation notes and building theories
  */
-const NotebookModal = ({ caseId, onClose, showNotification }) => {
+const NotebookModal = ({ caseId, caseData, onClose, showNotification }) => {
+  // Tab state
+  const [activeTab, setActiveTab] = useState('notes'); // 'notes' or 'theories'
+
+  // Notes state
   const [notes, setNotes] = useState([]);
   const [filteredNotes, setFilteredNotes] = useState([]);
   const [activeFilter, setActiveFilter] = useState('all');
@@ -26,11 +38,19 @@ const NotebookModal = ({ caseId, onClose, showNotification }) => {
   const [selectedTags, setSelectedTags] = useState([]);
   const [selectedColor, setSelectedColor] = useState('default');
 
+  // Theories state
+  const [theories, setTheories] = useState([]);
+  const [showTheoryBuilder, setShowTheoryBuilder] = useState(false);
+  const [editingTheoryId, setEditingTheoryId] = useState(null);
+  const [selectedTheoryIds, setSelectedTheoryIds] = useState([]);
+  const [showTheoryComparison, setShowTheoryComparison] = useState(false);
+
   /**
    * Load notes on mount and when caseId changes
    */
   useEffect(() => {
     loadNotes();
+    loadTheories();
   }, [caseId]);
 
   /**
@@ -47,6 +67,15 @@ const NotebookModal = ({ caseId, onClose, showNotification }) => {
     const caseNotes = getNotesForCase(caseId);
     const sorted = sortNotes(caseNotes, 'timestamp');
     setNotes(sorted);
+  };
+
+  /**
+   * Load all theories for current case
+   */
+  const loadTheories = () => {
+    const caseTheories = getTheoriesForCase(caseId);
+    const sorted = sortTheories(caseTheories, 'updated');
+    setTheories(sorted);
   };
 
   /**
@@ -200,6 +229,66 @@ const NotebookModal = ({ caseId, onClose, showNotification }) => {
     setNoteContent('');
     setSelectedTags([]);
     setSelectedColor('default');
+  };
+
+  /**
+   * Handle edit theory
+   */
+  const handleEditTheory = (theory) => {
+    setEditingTheoryId(theory.id);
+    setShowTheoryBuilder(true);
+  };
+
+  /**
+   * Handle delete theory
+   */
+  const handleDeleteTheory = (theoryId) => {
+    const success = deleteTheory(theoryId);
+    if (success) {
+      showNotification('Theory deleted', 'info');
+      loadTheories();
+      // Remove from selection if selected
+      setSelectedTheoryIds(prev => prev.filter(id => id !== theoryId));
+    } else {
+      showNotification('Failed to delete theory', 'error');
+    }
+  };
+
+  /**
+   * Handle select theory for comparison
+   */
+  const handleSelectTheory = (theory) => {
+    setSelectedTheoryIds(prev => {
+      if (prev.includes(theory.id)) {
+        // Deselect
+        return prev.filter(id => id !== theory.id);
+      } else {
+        // Select (max 4)
+        if (prev.length >= 4) {
+          showNotification('Maximum 4 theories can be compared at once', 'info');
+          return prev;
+        }
+        return [...prev, theory.id];
+      }
+    });
+  };
+
+  /**
+   * Handle theory saved (from TheoryBuilder)
+   */
+  const handleTheorySaved = () => {
+    loadTheories();
+  };
+
+  /**
+   * Handle compare theories
+   */
+  const handleCompareTheories = () => {
+    if (selectedTheoryIds.length < 2) {
+      showNotification('Select at least 2 theories to compare', 'info');
+      return;
+    }
+    setShowTheoryComparison(true);
   };
 
   /**
@@ -374,8 +463,27 @@ const NotebookModal = ({ caseId, onClose, showNotification }) => {
           </button>
         </div>
 
-        {/* Filter buttons */}
-        <div className="notebook-filters">
+        {/* Tabs */}
+        <div className="notebook-tabs">
+          <button
+            className={`notebook-tab ${activeTab === 'notes' ? 'active' : ''}`}
+            onClick={() => setActiveTab('notes')}
+          >
+            📝 Notes ({notes.length})
+          </button>
+          <button
+            className={`notebook-tab ${activeTab === 'theories' ? 'active' : ''}`}
+            onClick={() => setActiveTab('theories')}
+          >
+            📘 Theories ({theories.length})
+          </button>
+        </div>
+
+        {/* Notes Tab Content */}
+        {activeTab === 'notes' && (
+          <>
+            {/* Filter buttons */}
+            <div className="notebook-filters">
           <button
             className={`notebook-filter-btn ${activeFilter === 'all' ? 'active' : ''}`}
             onClick={() => handleFilterClick('all')}
@@ -449,12 +557,119 @@ const NotebookModal = ({ caseId, onClose, showNotification }) => {
           )}
         </div>
 
-        {/* Footer */}
-        <div className="notebook-footer">
-          <p className="notebook-footer-text">
-            💡 Tip: Pin important notes to keep them at the top!
-          </p>
-        </div>
+            {/* Footer */}
+            <div className="notebook-footer">
+              <p className="notebook-footer-text">
+                💡 Tip: Pin important notes to keep them at the top!
+              </p>
+            </div>
+          </>
+        )}
+
+        {/* Theories Tab Content */}
+        {activeTab === 'theories' && (
+          <>
+            {/* Theory Actions */}
+            <div className="theory-actions">
+              <button
+                className="theory-action-btn theory-action-btn-primary"
+                onClick={() => {
+                  setEditingTheoryId(null);
+                  setShowTheoryBuilder(true);
+                }}
+              >
+                ➕ Build New Theory
+              </button>
+
+              {selectedTheoryIds.length > 0 && (
+                <div className="theory-selection-info">
+                  <span>{selectedTheoryIds.length} selected</span>
+                  <button
+                    className="theory-action-btn"
+                    onClick={handleCompareTheories}
+                    disabled={selectedTheoryIds.length < 2}
+                  >
+                    🔄 Compare Theories
+                  </button>
+                  <button
+                    className="theory-action-btn theory-action-btn-secondary"
+                    onClick={() => setSelectedTheoryIds([])}
+                  >
+                    Clear Selection
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Theories Display */}
+            <div className="notebook-content">
+              {theories.length === 0 ? (
+                <div className="notebook-empty">
+                  <div className="notebook-empty-icon">📘</div>
+                  <p className="notebook-empty-text">
+                    No theories yet. Build your first theory to organize your investigation!
+                  </p>
+                  <button
+                    className="notebook-empty-btn"
+                    onClick={() => {
+                      setEditingTheoryId(null);
+                      setShowTheoryBuilder(true);
+                    }}
+                  >
+                    📘 BUILD YOUR FIRST THEORY
+                  </button>
+                </div>
+              ) : (
+                <div className="theories-list">
+                  {theories.map(theory => (
+                    <TheoryCard
+                      key={theory.id}
+                      theory={theory}
+                      onEdit={handleEditTheory}
+                      onDelete={handleDeleteTheory}
+                      onSelect={handleSelectTheory}
+                      isSelected={selectedTheoryIds.includes(theory.id)}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="notebook-footer">
+              <p className="notebook-footer-text">
+                💡 Tip: Select multiple theories to compare them side-by-side!
+              </p>
+            </div>
+          </>
+        )}
+
+        {/* Theory Builder Modal */}
+        {showTheoryBuilder && (
+          <TheoryBuilder
+            caseId={caseId}
+            caseData={caseData}
+            theoryId={editingTheoryId}
+            onClose={() => {
+              setShowTheoryBuilder(false);
+              setEditingTheoryId(null);
+            }}
+            onSave={handleTheorySaved}
+            showNotification={showNotification}
+          />
+        )}
+
+        {/* Theory Comparison Modal */}
+        {showTheoryComparison && (
+          <TheoryComparison
+            theories={theories}
+            selectedTheoryIds={selectedTheoryIds}
+            onClose={() => setShowTheoryComparison(false)}
+            onDeselect={(theoryId) => {
+              setSelectedTheoryIds(prev => prev.filter(id => id !== theoryId));
+            }}
+          />
+        )}
       </div>
     </div>
   );

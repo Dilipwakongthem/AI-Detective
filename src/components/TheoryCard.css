@@ -1,0 +1,338 @@
+/* Theory Card Styling */
+
+.theory-card {
+  background: linear-gradient(135deg, #2d2d44 0%, #1e1e2e 100%);
+  border: 2px solid #3d3d5c;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.theory-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(243, 156, 18, 0.05), transparent);
+  transition: left 0.6s;
+}
+
+.theory-card:hover {
+  border-color: #f39c12;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(243, 156, 18, 0.2);
+}
+
+.theory-card:hover::before {
+  left: 100%;
+}
+
+.theory-card-selected {
+  border-color: #f39c12;
+  box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.3);
+  background: linear-gradient(135deg, #3d3d5c 0%, #2d2d44 100%);
+}
+
+.theory-card-discarded {
+  opacity: 0.6;
+  border-color: #7f8c8d;
+}
+
+.theory-card-discarded:hover {
+  opacity: 0.8;
+}
+
+/* Header */
+.theory-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  gap: 15px;
+}
+
+.theory-card-title-section {
+  flex: 1;
+}
+
+.theory-card-title {
+  color: #f39c12;
+  font-size: 18px;
+  margin: 0 0 8px 0;
+  font-weight: bold;
+}
+
+.theory-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.theory-card-timestamp {
+  color: #7f8c8d;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.theory-card-confidence {
+  font-size: 14px;
+  color: #f39c12;
+  letter-spacing: 2px;
+}
+
+/* Actions */
+.theory-card-actions {
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.theory-card:hover .theory-card-actions {
+  opacity: 1;
+}
+
+.theory-card-action-btn {
+  background: #3d3d5c;
+  color: #e4e4e4;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theory-card-action-btn:hover {
+  background: #4d4d6c;
+  transform: scale(1.1);
+}
+
+.theory-card-delete-btn {
+  background: #e74c3c;
+}
+
+.theory-card-delete-btn:hover {
+  background: #c0392b;
+}
+
+/* Description */
+.theory-card-description {
+  color: #e4e4e4;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border-left: 3px solid #3d3d5c;
+}
+
+/* Stats */
+.theory-card-stats {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.theory-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(61, 61, 108, 0.3);
+  border: 1px solid #3d3d5c;
+  border-radius: 8px;
+  font-size: 13px;
+  transition: all 0.3s;
+}
+
+.theory-stat:hover {
+  background: rgba(61, 61, 108, 0.5);
+  border-color: #f39c12;
+  transform: translateY(-2px);
+}
+
+.theory-stat-icon {
+  font-size: 16px;
+}
+
+.theory-stat-label {
+  color: #7f8c8d;
+  font-weight: bold;
+}
+
+.theory-stat-value {
+  color: #e4e4e4;
+  font-weight: bold;
+  font-size: 15px;
+}
+
+.theory-stat-supporting {
+  border-left: 3px solid #27ae60;
+}
+
+.theory-stat-contradicting {
+  border-left: 3px solid #e74c3c;
+}
+
+.theory-stat-suspects {
+  border-left: 3px solid #3498db;
+}
+
+/* Strength Indicator */
+.theory-card-strength {
+  margin-bottom: 15px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+.theory-strength-label {
+  color: #7f8c8d;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.theory-strength-bar-container {
+  width: 100%;
+  height: 8px;
+  background: rgba(61, 61, 108, 0.5);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.theory-strength-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: strengthPulse 2s ease-in-out infinite;
+}
+
+@keyframes strengthPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.theory-strength-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theory-strength-icon {
+  font-size: 16px;
+}
+
+.theory-strength-score {
+  color: #f39c12;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.theory-strength-label-text {
+  color: #e4e4e4;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+/* Tags */
+.theory-card-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.theory-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: rgba(61, 61, 108, 0.2);
+  border: 1px solid;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s;
+}
+
+.theory-tag:hover {
+  background: rgba(61, 61, 108, 0.4);
+  transform: scale(1.05);
+}
+
+/* Selected Indicator */
+.theory-card-selected-indicator {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  background: #f39c12;
+  color: #1e1e2e;
+  padding: 6px 12px;
+  border-radius: 0 10px 0 10px;
+  font-size: 11px;
+  font-weight: bold;
+  animation: selectedPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes selectedPulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(243, 156, 18, 0.8);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .theory-card {
+    padding: 15px;
+  }
+
+  .theory-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .theory-card-actions {
+    opacity: 1; /* Always visible on mobile */
+  }
+
+  .theory-card-stats {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .theory-card-title {
+    font-size: 16px;
+  }
+
+  .theory-card-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}

@@ -9,6 +9,9 @@ import ConnectionLine from './ConnectionLine';
 import ConnectionModal from './ConnectionModal';
 import HypothesisBuilder from './HypothesisBuilder';
 import HypothesisList from './HypothesisList';
+import Timeline from './Timeline';
+import ConnectionInsights from './ConnectionInsights';
+import EvidenceBoardTutorial, { shouldShowTutorial } from './EvidenceBoardTutorial';
 import './EvidenceBoard.css';
 
 /**
@@ -25,6 +28,7 @@ const EvidenceBoard = ({
   const [boardCards, setBoardCards] = useState([]);
   const [connections, setConnections] = useState([]);
   const [hypotheses, setHypotheses] = useState([]);
+  const [timelineEvents, setTimelineEvents] = useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectionStart, setConnectionStart] = useState(null);
@@ -36,6 +40,9 @@ const EvidenceBoard = ({
   const [currentConnection, setCurrentConnection] = useState(null);
   const [showHypothesisBuilder, setShowHypothesisBuilder] = useState(false);
   const [showHypothesisList, setShowHypothesisList] = useState(false);
+  const [showTimeline, setShowTimeline] = useState(false);
+  const [showInsights, setShowInsights] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(shouldShowTutorial());
   const [viewMode, setViewMode] = useState('standard'); // standard | timeline | connections
 
   // Undo/Redo stack
@@ -104,6 +111,7 @@ const EvidenceBoard = ({
         setBoardCards(parsed.cards || []);
         setConnections(parsed.connections || []);
         setHypotheses(parsed.hypotheses || []);
+        setTimelineEvents(parsed.timelineEvents || []);
         setZoomLevel(parsed.zoomLevel || 100);
         setPanOffset(parsed.panOffset || { x: 0, y: 0 });
       } catch (error) {
@@ -120,13 +128,14 @@ const EvidenceBoard = ({
       cards: boardCards,
       connections,
       hypotheses,
+      timelineEvents,
       zoomLevel,
       panOffset,
       lastModified: new Date().toISOString()
     };
 
     localStorage.setItem(`evidence_board_${caseData.caseNumber}`, JSON.stringify(state));
-  }, [boardCards, connections, hypotheses, zoomLevel, panOffset, caseData.caseNumber]);
+  }, [boardCards, connections, hypotheses, timelineEvents, zoomLevel, panOffset, caseData.caseNumber]);
 
   /**
    * Auto-save every 30 seconds
@@ -516,6 +525,21 @@ const EvidenceBoard = ({
                 🔍+
               </button>
               <button
+                className="board-btn"
+                onClick={() => setShowTimeline(true)}
+                title="Timeline Visualization"
+              >
+                🕐 Timeline
+              </button>
+              <button
+                className="board-btn"
+                onClick={() => setShowInsights(!showInsights)}
+                title="Connection Insights"
+                style={showInsights ? { background: '#f39c12', color: '#1e1e2e' } : {}}
+              >
+                🧠 Insights
+              </button>
+              <button
                 className="board-btn board-btn-primary"
                 onClick={() => setShowHypothesisBuilder(true)}
                 disabled={boardCards.length < 3}
@@ -613,6 +637,17 @@ const EvidenceBoard = ({
                   </p>
                 </div>
               )}
+
+              {/* Connection Insights Panel */}
+              {showInsights && (
+                <ConnectionInsights
+                  boardCards={boardCards}
+                  connections={connections}
+                  suspects={caseData.suspects}
+                  evidence={caseData.evidence}
+                  onClose={() => setShowInsights(false)}
+                />
+              )}
             </div>
           </div>
 
@@ -670,6 +705,32 @@ const EvidenceBoard = ({
                 }
               }}
               onClose={() => setShowHypothesisList(false)}
+            />
+          )}
+
+          {showTimeline && (
+            <Timeline
+              caseData={caseData}
+              timelineEvents={timelineEvents}
+              onUpdateTimeline={(events) => {
+                setTimelineEvents(events);
+                showNotification('Timeline saved', 'success');
+              }}
+              onClose={() => setShowTimeline(false)}
+            />
+          )}
+
+          {/* Tutorial */}
+          {showTutorial && (
+            <EvidenceBoardTutorial
+              onComplete={() => {
+                setShowTutorial(false);
+                showNotification('Tutorial completed! Start building your case.', 'success');
+              }}
+              onSkip={() => {
+                setShowTutorial(false);
+                showNotification('Tutorial skipped. You can review features anytime.', 'info');
+              }}
             />
           )}
         </div>

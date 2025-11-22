@@ -149,39 +149,124 @@ const HypothesisList = ({
       );
     }
 
+    // Find strongest hypothesis
+    const strongest = selected.reduce((max, h) =>
+      h.strengthScore > max.strengthScore ? h : max
+    , selected[0]);
+
+    const highestConfidence = selected.reduce((max, h) =>
+      h.confidence > max.confidence ? h : max
+    , selected[0]);
+
+    const mostEvidence = selected.reduce((max, h) =>
+      h.supportingEvidence.length > max.supportingEvidence.length ? h : max
+    , selected[0]);
+
     return (
-      <div className="comparison-grid">
-        {selected.map(hypothesis => (
-          <div key={hypothesis.id} className="comparison-column">
-            <h4>{getSuspectName(hypothesis.guiltyParty)}</h4>
-
-            <div className="comparison-field">
-              <strong>Motive:</strong>
-              <p>{hypothesis.motive}</p>
+      <>
+        {/* Comparison Analysis */}
+        <div className="comparison-analysis">
+          <h3>📊 Comparison Analysis</h3>
+          <div className="analysis-insights">
+            <div className="analysis-insight">
+              <span className="insight-icon">💪</span>
+              <div>
+                <strong>Strongest Overall:</strong> {getSuspectName(strongest.guiltyParty)}
+                <span className="insight-detail">(Score: {strongest.strengthScore}/100)</span>
+              </div>
             </div>
-
-            <div className="comparison-field">
-              <strong>Method:</strong>
-              <p>{hypothesis.method || 'Not specified'}</p>
+            <div className="analysis-insight">
+              <span className="insight-icon">🎯</span>
+              <div>
+                <strong>Highest Confidence:</strong> {getSuspectName(highestConfidence.guiltyParty)}
+                <span className="insight-detail">({highestConfidence.confidence}%)</span>
+              </div>
             </div>
-
-            <div className="comparison-field">
-              <strong>Confidence:</strong>
-              <p>{hypothesis.confidence}%</p>
-            </div>
-
-            <div className="comparison-field">
-              <strong>Strength:</strong>
-              <p>{hypothesis.strengthScore}/100</p>
-            </div>
-
-            <div className="comparison-field">
-              <strong>Evidence:</strong>
-              <p>{hypothesis.supportingEvidence.length} pieces</p>
+            <div className="analysis-insight">
+              <span className="insight-icon">🔍</span>
+              <div>
+                <strong>Most Evidence:</strong> {getSuspectName(mostEvidence.guiltyParty)}
+                <span className="insight-detail">({mostEvidence.supportingEvidence.length} pieces)</span>
+              </div>
             </div>
           </div>
-        ))}
-      </div>
+          {strongest.id === highestConfidence.id && strongest.id === mostEvidence.id && (
+            <div className="comparison-recommendation">
+              ✓ <strong>Recommendation:</strong> {getSuspectName(strongest.guiltyParty)} has the strongest case across all metrics.
+            </div>
+          )}
+        </div>
+
+        {/* Side-by-side Comparison */}
+        <div className="comparison-grid">
+          {selected.map(hypothesis => {
+            const isStrongest = hypothesis.id === strongest.id;
+            const hasHighestConfidence = hypothesis.id === highestConfidence.id;
+            const hasMostEvidence = hypothesis.id === mostEvidence.id;
+
+            return (
+              <div
+                key={hypothesis.id}
+                className={`comparison-column ${isStrongest ? 'strongest' : ''}`}
+              >
+                <h4>
+                  {getSuspectName(hypothesis.guiltyParty)}
+                  {isStrongest && <span className="badge-strongest">⭐ Strongest</span>}
+                </h4>
+
+                <div className="comparison-field">
+                  <strong>Motive:</strong>
+                  <p>{hypothesis.motive}</p>
+                </div>
+
+                <div className="comparison-field">
+                  <strong>Method:</strong>
+                  <p>{hypothesis.method || 'Not specified'}</p>
+                </div>
+
+                <div className="comparison-field">
+                  <strong>Confidence:</strong>
+                  <p className={hasHighestConfidence ? 'highlight-value' : ''}>
+                    {hypothesis.confidence}%
+                    {hasHighestConfidence && ' 🔝'}
+                  </p>
+                </div>
+
+                <div className="comparison-field">
+                  <strong>Strength:</strong>
+                  <p className={isStrongest ? 'highlight-value' : ''}>
+                    {hypothesis.strengthScore}/100
+                    {isStrongest && ' 🔥'}
+                  </p>
+                </div>
+
+                <div className="comparison-field">
+                  <strong>Evidence:</strong>
+                  <p className={hasMostEvidence ? 'highlight-value' : ''}>
+                    {hypothesis.supportingEvidence.length} pieces
+                    {hasMostEvidence && ' 📚'}
+                  </p>
+                </div>
+
+                {/* Evidence Quality Indicator */}
+                <div className="comparison-field">
+                  <strong>Evidence Quality:</strong>
+                  <div className="quality-bar">
+                    <div
+                      className="quality-fill"
+                      style={{
+                        width: `${hypothesis.strengthScore}%`,
+                        background: hypothesis.strengthScore >= 75 ? '#27ae60' :
+                                   hypothesis.strengthScore >= 50 ? '#f39c12' : '#e74c3c'
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </>
     );
   };
 

@@ -270,6 +270,67 @@
 }
 
 /* Comparison View */
+.comparison-analysis {
+  background: #16213e;
+  border: 2px solid #f39c12;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.comparison-analysis h3 {
+  color: #f39c12;
+  margin: 0 0 15px 0;
+  font-size: 18px;
+}
+
+.analysis-insights {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.analysis-insight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(243, 156, 18, 0.05);
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.insight-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.analysis-insight div {
+  flex: 1;
+}
+
+.analysis-insight strong {
+  color: #f39c12;
+  display: block;
+  font-size: 13px;
+  margin-bottom: 3px;
+}
+
+.insight-detail {
+  color: #7f8c8d;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.comparison-recommendation {
+  background: rgba(39, 174, 96, 0.15);
+  border-left: 4px solid #27ae60;
+  padding: 12px;
+  border-radius: 6px;
+  color: #27ae60;
+  font-size: 14px;
+}
+
 .comparison-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -281,6 +342,12 @@
   border: 2px solid #3d3d5c;
   border-radius: 8px;
   padding: 20px;
+  transition: all 0.2s;
+}
+
+.comparison-column.strongest {
+  border-color: #f39c12;
+  box-shadow: 0 0 20px rgba(243, 156, 18, 0.3);
 }
 
 .comparison-column h4 {
@@ -289,6 +356,20 @@
   font-size: 18px;
   padding-bottom: 10px;
   border-bottom: 2px solid #3d3d5c;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.badge-strongest {
+  background: #f39c12;
+  color: #1e1e2e;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: bold;
 }
 
 .comparison-field {
@@ -307,6 +388,26 @@
   font-size: 14px;
   margin: 0;
   line-height: 1.5;
+}
+
+.comparison-field p.highlight-value {
+  color: #f39c12;
+  font-weight: bold;
+}
+
+.quality-bar {
+  width: 100%;
+  height: 12px;
+  background: #0f1419;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #3d3d5c;
+}
+
+.quality-fill {
+  height: 100%;
+  transition: all 0.3s ease;
+  border-radius: 6px;
 }
 
 .comparison-empty {

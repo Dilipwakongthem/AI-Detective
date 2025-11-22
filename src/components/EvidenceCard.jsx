@@ -14,7 +14,8 @@ const EvidenceCard = ({
   onMove,
   onRemove,
   onStartConnection,
-  onCompleteConnection
+  onCompleteConnection,
+  onEditNotes
 }) => {
   const cardRef = useRef(null);
 
@@ -119,6 +120,16 @@ const EvidenceCard = ({
           className="card-action-btn"
           onClick={(e) => {
             e.stopPropagation();
+            onEditNotes(card);
+          }}
+          title="Add/Edit notes"
+        >
+          📝
+        </button>
+        <button
+          className="card-action-btn"
+          onClick={(e) => {
+            e.stopPropagation();
             onStartConnection(card.id);
           }}
           title="Create connection"
@@ -136,6 +147,13 @@ const EvidenceCard = ({
           ✕
         </button>
       </div>
+
+      {/* Notes indicator */}
+      {(card.notes || (card.observations && card.observations.length > 0)) && (
+        <div className="notes-indicator" title="This card has notes">
+          📝
+        </div>
+      )}
 
       {/* Connection indicator */}
       {isConnecting && (

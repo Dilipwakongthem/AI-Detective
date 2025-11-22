@@ -12,6 +12,7 @@ import HypothesisList from './HypothesisList';
 import Timeline from './Timeline';
 import ConnectionInsights from './ConnectionInsights';
 import EvidenceBoardTutorial, { shouldShowTutorial } from './EvidenceBoardTutorial';
+import CardNotesModal from './CardNotesModal';
 import './EvidenceBoard.css';
 
 /**
@@ -43,6 +44,8 @@ const EvidenceBoard = ({
   const [showTimeline, setShowTimeline] = useState(false);
   const [showInsights, setShowInsights] = useState(false);
   const [showTutorial, setShowTutorial] = useState(shouldShowTutorial());
+  const [showNotesModal, setShowNotesModal] = useState(false);
+  const [currentNotesCard, setCurrentNotesCard] = useState(null);
   const [viewMode, setViewMode] = useState('standard'); // standard | timeline | connections
 
   // Undo/Redo stack
@@ -316,6 +319,27 @@ const EvidenceBoard = ({
     setBoardCards(prev => prev.filter(c => c.id !== cardId));
     addAction({ type: 'REMOVE_CARD', payload: card });
     showNotification('Card removed from board', 'info');
+  };
+
+  /**
+   * Open notes modal for card
+   */
+  const handleEditNotes = (card) => {
+    setCurrentNotesCard(card);
+    setShowNotesModal(true);
+  };
+
+  /**
+   * Save notes to card
+   */
+  const handleSaveNotes = (updatedCard) => {
+    setBoardCards(prev => prev.map(c =>
+      c.id === updatedCard.id ? updatedCard : c
+    ));
+    addAction({ type: 'UPDATE_NOTES', payload: updatedCard });
+    showNotification('Notes saved', 'success');
+    setShowNotesModal(false);
+    setCurrentNotesCard(null);
   };
 
   /**
@@ -614,6 +638,7 @@ const EvidenceBoard = ({
                     onRemove={handleRemoveCard}
                     onStartConnection={handleStartConnection}
                     onCompleteConnection={handleCompleteConnection}
+                    onEditNotes={handleEditNotes}
                   />
                 ))}
 
@@ -730,6 +755,18 @@ const EvidenceBoard = ({
               onSkip={() => {
                 setShowTutorial(false);
                 showNotification('Tutorial skipped. You can review features anytime.', 'info');
+              }}
+            />
+          )}
+
+          {/* Card Notes Modal */}
+          {showNotesModal && currentNotesCard && (
+            <CardNotesModal
+              card={currentNotesCard}
+              onSave={handleSaveNotes}
+              onClose={() => {
+                setShowNotesModal(false);
+                setCurrentNotesCard(null);
               }}
             />
           )}

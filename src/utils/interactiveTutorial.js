@@ -185,7 +185,7 @@ Let's find more evidence. Click **"Search for Evidence"** again.`,
 
   READY_TO_ACCUSE: {
     id: 'ready_to_accuse',
-    title: '⚖️ You're Ready, Detective!',
+    title: '⚖️ You\'re Ready, Detective!',
     message: `Great work! You've learned the fundamentals of being a detective:
 • **Gathering Evidence** - Finding clues at crime scenes
 • **Interrogating Suspects** - Reading body language and responses

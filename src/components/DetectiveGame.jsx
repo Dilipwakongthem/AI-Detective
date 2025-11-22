@@ -1252,7 +1252,7 @@ const DetectiveGame = () => {
         </div>
       )}
 
-      <div id="investigation-log" className="game-log">
+      <div id="investigation-log" className="game-log" data-tutorial="investigation-log">
         <h3>📜 INVESTIGATION LOG</h3>
         <div className="log-entries">
           {gameLog.map((entry, i) => (

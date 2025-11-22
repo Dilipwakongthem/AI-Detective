@@ -180,8 +180,13 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
 
 // Calculate modal position based on target element
 function getModalPosition(position, targetRect) {
-  if (!targetRect || !position) {
-    return {};
+  // If center or no target element, always center
+  if (position === 'center' || !targetRect) {
+    return {
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)'
+    };
   }
 
   const padding = 20;
@@ -216,7 +221,6 @@ function getModalPosition(position, targetRect) {
         transform: 'translateY(-50%)'
       };
 
-    case 'center':
     default:
       return {
         top: '50%',

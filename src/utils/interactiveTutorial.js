@@ -73,10 +73,10 @@ Let's find your first piece of evidence!`,
   SEARCH_EVIDENCE: {
     id: 'search_evidence',
     title: '🔎 Find Evidence',
-    message: `Click **"Search for Evidence"** to investigate the crime scene.
+    message: `Click **"🔍 Search Crime Scene"** to investigate the crime scene.
 
 Evidence is crucial - it connects suspects to the crime through physical traits and behavioral patterns.`,
-    position: 'bottom',
+    position: 'top',
     targetElement: '[data-tutorial="search-evidence-btn"]',
     highlightElement: true,
     blockOtherClicks: true,
@@ -90,36 +90,15 @@ Evidence is crucial - it connects suspects to the crime through physical traits 
     title: '✅ Evidence Discovered!',
     message: `Great! You found your first clue.
 
-Each piece of evidence contains details that may match suspect attributes:
-• Physical traits (height, build, blood type)
-• Behavioral patterns (phone records, shoe prints)
+Check the **Investigation Log** below to see what you discovered. The log tracks all your findings and interrogation notes.
 
-The game calculates match percentages automatically. Click **"View Evidence Board"** to see it.`,
-    position: 'right',
-    targetElement: '[data-tutorial="evidence-board-btn"]',
+Now let's interrogate a suspect to gather more information.`,
+    position: 'top',
+    targetElement: '[data-tutorial="investigation-log"]',
     highlightElement: true,
-    blockOtherClicks: true,
-    requiresAction: true,
-    nextTrigger: 'evidence_board_opened',
-    phase: 'investigation'
-  },
-
-  EVIDENCE_BOARD_EXPLAINED: {
-    id: 'evidence_board_explained',
-    title: '🧩 Evidence Matching',
-    message: `This board shows how evidence matches each suspect:
-
-🔴 **HIGH** (40%+) - Strong match, multiple traits align
-🟡 **MEDIUM** (20-39%) - Moderate connection
-🟢 **LOW** (10-19%) - Weak/circumstantial
-
-Collect more evidence to build a strong case. Close this and let's interrogate a suspect.`,
-    position: 'center',
-    targetElement: '[data-tutorial="close-evidence-btn"]',
-    highlightElement: true,
-    blockOtherClicks: true,
-    requiresAction: true,
-    nextTrigger: 'evidence_board_closed',
+    blockOtherClicks: false,
+    requiresAction: false,
+    nextTrigger: 'click_continue',
     phase: 'investigation'
   },
 
@@ -134,8 +113,8 @@ Each suspect has:
 • **Nervousness Level** - How anxious they appear
 • **Alibi** - Their claim about whereabouts
 
-Click on **any suspect** to begin interrogation.`,
-    position: 'left',
+Click on **any suspect card** to begin interrogation.`,
+    position: 'center',
     targetElement: '[data-tutorial="suspect-list"]',
     highlightElement: true,
     blockOtherClicks: true,

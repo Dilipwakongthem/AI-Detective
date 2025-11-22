@@ -564,16 +564,70 @@ const DetectiveGame = () => {
     }
   };
 
+  // Helper: Validate Evidence Board connections
+  const validateEvidenceBoardConnections = (caseId, guiltyIndex) => {
+    try {
+      const boardData = localStorage.getItem(`evidenceBoard_${caseId}`);
+      if (!boardData) {
+        return null; // No Evidence Board used
+      }
+
+      const board = JSON.parse(boardData);
+      const { connections, hypotheses } = board;
+
+      if (!connections || connections.length === 0) {
+        return { used: true, connectionsCount: 0, correctConnections: 0, incorrectConnections: 0, hypothesisValidation: null };
+      }
+
+      // Validate connections
+      let correctConnections = 0;
+      let incorrectConnections = 0;
+
+      connections.forEach(conn => {
+        const { from, to } = conn;
+
+        // Check if connection is between evidence and the guilty suspect
+        const isToGuilty = to.type === 'suspect' && to.dataId === guiltyIndex;
+        const isFromGuilty = from.type === 'suspect' && from.dataId === guiltyIndex;
+
+        if (isToGuilty || isFromGuilty) {
+          correctConnections++;
+        } else {
+          incorrectConnections++;
+        }
+      });
+
+      // Validate hypothesis if exists
+      let hypothesisValidation = null;
+      if (hypotheses && hypotheses.length > 0) {
+        const latestHypothesis = hypotheses[hypotheses.length - 1];
+        const isCorrect = latestHypothesis.guiltyParty === guiltyIndex;
+        hypothesisValidation = {
+          correct: isCorrect,
+          confidence: latestHypothesis.confidence,
+          strength: latestHypothesis.strength
+        };
+      }
+
+      return {
+        used: true,
+        connectionsCount: connections.length,
+        correctConnections,
+        incorrectConnections,
+        hypothesisValidation
+      };
+    } catch (error) {
+      console.error('Error validating Evidence Board:', error);
+      return null;
+    }
+  };
+
   const makeAccusation = (suspectId) => {
-    // Check evidence strength before allowing accusation
-    const evidenceCheck = checkEvidenceStrength(suspectId, currentCase);
     const suspect = currentCase.suspects[suspectId];
 
-    // Show confirmation dialog with evidence strength warning
-    const confirmationMessage = `${evidenceCheck.warning}\n\n` +
-      `Accuse ${suspect.name} of the crime?\n` +
-      `Evidence against them: ${evidenceCheck.evidenceCount}\n` +
-      `Total evidence collected: ${evidenceCheck.totalEvidence}/${currentCase.evidence.length}\n\n` +
+    // Show simple confirmation dialog without revealing evidence strength
+    const confirmationMessage = `Are you sure you want to accuse ${suspect.name} of the crime?\n\n` +
+      `Review your Evidence Board connections before proceeding.\n\n` +
       `This decision is final.`;
 
     if (!confirm(confirmationMessage)) {
@@ -581,6 +635,11 @@ const DetectiveGame = () => {
     }
 
     const result = evaluateAccusation(suspectId, currentCase, hintsUsed);
+
+    // Add Evidence Board validation to result
+    const boardValidation = validateEvidenceBoardConnections(currentCase.id, currentCase.guiltyIndex);
+    result.boardValidation = boardValidation;
+
     setAccusationResult(result);
 
     // Play sound based on result
@@ -1456,28 +1515,6 @@ const DetectiveGame = () => {
 
         <div className="accusation-suspects">
           {currentCase.suspects.map(suspect => {
-            // Add try-catch to prevent render errors
-            let evidenceCheck;
-            try {
-              evidenceCheck = checkEvidenceStrength(suspect.id, currentCase);
-            } catch (error) {
-              console.error('Error checking evidence strength:', error);
-              // Fallback evidence check
-              evidenceCheck = {
-                strength: 'unknown',
-                evidenceCount: 0,
-                totalEvidence: 0,
-                matchingTraits: 0,
-                warning: 'Unable to evaluate evidence',
-                shouldWarn: false
-              };
-            }
-
-            const strengthColor = evidenceCheck.strength === 'strong' ? '#22c55e' :
-                                 evidenceCheck.strength === 'moderate' ? '#f59e0b' :
-                                 evidenceCheck.strength === 'weak' ? '#ef4444' :
-                                 '#94a3b8';
-
             return (
               <div key={suspect.id} className="accusation-card" onClick={() => makeAccusation(suspect.id)}>
                 <h3>{suspect.name}</h3>
@@ -1485,10 +1522,8 @@ const DetectiveGame = () => {
                 <div className="accusation-details">
                   <div>Suspicion: {'⭐'.repeat(suspect.suspicionLevel)}</div>
                   {suspect.questioned && <div>Nervousness: {suspect.nervousness}%</div>}
-                  <div style={{ color: strengthColor, fontWeight: 'bold', marginTop: '8px' }}>
-                    Evidence: {evidenceCheck.evidenceCount > 0 ? `${evidenceCheck.evidenceCount} piece${evidenceCheck.evidenceCount !== 1 ? 's' : ''}` : 'None'}
-                    {evidenceCheck.strength === 'strong' && ' ✓'}
-                    {evidenceCheck.shouldWarn && ' ⚠️'}
+                  <div style={{ marginTop: '8px', color: '#94a3b8' }}>
+                    Use Evidence Board to build your case
                   </div>
                 </div>
                 <button className="accuse-btn">ACCUSE</button>
@@ -1548,6 +1583,45 @@ const DetectiveGame = () => {
           <h3>💭 EVALUATION</h3>
           <p>{accusationResult.feedback}</p>
         </div>
+
+        {accusationResult.boardValidation && (
+          <div className="result-section">
+            <h3>🔍 EVIDENCE BOARD ANALYSIS</h3>
+            {accusationResult.boardValidation.connectionsCount === 0 ? (
+              <p style={{ color: '#f59e0b' }}>⚠️ No connections made on Evidence Board. Consider using it to organize your investigation!</p>
+            ) : (
+              <>
+                <p><strong>Total Connections:</strong> {accusationResult.boardValidation.connectionsCount}</p>
+                <p style={{ color: '#22c55e' }}>
+                  <strong>✓ Correct Connections:</strong> {accusationResult.boardValidation.correctConnections}
+                  {accusationResult.boardValidation.correctConnections > 0 && ' (Evidence linked to guilty party)'}
+                </p>
+                {accusationResult.boardValidation.incorrectConnections > 0 && (
+                  <p style={{ color: '#ef4444' }}>
+                    <strong>✗ Misleading Connections:</strong> {accusationResult.boardValidation.incorrectConnections}
+                    {' (Evidence linked to innocent suspects)'}
+                  </p>
+                )}
+                {accusationResult.boardValidation.hypothesisValidation && (
+                  <div style={{ marginTop: '10px', padding: '10px', background: 'rgba(243, 156, 18, 0.1)', borderRadius: '6px' }}>
+                    <p><strong>📝 Hypothesis:</strong> {accusationResult.boardValidation.hypothesisValidation.correct ? '✓ Correct!' : '✗ Incorrect'}</p>
+                    <p style={{ fontSize: '14px', color: '#94a3b8' }}>
+                      Confidence: {accusationResult.boardValidation.hypothesisValidation.confidence}% |
+                      Strength: {accusationResult.boardValidation.hypothesisValidation.strength}%
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        )}
+
+        {!accusationResult.boardValidation && (
+          <div className="result-section">
+            <h3>🔍 EVIDENCE BOARD</h3>
+            <p style={{ color: '#f59e0b' }}>💡 Tip: Use the Evidence Board to visually organize evidence and build connections between suspects and clues for better deduction!</p>
+          </div>
+        )}
 
         <div className="result-section">
           <h3>🏆 REWARDS</h3>

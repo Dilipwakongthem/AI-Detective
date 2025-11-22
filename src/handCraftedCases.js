@@ -2205,6 +2205,195 @@ The case becomes a study in family dysfunction where nearly everyone committed s
       moderate: 'The DNA match to a known family member is suspicious. Why would the mysterious heir share DNA patterns with Margaret? Also examine the source of authentication documents - Swiss orphanage records from a burned building, Cayman Islands DNA lab, AI-generated photos.',
       major: 'Victoria Ashworth and Bernard Whitmore fabricated James II entirely using stolen DNA from Margaret, forged documents, bribed lab technicians, and AI-generated photos. Evidence: DNA database match to Margaret\'s daughter, digital forensics showing deepfake photos created on Bernard\'s computer, lab technician testimony about $150K bribe, encrypted emails planning fraud, and complete absence of James II in any international database.'
     }
+  },
+
+  {
+    id: 'stolen_manuscript',
+    title: 'The Stolen Manuscript',
+    difficulty: 1,
+    crimeType: 'Theft',
+    priority: 'MEDIUM',
+    location: 'Riverside University Library - Rare Books Section',
+    narrative: {
+      opening: `The Riverside University Library discovered a theft early Monday morning when head librarian Dorothy Chen opened the rare books vault for the day's cataloging work. The vault's prized possession - a first edition of Mary Shelley's "Frankenstein" from 1818, valued at $180,000 - was missing from its display case.
+
+The library's security system showed no signs of forced entry. The vault had been locked at 6 PM Friday evening by Dorothy herself, and the alarm was set properly. When she returned Monday at 8 AM, the vault appeared undisturbed except for the empty display case. The manuscript was simply gone.
+
+Here's what investigators know: Only four people have both the vault access code and keys - Dorothy Chen (head librarian), Professor William Burke (literature department chair who uses the vault for research), James Martinez (library security chief), and Sarah Lin (rare books conservator). The security logs show the vault was accessed once over the weekend - at 2:17 AM on Sunday morning using a valid access code.
+
+The building's exterior security cameras captured all four individuals entering the library at various times over the weekend, but the interior vault camera had mysteriously malfunctioned starting Saturday afternoon. Each person had their own reasons for being in the library during off-hours, and each had opportunity to take the manuscript.
+
+The investigation is straightforward but requires careful attention to detail. Whoever stole the manuscript left traces - a distinctive shoe print near the display case, fingerprints on the case's glass, and most tellingly, the access log that recorded exactly when the vault was entered. The thief also had to know how to disable the vault camera without triggering alerts, suggesting insider knowledge.`,
+
+      twist: `The theft was simpler than it appeared. James Martinez, the security chief, stole the manuscript to pay off gambling debts. He had the perfect position to disable the camera system without raising suspicion, and his security credentials gave him legitimate access to the vault. He planned to sell the manuscript to a private collector he'd met through his gambling contacts.
+
+The twist: James didn't realize that his distinctive work boots (steel-toed security boots required by his job) left a unique tread pattern that matched prints found at the scene. He also forgot that the display case required two-handed opening, meaning he had to set down his coffee cup to open it - leaving his fingerprints despite wearing gloves for the actual theft.`,
+
+      conclusion: `James Martinez stole the manuscript at 2:17 AM Sunday morning. Evidence proves his guilt conclusively:
+
+1. Access log shows vault entry at 2:17 AM with James's access code
+2. Boot print matches James's required steel-toed security boots (size 11, distinctive "SecureStep Pro" tread pattern)
+3. Fingerprints on coffee cup left at scene match James's prints
+4. Security camera was disabled using administrator access (only James and IT have this)
+5. Text messages between James and known fence discussing "rare book sale"
+6. James's financial records show $47,000 in gambling debts
+7. Manuscript found in James's home safe during search warrant execution
+
+The case serves as a tutorial for basic detective work: following access logs, matching physical evidence, and connecting financial motive to opportunity.`
+    },
+    victim: {
+      name: 'Riverside University',
+      age: 'N/A',
+      occupation: 'Educational Institution',
+      background: 'Prestigious private university with rare books collection valued at $2.4 million. The stolen Frankenstein manuscript was the crown jewel, acquired in 1952.',
+      personality: 'N/A - Institutional victim'
+    },
+    suspects: [
+      {
+        name: 'James Martinez',
+        age: 35,
+        occupation: 'Library Security Chief',
+        personality: 'Friendly',
+        motive: 'Gambling Debts',
+        alibi: 'Claims he was home asleep Sunday morning',
+        isGuilty: true,
+        backstory: 'Worked library security for 8 years. Well-liked and trusted. Developed gambling problem over past year, now $47K in debt to bookies. Desperate for money and saw opportunity to steal manuscript for quick cash.',
+        secret: 'Has been meeting with fence to arrange sale of rare items. The Frankenstein manuscript was meant to clear his debts.',
+        attributes: {
+          physical: { height: '6\'0"-6\'3"', build: 'Athletic build', hairColor: 'Black', eyeColor: 'Brown', bloodType: 'O+', handedness: 'Right', shoeSize: 11, hasGlasses: false },
+          behavioral: { phoneArea: '555', voiceQuality: 'Deep and friendly', shoeType: 'Steel-toed security boots', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Dorothy Chen',
+        age: 58,
+        occupation: 'Head Librarian',
+        personality: 'Meticulous',
+        motive: 'False Lead',
+        alibi: 'Was at home with spouse all weekend',
+        isGuilty: false,
+        backstory: 'Head librarian for 15 years. Dedicated to preserving rare books. Takes security very seriously. Last person to lock vault Friday evening. Devastated by the theft.',
+        secret: 'Made a cataloging error last month that she covered up, but it\'s unrelated to the theft. Worried investigators will discover it.',
+        attributes: {
+          physical: { height: '5\'4"-5\'7"', build: 'Slim build', hairColor: 'Gray', eyeColor: 'Dark brown', bloodType: 'A+', handedness: 'Right', shoeSize: 7, hasGlasses: true },
+          behavioral: { phoneArea: '555', voiceQuality: 'Soft and precise', shoeType: 'Comfortable flats', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Professor William Burke',
+        age: 52,
+        occupation: 'Literature Department Chair',
+        personality: 'Arrogant',
+        motive: 'Academic Rivalry',
+        alibi: 'Was in library Saturday researching for upcoming book',
+        isGuilty: false,
+        backstory: 'Renowned Shelley scholar writing definitive biography. Frequently uses rare books vault for research. Was in library Saturday afternoon but left before vault camera was disabled.',
+        secret: 'Plagiarized portions of a colleague\'s work in his upcoming book. Worried about being discovered, but didn\'t steal manuscript.',
+        attributes: {
+          physical: { height: '5\'10"-6\'1"', build: 'Medium build', hairColor: 'Gray', eyeColor: 'Blue', bloodType: 'B+', handedness: 'Right', shoeSize: 10, hasGlasses: true },
+          behavioral: { phoneArea: '555', voiceQuality: 'Pompous', shoeType: 'Leather loafers', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Sarah Lin',
+        age: 29,
+        occupation: 'Rare Books Conservator',
+        personality: 'Nervous',
+        motive: 'Financial Stress',
+        alibi: 'Working late Friday on conservation project',
+        isGuilty: false,
+        backstory: 'Recent hire with student loan debt ($120K). Passionate about book conservation. Was working late Friday but left at 8 PM, before the theft window. Access logs confirm.',
+        secret: 'Has been selling personal belongings to pay student loans, making her seem financially desperate, but she would never steal from the library.',
+        attributes: {
+          physical: { height: '5\'5"-5\'8"', build: 'Slim build', hairColor: 'Black', eyeColor: 'Dark brown', bloodType: 'O-', handedness: 'Left', shoeSize: 7, hasGlasses: false },
+          behavioral: { phoneArea: '555', voiceQuality: 'Quiet and hesitant', shoeType: 'Sneakers', smokingHabit: false }
+        }
+      }
+    ],
+    evidence: [
+      {
+        type: 'Access Logs',
+        description: 'Digital vault access log shows entry at 2:17 AM Sunday using James Martinez\'s access code. No other access recorded between Friday 6 PM lock-up and Monday 8 AM discovery.',
+        location: 'Security System',
+        critical: true,
+        connectedSuspect: 'James Martinez'
+      },
+      {
+        type: 'Fingerprints',
+        description: 'Coffee cup found near display case has James Martinez\'s fingerprints. Cup is from vending machine on security office floor.',
+        location: 'Crime Scene',
+        critical: true,
+        connectedSuspect: 'James Martinez'
+      },
+      {
+        type: 'Shoe Print',
+        description: 'Boot print near display case matches SecureStep Pro steel-toed security boots, size 11. James Martinez wears this exact model for work.',
+        location: 'Crime Scene',
+        critical: true,
+        connectedSuspect: 'James Martinez'
+      },
+      {
+        type: 'Security Footage',
+        description: 'Camera system disabled Saturday 3:47 PM using administrator credentials. Only James and IT department have this access. IT was off-campus all weekend.',
+        location: 'Security System',
+        critical: true,
+        connectedSuspect: 'James Martinez'
+      },
+      {
+        type: 'Text Messages',
+        description: 'Messages between James and contact "Vinny" discussing "rare book opportunity" and "180K item" sent Saturday night.',
+        location: 'James\'s Phone',
+        critical: true,
+        connectedSuspect: 'James Martinez'
+      },
+      {
+        type: 'Financial Documents',
+        description: 'James owes $47,000 to three different bookies. Recent text messages show escalating threats.',
+        location: 'Financial Records',
+        critical: true,
+        connectedSuspect: 'James Martinez'
+      },
+      {
+        type: 'Search Warrant Evidence',
+        description: 'Frankenstein manuscript found in safe at James\'s apartment. Still in library protective case.',
+        location: 'James\'s Apartment',
+        critical: true,
+        connectedSuspect: 'James Martinez'
+      },
+      {
+        type: 'Witness Testimony',
+        description: 'Dorothy Chen\'s spouse confirms she was home all weekend. They watched movies together Sunday morning.',
+        location: 'Witness Interview',
+        critical: false,
+        connectedSuspect: 'Dorothy Chen'
+      },
+      {
+        type: 'Security Footage',
+        description: 'Professor Burke entered library Saturday at 1:15 PM and left at 5:30 PM. Hours before theft occurred.',
+        location: 'Building Security',
+        critical: false,
+        connectedSuspect: 'Professor William Burke'
+      },
+      {
+        type: 'Access Logs',
+        description: 'Sarah Lin accessed vault Friday at 4:30 PM for conservation work. Left building at 8:05 PM per building security log.',
+        location: 'Security System',
+        critical: false,
+        connectedSuspect: 'Sarah Lin'
+      },
+      {
+        type: 'Financial Documents',
+        description: 'Sarah Lin has $120K student loan debt but makes regular payments. No unusual financial activity.',
+        location: 'Bank Records',
+        critical: false,
+        connectedSuspect: 'Sarah Lin'
+      }
+    ],
+    hints: {
+      subtle: 'Check the access logs carefully - they show exactly when the vault was entered. Also look at who had the ability to disable security cameras.',
+      moderate: 'The boot print and coffee cup are key physical evidence. Who wears steel-toed boots as part of their job? And check the fingerprints on that coffee cup.',
+      major: 'James Martinez used his access code at 2:17 AM Sunday. His steel-toed security boots left prints at the scene. His fingerprints are on the coffee cup. Camera disabled with admin access only he had. Text messages discuss selling the manuscript. He has $47K gambling debts.'
+    }
   }
 ];
 

@@ -447,9 +447,6 @@ const DetectiveGame = () => {
     setGameState('investigation');
     addLog('🔍 Investigation started. Explore the crime scene and gather evidence.');
 
-    // Scroll to latest log entry
-    setTimeout(() => scrollLogToBottom(), 200);
-
     // Trigger tutorial event
     if (interactiveTutorial.isActive()) {
       const advanced = interactiveTutorial.triggerEvent('investigation_started');

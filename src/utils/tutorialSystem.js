@@ -207,12 +207,19 @@ class TutorialSystem {
         this.currentStep = state.currentStep || null;
         this.completedSteps = state.completedSteps || [];
         this.skipped = state.skipped || false;
+        console.log('[TutorialSystem] Loaded saved state:', {
+          enabled: this.enabled,
+          currentStep: this.currentStep,
+          completedSteps: this.completedSteps.length,
+          skipped: this.skipped
+        });
       } else {
         // First time player - tutorial will be enabled when they start their first case
         this.enabled = true;
         this.currentStep = null; // Don't show tutorial on main menu
         this.completedSteps = [];
         this.skipped = false;
+        console.log('[TutorialSystem] First time player - tutorial ready to start');
       }
     } catch (error) {
       console.error('Error loading tutorial state:', error);
@@ -238,9 +245,16 @@ class TutorialSystem {
 
   // Start the tutorial (called when player starts their first case)
   start() {
+    console.log('[TutorialSystem] start() called - enabled:', this.enabled,
+                'skipped:', this.skipped, 'completedSteps:', this.completedSteps.length);
+
     if (this.enabled && !this.skipped && this.completedSteps.length === 0) {
+      console.log('[TutorialSystem] Starting tutorial, setting currentStep to welcome');
       this.currentStep = 'welcome';
       this.saveState();
+      console.log('[TutorialSystem] Tutorial started, isActive:', this.isActive());
+    } else {
+      console.log('[TutorialSystem] Tutorial not started - conditions not met');
     }
   }
 

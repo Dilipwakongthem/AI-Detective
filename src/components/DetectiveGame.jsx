@@ -170,27 +170,18 @@ const DetectiveGame = () => {
     };
   }, []);
 
-  // Tutorial system - check if tutorial should be active
+  // Tutorial system - initial state check only
   useEffect(() => {
-    const updateTutorialState = () => {
-      const isActive = tutorialSystem.isActive();
-      setTutorialActive(isActive);
+    const isActive = tutorialSystem.isActive();
+    const step = tutorialSystem.getCurrentStep();
 
-      if (isActive) {
-        const step = tutorialSystem.getCurrentStep();
-        setCurrentTutorialStep(step);
-      } else {
-        setCurrentTutorialStep(null);
-      }
-    };
+    console.log('[Tutorial Init] Initial state - isActive:', isActive, 'step:', step?.id);
 
-    // Initial check
-    updateTutorialState();
+    setTutorialActive(isActive);
+    setCurrentTutorialStep(step);
 
-    // Set up interval to check tutorial state (in case it changes)
-    const interval = setInterval(updateTutorialState, 500);
-
-    return () => clearInterval(interval);
+    // Note: We don't use an interval anymore to avoid conflicts
+    // Tutorial state is updated directly when actions happen (startInvestigation, nextStep, etc.)
   }, []);
 
   // Notification system
@@ -435,11 +426,20 @@ const DetectiveGame = () => {
     addLog('🔍 Investigation started. Explore the crime scene and gather evidence.');
 
     // Start tutorial for first-time players when they begin their first case
-    if (!tutorialSystem.isActive() && tutorialSystem.enabled && !tutorialSystem.skipped) {
-      tutorialSystem.start();
-      setCurrentTutorialStep(tutorialSystem.getCurrentStep());
-      setTutorialActive(tutorialSystem.isActive());
-    }
+    // Use setTimeout to ensure state updates happen after gameState change
+    setTimeout(() => {
+      if (!tutorialSystem.isActive() && tutorialSystem.enabled && !tutorialSystem.skipped) {
+        console.log('[Tutorial] Starting tutorial for first-time player');
+        tutorialSystem.start();
+        const step = tutorialSystem.getCurrentStep();
+        console.log('[Tutorial] Current step:', step?.id);
+        setCurrentTutorialStep(step);
+        setTutorialActive(true);
+      } else {
+        console.log('[Tutorial] Not starting - isActive:', tutorialSystem.isActive(),
+                    'enabled:', tutorialSystem.enabled, 'skipped:', tutorialSystem.skipped);
+      }
+    }, 100);
   };
 
   const investigateLocation = async (locationName) => {
@@ -638,11 +638,18 @@ const DetectiveGame = () => {
 
   // Tutorial handlers
   const handleTutorialNext = () => {
+    console.log('[Tutorial] Next step clicked');
     tutorialSystem.nextStep();
-    setCurrentTutorialStep(tutorialSystem.getCurrentStep());
+    const newStep = tutorialSystem.getCurrentStep();
+    console.log('[Tutorial] New step:', newStep?.id);
+    setCurrentTutorialStep(newStep);
+    if (!newStep) {
+      setTutorialActive(false);
+    }
   };
 
   const handleTutorialSkip = () => {
+    console.log('[Tutorial] Skip clicked');
     tutorialSystem.skip();
     setTutorialActive(false);
     setCurrentTutorialStep(null);
@@ -650,6 +657,7 @@ const DetectiveGame = () => {
   };
 
   const handleTutorialComplete = () => {
+    console.log('[Tutorial] Complete clicked');
     tutorialSystem.complete();
     setTutorialActive(false);
     setCurrentTutorialStep(null);
@@ -1649,15 +1657,25 @@ const DetectiveGame = () => {
       )}
 
       {/* Tutorial Modal - Only show during active case gameplay */}
-      {tutorialActive && currentTutorialStep &&
-       (gameState === 'investigation' || gameState === 'interrogation' || gameState === 'accusation') && (
-        <TutorialModal
-          step={currentTutorialStep}
-          onNext={handleTutorialNext}
-          onSkip={handleTutorialSkip}
-          onComplete={handleTutorialComplete}
-        />
-      )}
+      {(() => {
+        const shouldShow = tutorialActive && currentTutorialStep &&
+          (gameState === 'investigation' || gameState === 'interrogation' || gameState === 'accusation');
+
+        if (tutorialActive || currentTutorialStep) {
+          console.log('[Tutorial Render] tutorialActive:', tutorialActive,
+                      'hasStep:', !!currentTutorialStep, 'stepId:', currentTutorialStep?.id,
+                      'gameState:', gameState, 'shouldShow:', shouldShow);
+        }
+
+        return shouldShow ? (
+          <TutorialModal
+            step={currentTutorialStep}
+            onNext={handleTutorialNext}
+            onSkip={handleTutorialSkip}
+            onComplete={handleTutorialComplete}
+          />
+        ) : null;
+      })()}
 
       {/* Notification System */}
       {notification && (

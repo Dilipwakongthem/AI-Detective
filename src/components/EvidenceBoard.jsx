@@ -3,9 +3,12 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import EvidenceCard from './EvidenceCard';
+import GridCell from './GridCell';
+import SidebarItem from './SidebarItem';
 import ConnectionLine from './ConnectionLine';
 import ConnectionModal from './ConnectionModal';
 import HypothesisBuilder from './HypothesisBuilder';
+import HypothesisList from './HypothesisList';
 import './EvidenceBoard.css';
 
 /**
@@ -32,6 +35,7 @@ const EvidenceBoard = ({
   const [showConnectionModal, setShowConnectionModal] = useState(false);
   const [currentConnection, setCurrentConnection] = useState(null);
   const [showHypothesisBuilder, setShowHypothesisBuilder] = useState(false);
+  const [showHypothesisList, setShowHypothesisList] = useState(false);
   const [viewMode, setViewMode] = useState('standard'); // standard | timeline | connections
 
   // Undo/Redo stack
@@ -53,6 +57,40 @@ const EvidenceBoard = ({
   useEffect(() => {
     loadBoardState();
   }, [caseData]);
+
+  /**
+   * Keyboard shortcuts
+   */
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ctrl+Z or Cmd+Z - Undo
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        handleUndo();
+      }
+      // Ctrl+Y or Cmd+Shift+Z - Redo
+      else if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.shiftKey && e.key === 'z'))) {
+        e.preventDefault();
+        handleRedo();
+      }
+      // Delete or Backspace - Remove selected card
+      else if ((e.key === 'Delete' || e.key === 'Backspace') && selectedCard && !isConnecting) {
+        e.preventDefault();
+        handleRemoveCard(selectedCard);
+      }
+      // Escape - Cancel connection mode
+      else if (e.key === 'Escape' && isConnecting) {
+        e.preventDefault();
+        setIsConnecting(false);
+        setConnectionStart(null);
+        setSelectedCard(null);
+        showNotification('Connection cancelled', 'info');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [historyIndex, actionHistory, selectedCard, isConnecting]);
 
   /**
    * Load board state from localStorage
@@ -184,9 +222,16 @@ const EvidenceBoard = ({
   };
 
   /**
-   * Handle card drop on board
+   * Handle card drop on board (from sidebar or moving existing card)
    */
-  const handleCardDrop = (cardData, gridPosition) => {
+  const handleCardDrop = (item, gridPosition) => {
+    // If moving existing card
+    if (item.isOnBoard && item.cardId) {
+      handleCardMove(item.cardId, gridPosition);
+      return { position: gridPosition };
+    }
+
+    // Adding new card from sidebar
     // Check if position is occupied
     const occupied = boardCards.some(c =>
       c.position.x === gridPosition.x && c.position.y === gridPosition.y
@@ -199,15 +244,17 @@ const EvidenceBoard = ({
 
     const newCard = {
       id: `card_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      type: cardData.type, // 'evidence' | 'suspect'
-      dataId: cardData.id, // Reference to evidence/suspect ID
+      type: item.type, // 'evidence' | 'suspect'
+      dataId: item.id, // Reference to evidence/suspect ID
       position: gridPosition,
-      data: cardData
+      data: item.data || item
     };
 
     setBoardCards(prev => [...prev, newCard]);
     addAction({ type: 'ADD_CARD', payload: newCard });
-    showNotification(`Added ${cardData.type} to board`, 'success');
+    showNotification(`Added ${item.type} to board`, 'success');
+
+    return { position: gridPosition };
   };
 
   /**
@@ -317,14 +364,27 @@ const EvidenceBoard = ({
   };
 
   /**
-   * Save connection with properties
+   * Save connection with properties (create or update)
    */
   const handleSaveConnection = (connectionData) => {
-    setConnections(prev => [...prev, connectionData]);
-    addAction({ type: 'ADD_CONNECTION', payload: connectionData });
+    // Check if this is an existing connection (has id and exists in connections array)
+    const existingIndex = connections.findIndex(c => c.id === connectionData.id);
+
+    if (existingIndex !== -1) {
+      // Update existing connection
+      setConnections(prev => prev.map(c =>
+        c.id === connectionData.id ? connectionData : c
+      ));
+      showNotification('Connection updated', 'success');
+    } else {
+      // Create new connection
+      setConnections(prev => [...prev, connectionData]);
+      addAction({ type: 'ADD_CONNECTION', payload: connectionData });
+      showNotification('Connection created', 'success');
+    }
+
     setShowConnectionModal(false);
     setCurrentConnection(null);
-    showNotification('Connection created', 'success');
   };
 
   /**
@@ -361,7 +421,7 @@ const EvidenceBoard = ({
   };
 
   /**
-   * Render grid cells
+   * Render grid cells with drop zones
    */
   const renderGrid = () => {
     const cells = [];
@@ -373,17 +433,13 @@ const EvidenceBoard = ({
         );
 
         cells.push(
-          <div
+          <GridCell
             key={`cell-${row}-${col}`}
-            className={`grid-cell ${isOccupied ? 'occupied' : ''}`}
-            style={{
-              left: col * CELL_SIZE,
-              top: row * CELL_SIZE,
-              width: CELL_SIZE,
-              height: CELL_SIZE
-            }}
-            data-x={col}
-            data-y={row}
+            x={col}
+            y={row}
+            cellSize={CELL_SIZE}
+            isOccupied={isOccupied}
+            onDrop={handleCardDrop}
           />
         );
       }
@@ -466,6 +522,14 @@ const EvidenceBoard = ({
               >
                 💭 Build Hypothesis
               </button>
+              {hypotheses.length > 0 && (
+                <button
+                  className="board-btn"
+                  onClick={() => setShowHypothesisList(true)}
+                >
+                  📋 View Hypotheses ({hypotheses.length})
+                </button>
+              )}
               <button className="board-close-btn" onClick={onClose}>✕</button>
             </div>
           </div>
@@ -480,22 +544,11 @@ const EvidenceBoard = ({
                 {caseData.evidence
                   .filter(e => e.discovered)
                   .map(evidence => (
-                    <div
+                    <SidebarItem
                       key={evidence.id}
-                      className="evidence-list-item"
-                      draggable
-                      onClick={() => {
-                        // Quick add to board (random position)
-                        const randomX = Math.floor(Math.random() * GRID_COLS);
-                        const randomY = Math.floor(Math.random() * GRID_ROWS);
-                        handleCardDrop(
-                          { type: 'evidence', id: evidence.id, ...evidence },
-                          { x: randomX, y: randomY }
-                        );
-                      }}
-                    >
-                      🔍 {evidence.type}
-                    </div>
+                      item={evidence}
+                      itemType="evidence"
+                    />
                   ))
                 }
               </div>
@@ -503,21 +556,11 @@ const EvidenceBoard = ({
               <h3 style={{ marginTop: '20px' }}>👥 Suspects</h3>
               <div className="suspect-list">
                 {caseData.suspects.map(suspect => (
-                  <div
+                  <SidebarItem
                     key={suspect.id}
-                    className="suspect-list-item"
-                    draggable
-                    onClick={() => {
-                      const randomX = Math.floor(Math.random() * GRID_COLS);
-                      const randomY = Math.floor(Math.random() * GRID_ROWS);
-                      handleCardDrop(
-                        { type: 'suspect', id: suspect.id, ...suspect },
-                        { x: randomX, y: randomY }
-                      );
-                    }}
-                  >
-                    👤 {suspect.name}
-                  </div>
+                    item={suspect}
+                    itemType="suspect"
+                  />
                 ))}
               </div>
             </div>
@@ -608,6 +651,25 @@ const EvidenceBoard = ({
                 showNotification('Hypothesis created', 'success');
               }}
               onClose={() => setShowHypothesisBuilder(false)}
+            />
+          )}
+
+          {showHypothesisList && (
+            <HypothesisList
+              hypotheses={hypotheses}
+              suspects={caseData.suspects}
+              onEdit={(hypothesis) => {
+                // TODO: Implement hypothesis editing
+                showNotification('Hypothesis editing coming soon', 'info');
+                setShowHypothesisList(false);
+              }}
+              onDelete={(hypoId) => {
+                if (window.confirm('Delete this hypothesis?')) {
+                  setHypotheses(prev => prev.filter(h => h.id !== hypoId));
+                  showNotification('Hypothesis deleted', 'info');
+                }
+              }}
+              onClose={() => setShowHypothesisList(false)}
             />
           )}
         </div>

@@ -1,0 +1,382 @@
+/* Hypothesis List Styling */
+
+.hypothesis-list-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3500;
+  animation: fadeIn 0.2s ease;
+}
+
+.hypothesis-list-modal {
+  background: #2d2d44;
+  border: 2px solid #3d3d5c;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 1000px;
+  max-height: 85vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.6);
+}
+
+.hypothesis-list-header {
+  background: #16213e;
+  padding: 20px;
+  border-bottom: 2px solid #3d3d5c;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hypothesis-list-header h2 {
+  color: #f39c12;
+  margin: 0;
+  font-size: 22px;
+}
+
+.header-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.view-toggle {
+  background: #3d3d5c;
+  color: #e4e4e4;
+  border: 1px solid #4d4d6c;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.view-toggle:hover:not(:disabled) {
+  background: #4d4d6c;
+}
+
+.view-toggle.active {
+  background: #f39c12;
+  color: #1e1e2e;
+  border-color: #f39c12;
+}
+
+.view-toggle:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.close-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  transition: all 0.2s;
+}
+
+.close-btn:hover {
+  background: #c0392b;
+  transform: rotate(90deg);
+}
+
+.hypothesis-list-content {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Hypothesis Cards */
+.hypotheses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 20px;
+}
+
+.hypothesis-card {
+  background: #16213e;
+  border: 2px solid #3d3d5c;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.hypothesis-card:hover {
+  border-color: #f39c12;
+  transform: translateY(-2px);
+}
+
+.hypothesis-card.selected {
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.3);
+}
+
+.hypothesis-card-header {
+  background: #0f1419;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #3d3d5c;
+}
+
+.hypothesis-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #f39c12;
+  font-size: 16px;
+}
+
+.hypothesis-icon {
+  font-size: 20px;
+}
+
+.hypothesis-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.hypothesis-action-btn {
+  background: #3d3d5c;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.hypothesis-action-btn:hover {
+  background: #4d4d6c;
+  transform: scale(1.1);
+}
+
+.hypothesis-delete {
+  background: #e74c3c;
+}
+
+.hypothesis-delete:hover {
+  background: #c0392b;
+}
+
+.hypothesis-card-body {
+  padding: 15px;
+}
+
+.hypothesis-field {
+  margin-bottom: 12px;
+}
+
+.field-label {
+  color: #f39c12;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.field-value {
+  color: #e4e4e4;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.hypothesis-metrics {
+  margin: 15px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.metric {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.metric-label {
+  color: #7f8c8d;
+  font-size: 12px;
+  width: 80px;
+}
+
+.metric-bar {
+  flex: 1;
+  height: 12px;
+  background: #0f1419;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #3d3d5c;
+}
+
+.metric-fill {
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+.metric-value {
+  color: #e4e4e4;
+  font-size: 12px;
+  font-weight: bold;
+  width: 60px;
+  text-align: right;
+}
+
+.hypothesis-meta {
+  display: flex;
+  justify-content: space-between;
+  color: #7f8c8d;
+  font-size: 12px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #3d3d5c;
+}
+
+.hypothesis-notes {
+  margin-top: 15px;
+  padding: 10px;
+  background: #0f1419;
+  border-radius: 6px;
+  border-left: 3px solid #f39c12;
+}
+
+.notes-label {
+  color: #f39c12;
+  font-size: 11px;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.hypothesis-notes p {
+  color: #e4e4e4;
+  font-size: 13px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Comparison View */
+.comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.comparison-column {
+  background: #16213e;
+  border: 2px solid #3d3d5c;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.comparison-column h4 {
+  color: #f39c12;
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #3d3d5c;
+}
+
+.comparison-field {
+  margin-bottom: 15px;
+}
+
+.comparison-field strong {
+  color: #7f8c8d;
+  font-size: 12px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.comparison-field p {
+  color: #e4e4e4;
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.comparison-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #7f8c8d;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #7f8c8d;
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+}
+
+.empty-state p {
+  font-size: 18px;
+  margin: 10px 0;
+}
+
+.empty-hint {
+  font-size: 14px;
+  color: #5f6c7d !important;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Scrollbar */
+.hypothesis-list-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.hypothesis-list-content::-webkit-scrollbar-track {
+  background: #1e1e2e;
+}
+
+.hypothesis-list-content::-webkit-scrollbar-thumb {
+  background: #3d3d5c;
+  border-radius: 4px;
+}
+
+.hypothesis-list-content::-webkit-scrollbar-thumb:hover {
+  background: #4d4d6c;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .hypotheses-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .comparison-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hypothesis-list-modal {
+    width: 95%;
+    max-height: 90vh;
+  }
+}

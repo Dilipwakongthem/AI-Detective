@@ -18,17 +18,30 @@ const EvidenceCard = ({
 }) => {
   const cardRef = useRef(null);
 
-  // Drag functionality
+  // Drag functionality for cards already on board
   const [{ isDragging }, drag] = useDrag({
     type: 'BOARD_CARD',
-    item: () => ({ id: card.id, type: card.type }),
+    item: () => ({
+      id: card.id,
+      cardId: card.id,
+      type: card.type,
+      dataId: card.dataId,
+      currentPosition: card.position,
+      isOnBoard: true
+    }),
     collect: (monitor) => ({
       isDragging: monitor.isDragging()
-    })
+    }),
+    end: (item, monitor) => {
+      const dropResult = monitor.getDropResult();
+      if (dropResult && dropResult.position) {
+        onMove(card.id, dropResult.position);
+      }
+    }
   });
 
   /**
-   * Handle click - for connection mode
+   * Handle click - for connection mode or selection
    */
   const handleClick = (e) => {
     e.stopPropagation();
@@ -84,7 +97,8 @@ const EvidenceCard = ({
         top: card.position.y * cellSize,
         width: cellSize - 10,
         height: cellSize - 10,
-        borderColor: display.color
+        borderColor: display.color,
+        cursor: isDragging ? 'grabbing' : 'grab'
       }}
       onClick={handleClick}
     >

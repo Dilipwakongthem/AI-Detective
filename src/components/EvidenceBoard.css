@@ -184,12 +184,36 @@
   position: absolute;
   border: 1px dashed rgba(255, 255, 255, 0.05);
   transition: all 0.2s;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .grid-cell.occupied {
   background: rgba(243, 156, 18, 0.05);
   border-color: rgba(243, 156, 18, 0.2);
+}
+
+.grid-cell.drop-target {
+  background: rgba(52, 152, 219, 0.3);
+  border-color: #3498db;
+  border-style: solid;
+  border-width: 2px;
+  animation: dropPulse 0.5s infinite alternate;
+}
+
+.grid-cell.drop-invalid {
+  background: rgba(231, 76, 60, 0.2);
+  border-color: #e74c3c;
+  border-style: solid;
+  cursor: not-allowed;
+}
+
+@keyframes dropPulse {
+  from {
+    background: rgba(52, 152, 219, 0.2);
+  }
+  to {
+    background: rgba(52, 152, 219, 0.4);
+  }
 }
 
 /* Empty State */

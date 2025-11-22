@@ -13,6 +13,7 @@ import Timeline from './Timeline';
 import ConnectionInsights from './ConnectionInsights';
 import EvidenceBoardTutorial, { shouldShowTutorial } from './EvidenceBoardTutorial';
 import CardNotesModal from './CardNotesModal';
+import FilterPanel from './FilterPanel';
 import './EvidenceBoard.css';
 
 /**
@@ -47,6 +48,12 @@ const EvidenceBoard = ({
   const [showNotesModal, setShowNotesModal] = useState(false);
   const [currentNotesCard, setCurrentNotesCard] = useState(null);
   const [viewMode, setViewMode] = useState('standard'); // standard | timeline | connections
+
+  // Filter state
+  const [searchTerm, setSearchTerm] = useState('');
+  const [locationFilter, setLocationFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
+  const [showConnectedOnly, setShowConnectedOnly] = useState(false);
 
   // Undo/Redo stack
   const [actionHistory, setActionHistory] = useState([]);

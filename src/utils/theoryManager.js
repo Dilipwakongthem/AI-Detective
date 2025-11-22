@@ -85,7 +85,6 @@ export const addTheory = (caseId, theoryData) => {
   data.theories.push(theory);
 
   if (saveTheoryData(data)) {
-    console.log('Theory added:', theory.id);
     return theory;
   }
 

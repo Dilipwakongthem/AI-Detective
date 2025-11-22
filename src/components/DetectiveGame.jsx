@@ -396,35 +396,45 @@ const DetectiveGame = () => {
   };
 
   const startNewCase = (isLegendary = false, suppressNotification = false) => {
-    // Check if player can start a case
-    const caseAvailability = canStartCase();
+    // Tutorial cases are free - skip case availability check
+    const isTutorialCase = interactiveTutorial.isActive();
 
-    if (!caseAvailability.canStart) {
-      // No cases available - show modal
-      setShowCaseLimitModal(true);
-      return;
-    }
+    if (!isTutorialCase) {
+      // Check if player can start a case (only for non-tutorial cases)
+      const caseAvailability = canStartCase();
 
-    // Determine which case source to use and deduct
-    let caseSource = 'daily';
-
-    if (caseAvailability.dailyRemaining > 0) {
-      const result = useDailyCase();
-      caseSource = 'daily';
-      if (!suppressNotification) {
-        showNotification(`Daily case used. ${result.remaining} free cases remaining today.`, 'info');
+      if (!caseAvailability.canStart) {
+        // No cases available - show modal
+        setShowCaseLimitModal(true);
+        return;
       }
-    } else if (caseAvailability.bonusRemaining > 0) {
-      const result = useBonusCase();
-      caseSource = 'bonus';
-      if (!suppressNotification) {
-        showNotification(`Bonus case used. ${result.remaining} bonus cases remaining today.`, 'info');
+
+      // Determine which case source to use and deduct
+      let caseSource = 'daily';
+
+      if (caseAvailability.dailyRemaining > 0) {
+        const result = useDailyCase();
+        caseSource = 'daily';
+        if (!suppressNotification) {
+          showNotification(`Daily case used. ${result.remaining} free cases remaining today.`, 'info');
+        }
+      } else if (caseAvailability.bonusRemaining > 0) {
+        const result = useBonusCase();
+        caseSource = 'bonus';
+        if (!suppressNotification) {
+          showNotification(`Bonus case used. ${result.remaining} bonus cases remaining today.`, 'info');
+        }
+      } else if (caseAvailability.caseFilesRemaining > 0) {
+        const result = useCaseFile();
+        caseSource = 'purchased';
+        if (!suppressNotification) {
+          showNotification(`Case file used. ${result.remaining} case files remaining.`, 'success');
+        }
       }
-    } else if (caseAvailability.caseFilesRemaining > 0) {
-      const result = useCaseFile();
-      caseSource = 'purchased';
+    } else {
+      // Tutorial case - show tutorial notification
       if (!suppressNotification) {
-        showNotification(`Case file used. ${result.remaining} case files remaining.`, 'success');
+        showNotification('📚 Tutorial case - Play for FREE!', 'info');
       }
     }
 

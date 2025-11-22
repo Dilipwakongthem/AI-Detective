@@ -2394,6 +2394,192 @@ The case serves as a tutorial for basic detective work: following access logs, m
       moderate: 'The boot print and coffee cup are key physical evidence. Who wears steel-toed boots as part of their job? And check the fingerprints on that coffee cup.',
       major: 'James Martinez used his access code at 2:17 AM Sunday. His steel-toed security boots left prints at the scene. His fingerprints are on the coffee cup. Camera disabled with admin access only he had. Text messages discuss selling the manuscript. He has $47K gambling debts.'
     }
+  },
+
+  {
+    id: 'poisoned_pen',
+    title: 'The Poisoned Pen',
+    difficulty: 2,
+    crimeType: 'Blackmail',
+    priority: 'MEDIUM',
+    location: 'Millbrook Herald Newspaper Office',
+    narrative: {
+      opening: `The quiet town of Millbrook was shaken when three prominent citizens received anonymous blackmail letters within a week, each threatening to expose embarrassing secrets unless payment was made. The letters, typed on vintage typewriter, were unsigned but carried specific details only an insider could know. When the third victim, Mayor Patricia Lawson, refused to pay and instead went to the police, the situation escalated - someone broke into her home office and assaulted her assistant who was working late.
+
+The investigation centers on five suspects, all connected to the Millbrook Herald newspaper office where an old typewriter matching the letters was found in the storage room. Each suspect had access to the office, motive to blackmail the victims, and secrets of their own to protect.`,
+
+      twist: `The blackmailer is Linda Morrison, the newspaper's investigative journalist who discovered the secrets while researching articles. She used the information to blackmail victims to fund her daughter's experimental cancer treatment ($180K). When Mayor Lawson refused to pay and threatened to expose the blackmail scheme, Linda panicked and confronted her, leading to the assault.`,
+
+      conclusion: `Linda Morrison committed blackmail and assault. Evidence: typewriter ribbon analysis matches letters, her fingerprints on storage room typewriter, medical bills showing desperate financial need, and security footage showing her at mayor's home during assault. Her daughter's cancer diagnosis provides tragic motive but doesn't excuse her crimes.`
+    },
+    victim: {
+      name: 'Multiple Victims (Blackmail)',
+      age: 'Various',
+      occupation: 'Prominent Citizens',
+      background: 'Three victims: business owner (affair), councilman (embezzlement), mayor (family scandal). Each received letters demanding $50K payment.',
+      personality: 'N/A - Multiple victims'
+    },
+    suspects: [
+      {
+        name: 'Linda Morrison',
+        age: 42,
+        occupation: 'Investigative Journalist',
+        personality: 'Desperate',
+        motive: 'Medical Bills',
+        alibi: 'Claims she was working late at newspaper office',
+        isGuilty: true,
+        backstory: 'Award-winning journalist who discovered secrets while researching corruption story. Daughter diagnosed with rare cancer requires $180K experimental treatment not covered by insurance. Desperate circumstances led to blackmail.',
+        secret: 'Typed blackmail letters using newspaper storage typewriter. When Mayor refused payment and threatened exposure, Linda assaulted her assistant in panic.',
+        attributes: {
+          physical: { height: '5\'6"-5\'9"', build: 'Medium build', hairColor: 'Dark brown', eyeColor: 'Hazel', bloodType: 'A+', handedness: 'Right', shoeSize: 8, hasGlasses: true },
+          behavioral: { phoneArea: '555', voiceQuality: 'Professional', shoeType: 'Flats', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Robert Chen',
+        age: 55,
+        occupation: 'Newspaper Editor',
+        personality: 'Gruff',
+        motive: 'False Lead',
+        alibi: 'Home with family during incidents',
+        isGuilty: false,
+        backstory: 'Long-time editor who knows all town secrets from years of journalism. Seems obvious suspect but is actually innocent. Has grudge against mayor over censorship dispute.',
+        secret: 'Knows about victims\' secrets from past stories but never acted on information. His conflict with mayor is red herring.',
+        attributes: {
+          physical: { height: '5\'10"-6\'1"', build: 'Heavy build', hairColor: 'Gray', eyeColor: 'Brown', bloodType: 'O+', handedness: 'Right', shoeSize: 11, hasGlasses: true },
+          behavioral: { phoneArea: '555', voiceQuality: 'Gruff', shoeType: 'Loafers', smokingHabit: true }
+        }
+      },
+      {
+        name: 'Councilman David Torres',
+        age: 48,
+        occupation: 'City Councilman',
+        personality: 'Nervous',
+        motive: 'One of the Victims',
+        alibi: 'At city council meeting during assault',
+        isGuilty: false,
+        backstory: 'One of three blackmail victims. Letter threatened to expose his embezzlement of campaign funds ($35K). Paid the blackmail out of fear.',
+        secret: 'Embezzled campaign funds and paid blackmail to keep secret. Victim, not perpetrator.',
+        attributes: {
+          physical: { height: '5\'8"-5\'11"', build: 'Slim build', hairColor: 'Black', eyeColor: 'Dark brown', bloodType: 'B+', handedness: 'Right', shoeSize: 10, hasGlasses: false },
+          behavioral: { phoneArea: '555', voiceQuality: 'Nervous', shoeType: 'Dress shoes', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Margaret Sullivan',
+        age: 38,
+        occupation: 'Business Owner',
+        personality: 'Defensive',
+        motive: 'Victim with Secret',
+        alibi: 'Working at business during assault',
+        isGuilty: false,
+        backstory: 'Owner of local hardware store. First blackmail victim - letter threatened to expose affair with employee. Paid $50K to keep marriage intact.',
+        secret: 'Having affair with 24-year-old employee. Victim who paid blackmail demand.',
+        attributes: {
+          physical: { height: '5\'7"-5\'10"', build: 'Athletic build', hairColor: 'Blonde', eyeColor: 'Blue', bloodType: 'O-', handedness: 'Right', shoeSize: 9, hasGlasses: false },
+          behavioral: { phoneArea: '555', voiceQuality: 'Firm', shoeType: 'Sneakers', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Sarah Kim',
+        age: 26,
+        occupation: 'Copy Editor',
+        personality: 'Anxious',
+        motive: 'Financial Stress',
+        alibi: 'At home streaming video games (Twitch channel confirms)',
+        isGuilty: false,
+        backstory: 'Junior employee with student loan debt. Has access to newspaper office but lacks motive. Her financial stress makes her seem suspicious.',
+        secret: 'Struggling with debt but would never commit blackmail. Red herring suspect.',
+        attributes: {
+          physical: { height: '5\'4"-5\'7"', build: 'Slim build', hairColor: 'Black', eyeColor: 'Dark brown', bloodType: 'A-', handedness: 'Left', shoeSize: 7, hasGlasses: true },
+          behavioral: { phoneArea: '555', voiceQuality: 'Quiet', shoeType: 'Sneakers', smokingHabit: false }
+        }
+      }
+    ],
+    evidence: [
+      {
+        type: 'Typewriter Analysis',
+        description: 'Blackmail letters typed on vintage Underwood typewriter. Same typewriter found in newspaper storage room. Ribbon analysis matches letter content.',
+        location: 'Forensics Lab',
+        critical: true,
+        connectedSuspect: 'Linda Morrison'
+      },
+      {
+        type: 'Fingerprints',
+        description: 'Linda Morrison\'s fingerprints found on storage room typewriter and on envelope of second blackmail letter.',
+        location: 'Crime Lab',
+        critical: true,
+        connectedSuspect: 'Linda Morrison'
+      },
+      {
+        type: 'Security Footage',
+        description: 'Video shows Linda Morrison at Mayor Lawson\'s home office area 15 minutes before assault. She appears agitated.',
+        location: 'Building Security',
+        critical: true,
+        connectedSuspect: 'Linda Morrison'
+      },
+      {
+        type: 'Medical Records',
+        description: 'Linda\'s daughter diagnosed with rare cancer. Treatment requires $180K not covered by insurance. Bills dated two weeks before first blackmail letter.',
+        location: 'Hospital',
+        critical: true,
+        connectedSuspect: 'Linda Morrison'
+      },
+      {
+        type: 'Financial Documents',
+        description: 'Linda made deposits totaling $100K (two victims paid). Deposit dates match days after blackmail letters were delivered.',
+        location: 'Bank Records',
+        critical: true,
+        connectedSuspect: 'Linda Morrison'
+      },
+      {
+        type: 'Witness Testimony',
+        description: 'Mayor\'s assistant describes assailant as female, medium build, wearing glasses. Matches Linda Morrison.',
+        location: 'Hospital Interview',
+        critical: true,
+        connectedSuspect: 'Linda Morrison'
+      },
+      {
+        type: 'Access Logs',
+        description: 'Newspaper office keycard logs show Linda accessed storage room (where typewriter kept) late at night three times matching dates before each letter was sent.',
+        location: 'Building Security',
+        critical: true,
+        connectedSuspect: 'Linda Morrison'
+      },
+      {
+        type: 'Financial Documents',
+        description: 'Councilman Torres embezzled $35K from campaign funds. Blackmail letter details match financial forensics.',
+        location: 'Campaign Finance Records',
+        critical: false,
+        connectedSuspect: 'Councilman David Torres'
+      },
+      {
+        type: 'Private Investigation Report',
+        description: 'Report confirming Margaret Sullivan\'s affair with employee. Same details mentioned in blackmail letter.',
+        location: 'Private Detective Files',
+        critical: false,
+        connectedSuspect: 'Margaret Sullivan'
+      },
+      {
+        type: 'Witness Testimony',
+        description: 'Robert Chen was home with family during all key events. Wife and children confirm alibi.',
+        location: 'Witness Interviews',
+        critical: false,
+        connectedSuspect: 'Robert Chen'
+      },
+      {
+        type: 'Streaming Records',
+        description: 'Sarah Kim was live streaming on Twitch during assault. Video timestamp confirms alibi.',
+        location: 'Digital Records',
+        critical: false,
+        connectedSuspect: 'Sarah Kim'
+      }
+    ],
+    hints: {
+      subtle: 'Look for someone with both access to information and desperate financial need. The typewriter in newspaper storage is key.',
+      moderate: 'Check who accessed the storage room and had medical emergencies requiring large sums. The timing of deposits matches letter deliveries.',
+      major: 'Linda Morrison typed letters on storage typewriter (fingerprints, ribbon analysis), accessed storage room at key times, has daughter with $180K medical bills, deposited blackmail payments, and was seen at mayor\'s office during assault.'
+    }
   }
 ];
 

@@ -110,18 +110,19 @@ Click Continue when ready to interrogate a suspect.`,
     message: `Now let's question a suspect.
 
 Each suspect has:
-• **Personality** - How they respond to questions
+• **Personality** - How they respond
 • **Nervousness Level** - How anxious they appear
 • **Alibi** - Their claim about whereabouts
 
-Click on **any suspect card** below to begin interrogation.`,
-    position: 'center',
+Click on **any suspect card** to begin interrogation.`,
+    position: 'right',
     targetElement: '[data-tutorial="suspect-list"]',
     highlightElement: true,
     blockOtherClicks: true,
     requiresAction: true,
     nextTrigger: 'suspect_selected',
-    phase: 'investigation'
+    phase: 'investigation',
+    compactModal: true // Special flag for smaller modal
   },
 
   INTERROGATION_INTRO: {

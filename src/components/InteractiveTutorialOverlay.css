@@ -11,15 +11,17 @@
   pointer-events: auto;
 }
 
-/* Semi-transparent backdrop */
+/* Semi-transparent backdrop - blocks all background content */
 .tutorial-backdrop-interactive {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.92);
   animation: fadeIn 0.3s ease-in;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
 }
 
 /* Spotlight cutout (clear area around target) */
@@ -59,6 +61,21 @@
               0 0 30px rgba(243, 156, 18, 0.4);
   animation: slideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   pointer-events: auto;
+}
+
+/* Compact modal for SELECT_SUSPECT step - smaller and positioned right */
+.tutorial-modal-compact {
+  max-width: 280px;
+  padding: 18px;
+}
+
+.tutorial-modal-compact .tutorial-modal-title {
+  font-size: 18px;
+}
+
+.tutorial-modal-compact .tutorial-modal-message {
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 /* Modal header */

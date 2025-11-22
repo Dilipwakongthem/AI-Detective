@@ -102,7 +102,7 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
     const padding = 20;
-    const gap = 30; // Gap between modal and target
+    const gap = step.compactModal ? 20 : 30; // Smaller gap for compact modals
 
     // If no target or center position, always center
     if (step.position === 'center' || !targetRect) {
@@ -440,7 +440,7 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
       {/* Tutorial modal with instructions */}
       <div
         ref={modalRef}
-        className={`tutorial-modal-interactive tutorial-position-${arrowDirection}`}
+        className={`tutorial-modal-interactive tutorial-position-${arrowDirection} ${step.compactModal ? 'tutorial-modal-compact' : ''}`}
         style={modalPosition || { opacity: 0 }} // Hide until positioned
       >
         <div className="tutorial-modal-header">

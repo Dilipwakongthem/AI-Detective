@@ -46,7 +46,7 @@ export const STORAGE_KEYS = {
 // Default Values
 const DEFAULTS = {
   dailyCasesRemaining: 5,
-  bonusCasesRemaining: 3,
+  bonusCasesRemaining: 0, // Start at 0 - earned by watching ads
   caseFilesOwned: 0,
   hintTokensOwned: 0,
   adRemovalPurchased: false,
@@ -252,6 +252,16 @@ export const useBonusCase = () => {
   }
 
   return { success: false, remaining: 0, type: 'bonus' };
+};
+
+/**
+ * Add a bonus case (earned by watching ad)
+ */
+export const addBonusCase = () => {
+  const current = loadFromStorage(STORAGE_KEYS.bonusCasesRemaining, DEFAULTS.bonusCasesRemaining);
+  const newAmount = current + 1;
+  saveToStorage(STORAGE_KEYS.bonusCasesRemaining, newAmount);
+  return { success: true, remaining: newAmount, type: 'bonus' };
 };
 
 /**
@@ -531,6 +541,7 @@ export default {
   formatTimeUntilReset,
   useDailyCase,
   useBonusCase,
+  addBonusCase,
   useCaseFile,
   canStartCase,
   addCaseFiles,

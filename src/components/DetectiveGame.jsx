@@ -17,6 +17,7 @@ import {
   canStartCase,
   useDailyCase,
   useBonusCase,
+  addBonusCase,
   useCaseFile,
   getCaseFiles,
   getHintTokens,
@@ -735,14 +736,19 @@ const DetectiveGame = () => {
                 <button
                   className="modal-btn primary"
                   onClick={() => {
-                    setShowCaseLimitModal(false);
+                    // Don't close modal yet - wait for ad to complete
                     requestBonusCaseWithAd(
                       (result) => {
+                        // Ad watched successfully - add bonus case
+                        const bonusResult = addBonusCase();
+                        // Close modal and start case
+                        setShowCaseLimitModal(false);
                         showNotification('✅ Bonus case unlocked! Starting case...', 'success');
                         startNewCase(false);
                       },
                       (error) => {
-                        showNotification(`Ad failed: ${error.message}`, 'error');
+                        // Ad failed - show error but keep modal open
+                        showNotification(`❌ ${error.message}`, 'error');
                       }
                     );
                   }}

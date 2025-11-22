@@ -58,7 +58,7 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
           const newRect = target.getBoundingClientRect();
           updateTargetRect(newRect);
         }, 400);
-      }, 150); // Delay to ensure other scrolling operations complete first
+      }, 500); // Delay to ensure investigation log scroll completes first (happens at ~400ms)
 
       // Add highlight class to target element
       target.classList.add('tutorial-target-highlight');

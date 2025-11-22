@@ -395,7 +395,7 @@ const DetectiveGame = () => {
     }
   };
 
-  const startNewCase = (isLegendary = false) => {
+  const startNewCase = (isLegendary = false, suppressNotification = false) => {
     // Check if player can start a case
     const caseAvailability = canStartCase();
 
@@ -411,15 +411,21 @@ const DetectiveGame = () => {
     if (caseAvailability.dailyRemaining > 0) {
       const result = useDailyCase();
       caseSource = 'daily';
-      showNotification(`Daily case used. ${result.remaining} free cases remaining today.`, 'info');
+      if (!suppressNotification) {
+        showNotification(`Daily case used. ${result.remaining} free cases remaining today.`, 'info');
+      }
     } else if (caseAvailability.bonusRemaining > 0) {
       const result = useBonusCase();
       caseSource = 'bonus';
-      showNotification(`Bonus case used. ${result.remaining} bonus cases remaining today.`, 'info');
+      if (!suppressNotification) {
+        showNotification(`Bonus case used. ${result.remaining} bonus cases remaining today.`, 'info');
+      }
     } else if (caseAvailability.caseFilesRemaining > 0) {
       const result = useCaseFile();
       caseSource = 'purchased';
-      showNotification(`Case file used. ${result.remaining} case files remaining.`, 'success');
+      if (!suppressNotification) {
+        showNotification(`Case file used. ${result.remaining} case files remaining.`, 'success');
+      }
     }
 
     // Generate and start the case
@@ -744,7 +750,7 @@ const DetectiveGame = () => {
                         // Close modal and start case
                         setShowCaseLimitModal(false);
                         showNotification('✅ Bonus case unlocked! Starting case...', 'success');
-                        startNewCase(false);
+                        startNewCase(false, true); // suppressNotification = true
                       },
                       (error) => {
                         // Ad failed - show error but keep modal open

@@ -894,6 +894,7 @@ const DetectiveGame = () => {
     const caseFiles = getCaseFiles();
     const hintTokens = getHintTokens();
     const isPremium = hasAdRemoval();
+    const adWatches = getRemainingAdWatches();
 
     return (
       <div className="menu-screen screen-enter">
@@ -951,9 +952,14 @@ const DetectiveGame = () => {
           </div>
           <div className="bonus-cases">
             Bonus: {Array.from({ length: 3 }).map((_, i) => (
-              <span key={i}>{i < caseAvailability.bonusRemaining ? '📺' : '⚪'}</span>
-            ))} {caseAvailability.bonusRemaining} via ads
+              <span key={i}>{i < adWatches.cases ? '📺' : '⚪'}</span>
+            ))} {adWatches.cases} ads available
           </div>
+          {caseAvailability.bonusRemaining > 0 && (
+            <div className="bonus-cases">
+              Earned: 🎁 {caseAvailability.bonusRemaining} bonus cases ready
+            </div>
+          )}
           {caseFiles > 0 && (
             <div className="owned-cases">
               Owned: 💼 {caseFiles} case files ready

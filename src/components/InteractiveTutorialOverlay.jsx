@@ -29,7 +29,8 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
         return null;
       }
 
-      // Scroll element into view if needed (smooth scroll)
+      // Always scroll element into view to ensure visibility
+      // This handles cases where other scrolling (like investigation log) might interfere
       const rect = target.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
       const viewportWidth = window.innerWidth;
@@ -42,8 +43,10 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
         rect.right <= viewportWidth
       );
 
-      if (!isInViewport) {
-        console.log('[Tutorial] Scrolling element into view:', step.targetElement);
+      console.log('[Tutorial] Scrolling element into view:', step.targetElement, 'isInViewport:', isInViewport);
+
+      // Always scroll into view with a delay to ensure it happens after other scrolling
+      setTimeout(() => {
         target.scrollIntoView({
           behavior: 'smooth',
           block: 'center',
@@ -55,13 +58,7 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
           const newRect = target.getBoundingClientRect();
           updateTargetRect(newRect);
         }, 400);
-      } else {
-        // Don't set rect immediately - wait for layout to settle
-        setTimeout(() => {
-          const settledRect = target.getBoundingClientRect();
-          updateTargetRect(settledRect);
-        }, 100);
-      }
+      }, 150); // Delay to ensure other scrolling operations complete first
 
       // Add highlight class to target element
       target.classList.add('tutorial-target-highlight');

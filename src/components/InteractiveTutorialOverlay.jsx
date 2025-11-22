@@ -15,13 +15,20 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
     const findAndHighlightTarget = () => {
       const target = document.querySelector(step.targetElement);
       if (target) {
-        const rect = target.getBoundingClientRect();
-        setTargetRect({
-          top: rect.top,
-          left: rect.left,
-          width: rect.width,
-          height: rect.height
-        });
+        // Small delay to ensure element is fully rendered and positioned
+        setTimeout(() => {
+          const rect = target.getBoundingClientRect();
+          setTargetRect({
+            top: rect.top,
+            left: rect.left,
+            width: rect.width,
+            height: rect.height
+          });
+          console.log('[Tutorial] Target rect calculated:', {
+            element: step.targetElement,
+            rect: { top: rect.top, left: rect.left, width: rect.width, height: rect.height }
+          });
+        }, 50);
 
         // Add highlight class to target element
         target.classList.add('tutorial-target-highlight');
@@ -35,7 +42,7 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
       }
     };
 
-    // Initial find
+    // Initial find with delay to ensure DOM is ready
     const cleanup = findAndHighlightTarget();
 
     // Update on window resize
@@ -52,6 +59,19 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
       window.removeEventListener('scroll', handleResize);
     };
   }, [step]);
+
+  // Auto-advance for informational steps that don't require action
+  useEffect(() => {
+    if (!step || step.requiresAction || step.isFinal) return;
+
+    // Auto-advance after 4 seconds for informational steps
+    const autoAdvanceTimer = setTimeout(() => {
+      console.log('[Tutorial] Auto-advancing informational step:', step.id);
+      onNext();
+    }, 4000);
+
+    return () => clearTimeout(autoAdvanceTimer);
+  }, [step, onNext]);
 
   const handleAction = () => {
     if (step.isFinal) {

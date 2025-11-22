@@ -449,19 +449,25 @@ const DetectiveGame = () => {
     if (undiscoveredEvidence.length > 0) {
       const found = undiscoveredEvidence[Math.floor(Math.random() * undiscoveredEvidence.length)];
       found.discovered = true;
-      const evidenceCount = currentCase.evidence.filter(e => e.discovered).length + 1; // Count including the one we just found
+      const evidenceCount = currentCase.evidence.filter(e => e.discovered).length;
       setCurrentCase({ ...currentCase, cluesFound: currentCase.cluesFound + 1 });
       addLog(`🔍 Found evidence: ${found.type} - ${found.description}`);
       soundEngine.play('evidenceFound');
       showNotification(`✅ Evidence discovered!`, 'success');
 
+      console.log('[Tutorial Debug] Evidence found! Count:', evidenceCount, 'Tutorial active:', interactiveTutorial.isActive());
+
       // Trigger tutorial event
       if (interactiveTutorial.isActive()) {
         // First evidence found
         if (evidenceCount === 1) {
+          console.log('[Tutorial Debug] First evidence! Triggering event...');
           const advanced = interactiveTutorial.triggerEvent('evidence_found');
+          console.log('[Tutorial Debug] Event triggered, advanced:', advanced);
           if (advanced) {
-            setCurrentTutorialStep(interactiveTutorial.getCurrentStep());
+            const newStep = interactiveTutorial.getCurrentStep();
+            console.log('[Tutorial Debug] New step:', newStep?.id);
+            setCurrentTutorialStep(newStep);
           }
         }
         // Second evidence found

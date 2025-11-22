@@ -115,7 +115,7 @@ Each suspect has:
 • **Alibi** - Their claim about whereabouts
 
 Click on **any suspect card** below to begin interrogation.`,
-    position: 'top',
+    position: 'center',
     targetElement: '[data-tutorial="suspect-list"]',
     highlightElement: true,
     blockOtherClicks: true,
@@ -185,23 +185,25 @@ Let's find more evidence. Click **"Search for Evidence"** again.`,
 
   READY_TO_ACCUSE: {
     id: 'ready_to_accuse',
-    title: '⚖️ Ready to Accuse?',
-    message: `You've collected evidence and interrogated suspects.
+    title: '⚖️ You're Ready, Detective!',
+    message: `Great work! You've learned the fundamentals of being a detective:
+• **Gathering Evidence** - Finding clues at crime scenes
+• **Interrogating Suspects** - Reading body language and responses
+• **Analyzing Matches** - Connecting evidence to suspects
 
-When you're confident you know who did it:
-• Look for suspects with HIGH confidence evidence matches
-• Consider their nervousness patterns
-• Trust your detective instincts
+**What's Next:**
+When you're confident, click on a suspect and choose **"Accuse"** to solve the case!
 
-Click on a suspect card and then **"Accuse"** to make your decision.
+Or keep investigating to gather more evidence. You're in control now!
 
-Or click Continue to keep investigating.`,
-    position: 'top',
-    targetElement: '[data-tutorial="suspect-list"]',
-    highlightElement: true,
-    blockOtherClicks: false, // Allow them to investigate freely
-    requiresAction: false, // Changed to false so Continue button shows
-    showContinueButton: true, // Explicitly show Continue button
+**The tutorial ends here - good luck! 🕵️**`,
+    position: 'center',
+    targetElement: null, // No specific target - they're free to explore
+    highlightElement: false,
+    blockOtherClicks: false, // Full freedom
+    requiresAction: false,
+    showContinueButton: true,
+    isFinal: true, // This is the final tutorial step
     nextTrigger: 'click_continue',
     phase: 'investigation'
   },
@@ -287,10 +289,8 @@ const TUTORIAL_SEQUENCE = [
   'interrogation_intro',
   'interrogation_response',
   'collect_more_evidence',
-  'ready_to_accuse',
-  'case_result',
-  'save_progress_intro',
-  'tutorial_complete'
+  'ready_to_accuse'
+  // Tutorial ends here - player continues on their own
 ];
 
 class InteractiveTutorial {

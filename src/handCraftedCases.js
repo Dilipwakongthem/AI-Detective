@@ -2580,6 +2580,238 @@ The investigation centers on five suspects, all connected to the Millbrook Heral
       moderate: 'Check who accessed the storage room and had medical emergencies requiring large sums. The timing of deposits matches letter deliveries.',
       major: 'Linda Morrison typed letters on storage typewriter (fingerprints, ribbon analysis), accessed storage room at key times, has daughter with $180K medical bills, deposited blackmail payments, and was seen at mayor\'s office during assault.'
     }
+  },
+
+  {
+    id: 'vanishing_act',
+    title: 'The Vanishing Act',
+    difficulty: 4,
+    crimeType: 'Kidnapping',
+    priority: 'URGENT',
+    location: 'Suburban Oakwood Heights',
+    narrative: {
+      opening: `Eight-year-old Emma Rodriguez vanished from her front yard at 4:15 PM on a Tuesday afternoon. Her mother, Sofia Rodriguez, had stepped inside for less than five minutes to answer a phone call. When she returned, Emma was gone. No witnesses, no screams, no trace - just an empty yard and a discarded pink bicycle.
+
+The case appears to be a standard kidnapping until investigators discover that Emma's non-custodial father, Michael Chen, has been fighting for custody and recently threatened to "take what's mine." But the case grows more complex: a ransom note demanding $250,000 arrives, yet Michael claims ignorance and seems genuinely distraught.
+
+Seven suspects emerge, each with potential motive: the bitter ex-husband, the financially desperate business partner, the unstable neighbor, the fired nanny seeking revenge, the teacher with boundary issues, a registered offender nearby, and even Sofia's new boyfriend who may want the child gone.`,
+
+      twist: `Emma wasn't kidnapped - she's hiding in her biological father Michael's basement with his new wife's help, but they didn't write the ransom note. Sofia's business partner Linda Chen (no relation to Michael) saw an opportunity to exploit the situation and sent the fake ransom note to extort money from Sofia's successful company. The case involves TWO crimes: custodial interference (Michael) and extortion (Linda).`,
+
+      conclusion: `Michael Chen committed custodial interference by hiding Emma (found safe in his basement). His new wife helped. Separately, Linda Chen (business partner) committed extortion by sending fake ransom note to profit from crisis. Evidence: Emma's DNA in Michael's home, security footage of Michael picking up Emma (disguised), Linda's fingerprints on ransom envelope, and burner phone records linking Linda to ransom demands.`
+    },
+    victim: {
+      name: 'Emma Rodriguez',
+      age: 8,
+      occupation: 'Student',
+      background: 'Third-grader caught in custody battle between divorced parents. Goes missing from front yard.',
+      personality: 'Innocent child victim (found alive)'
+    },
+    suspects: [
+      {
+        name: 'Michael Chen',
+        age: 38,
+        occupation: 'Software Engineer',
+        personality: 'Desperate',
+        motive: 'Custody Battle',
+        alibi: 'Claims he was at work 30 miles away',
+        isGuilty: true,
+        backstory: 'Non-custodial father losing custody battle. Threatened to take Emma multiple times. Disguised himself, picked up Emma from yard telling her "mom said to come with me." Hiding her in basement.',
+        secret: 'Hiding Emma in his basement with new wife\'s help. Plans to flee to Canada. Didn\'t send ransom note.',
+        attributes: {
+          physical: { height: '5\'10"-6\'1"', build: 'Slim build', hairColor: 'Black', eyeColor: 'Dark brown', bloodType: 'O+', handedness: 'Right', shoeSize: 10, hasGlasses: false },
+          behavioral: { phoneArea: '555', voiceQuality: 'Anxious', shoeType: 'Sneakers', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Linda Chen',
+        age: 45,
+        occupation: 'Business Partner',
+        personality: 'Calculating',
+        motive: 'Financial Extortion',
+        alibi: 'At business meeting during disappearance',
+        isGuilty: true,
+        backstory: 'Sofia\'s business partner in struggling tech startup. Saw Emma\'s disappearance as opportunity to extort $250K from company funds. Sent fake ransom note.',
+        secret: 'Wrote ransom note using burner phone and fake email. Plans to embezzle ransom money. Not involved in actual disappearance.',
+        attributes: {
+          physical: { height: '5\'7"-5\'10"', build: 'Medium build', hairColor: 'Black', eyeColor: 'Brown', bloodType: 'A+', handedness: 'Right', shoeSize: 9, hasGlasses: true },
+          behavioral: { phoneArea: '555', voiceQuality: 'Professional', shoeType: 'Heels', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Jennifer Wu',
+        age: 25,
+        occupation: 'Former Nanny',
+        personality: 'Angry',
+        motive: 'Revenge for Firing',
+        alibi: 'At job interview across town',
+        isGuilty: false,
+        backstory: 'Fired by Sofia two months ago over minor incident. Made angry posts on social media about the family. Seems like obvious suspect but is innocent.',
+        secret: 'Was bitter about firing but would never harm Emma. Red herring.',
+        attributes: {
+          physical: { height: '5\'4"-5\'7"', build: 'Slim build', hairColor: 'Dark brown', eyeColor: 'Brown', bloodType: 'B+', handedness: 'Right', shoeSize: 7, hasGlasses: false },
+          behavioral: { phoneArea: '555', voiceQuality: 'Sharp', shoeType: 'Flats', smokingHabit: false }
+        }
+      },
+      {
+        name: 'David Morrison',
+        age: 52,
+        occupation: 'Neighbor',
+        personality: 'Odd',
+        motive: 'Suspicious Behavior',
+        alibi: 'Home alone, no witnesses',
+        isGuilty: false,
+        backstory: 'Registered sex offender (statutory, 20 years ago). Lives three houses down. Makes him obvious suspect but is actually innocent and has been cooperative.',
+        secret: 'Has been watched closely by police. Genuinely wants to help find Emma. Classic red herring.',
+        attributes: {
+          physical: { height: '5\'9"-6\'0"', build: 'Heavy build', hairColor: 'Gray', eyeColor: 'Blue', bloodType: 'AB-', handedness: 'Right', shoeSize: 11, hasGlasses: true },
+          behavioral: { phoneArea: '555', voiceQuality: 'Quiet', shoeType: 'Sandals', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Mr. Robert Hayes',
+        age: 34,
+        occupation: 'Elementary School Teacher',
+        personality: 'Friendly',
+        motive: 'Inappropriate Attachment',
+        alibi: 'At school grading papers until 6 PM',
+        isGuilty: false,
+        backstory: 'Emma\'s third-grade teacher. Gave Emma extra attention which made Sofia uncomfortable. School investigated for boundary issues but found no evidence of wrongdoing.',
+        secret: 'Was mentoring Emma because she reminded him of his late daughter. Innocent but his behavior looks suspicious.',
+        attributes: {
+          physical: { height: '5\'11"-6\'2"', build: 'Medium build', hairColor: 'Blonde', eyeColor: 'Green', bloodType: 'O-', handedness: 'Right', shoeSize: 10, hasGlasses: false },
+          behavioral: { phoneArea: '555', voiceQuality: 'Warm', shoeType: 'Casual shoes', smokingHabit: false }
+        }
+      },
+      {
+        name: 'James Rodriguez',
+        age: 42,
+        occupation: 'Sofia\'s New Boyfriend',
+        personality: 'Defensive',
+        motive: 'False Suspicion',
+        alibi: 'At work, multiple witnesses',
+        isGuilty: false,
+        backstory: 'Dating Sofia for 6 months. Some suspect he wanted Emma gone to have Sofia to himself. Solid alibi and genuine concern make him innocent.',
+        secret: 'Was planning to propose to Sofia. Emma\'s disappearance devastated him. Completely innocent.',
+        attributes: {
+          physical: { height: '6\'0"-6\'3"', build: 'Athletic build', hairColor: 'Dark brown', eyeColor: 'Brown', bloodType: 'A-', handedness: 'Right', shoeSize: 12, hasGlasses: false },
+          behavioral: { phoneArea: '555', voiceQuality: 'Deep', shoeType: 'Work boots', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Angela Chen',
+        age: 33,
+        occupation: 'Michael\'s New Wife',
+        personality: 'Protective',
+        motive: 'Supporting Husband',
+        alibi: 'Home alone during disappearance',
+        isGuilty: true,
+        backstory: 'Michael\'s wife who helped hide Emma in basement. Believed Michael\'s claim that Sofia was abusive (untrue). Accomplice to custodial interference.',
+        secret: 'Helping hide Emma in soundproofed basement. Told Emma it\'s a "game." Guilty of conspiracy.',
+        attributes: {
+          physical: { height: '5\'5"-5\'8"', build: 'Slim build', hairColor: 'Black', eyeColor: 'Dark brown', bloodType: 'B-', handedness: 'Right', shoeSize: 8, hasGlasses: false },
+          behavioral: { phoneArea: '555', voiceQuality: 'Soft', shoeType: 'Slippers', smokingHabit: false }
+        }
+      }
+    ],
+    evidence: [
+      {
+        type: 'DNA Evidence',
+        description: 'Emma\'s DNA (hair, skin cells) found in Michael Chen\'s basement. Fresh evidence indicating recent presence.',
+        location: 'Michael\'s Home',
+        critical: true,
+        connectedSuspect: 'Michael Chen'
+      },
+      {
+        type: 'Security Footage',
+        description: 'Gas station camera shows man in disguise (baseball cap, sunglasses) matching Michael\'s height/build putting child matching Emma\'s description in car at 4:22 PM.',
+        location: 'Gas Station',
+        critical: true,
+        connectedSuspect: 'Michael Chen'
+      },
+      {
+        type: 'Fingerprints',
+        description: 'Linda Chen\'s fingerprints on ransom note envelope. She claims she "found it" but analysis shows she handled it before it was sealed.',
+        location: 'Crime Lab',
+        critical: true,
+        connectedSuspect: 'Linda Chen'
+      },
+      {
+        type: 'Phone Records',
+        description: 'Burner phone purchased by Linda Chen used to send ransom demands. Cell tower data places phone near Linda\'s locations.',
+        location: 'Phone Company',
+        critical: true,
+        connectedSuspect: 'Linda Chen'
+      },
+      {
+        type: 'Witness Testimony',
+        description: 'Neighbor saw man matching Michael\'s build near Rodriguez house at 4:10 PM. Man was wearing disguise but walked with distinctive limp Michael has.',
+        location: 'Neighbor Interview',
+        critical: true,
+        connectedSuspect: 'Michael Chen'
+      },
+      {
+        type: 'Financial Documents',
+        description: 'Linda Chen has $180K in business debts. Would benefit from ransom money through embezzlement scheme.',
+        location: 'Bank Records',
+        critical: true,
+        connectedSuspect: 'Linda Chen'
+      },
+      {
+        type: 'Search Warrant',
+        description: 'Emma found alive and unharmed in Michael Chen\'s soundproofed basement. Angela Chen was caring for her.',
+        location: 'Michael\'s Home',
+        critical: true,
+        connectedSuspect: 'Michael Chen'
+      },
+      {
+        type: 'Email Records',
+        description: 'Michael emailed Angela days before: "Plan is set for Tuesday. Have basement ready." Clear premeditation.',
+        location: 'Email Server',
+        critical: true,
+        connectedSuspect: 'Michael Chen'
+      },
+      {
+        type: 'Handwriting Analysis',
+        description: 'Ransom note written by Linda Chen. Forensic handwriting expert confirms match despite disguise attempt.',
+        location: 'Forensics Lab',
+        critical: false,
+        connectedSuspect: 'Linda Chen'
+      },
+      {
+        type: 'Witness Testimony',
+        description: 'Jennifer Wu (former nanny) has solid alibi at job interview. Receptionist and interviewer confirm.',
+        location: 'Witness Interviews',
+        critical: false,
+        connectedSuspect: 'Jennifer Wu'
+      },
+      {
+        type: 'Background Check',
+        description: 'David Morrison (neighbor) fully cooperated with investigation. GPS ankle monitor (parole requirement) shows he was home all afternoon.',
+        location: 'Parole Records',
+        critical: false,
+        connectedSuspect: 'David Morrison'
+      },
+      {
+        type: 'School Records',
+        description: 'Mr. Hayes was at school until 6 PM. Security cameras and witness statements confirm. Emma gone before he left school.',
+        location: 'School',
+        critical: false,
+        connectedSuspect: 'Mr. Robert Hayes'
+      },
+      {
+        type: 'Witness Testimony',
+        description: 'James Rodriguez at work during disappearance. Coworkers confirm. Security badge logs show no gaps.',
+        location: 'Workplace',
+        critical: false,
+        connectedSuspect: 'James Rodriguez'
+      }
+    ],
+    hints: {
+      subtle: 'Emma wasn\'t taken by a stranger - look at who had the most to gain from having her. Also, why would a kidnapper send a ransom if they already have custody motives?',
+      moderate: 'Check the ransom note separately from the disappearance. Michael has custody motive but no financial need. Who benefits from ransom money?',
+      major: 'Michael Chen took Emma (DNA in basement, security footage, witness testimony, email premeditation). Linda Chen sent fake ransom note (fingerprints, burner phone, handwriting, financial motive). Two separate crimes.'
+    }
   }
 ];
 

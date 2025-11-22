@@ -5,9 +5,9 @@ import NotebookModal from './NotebookModal';
 import ThemeSelectorModal from './ThemeSelectorModal';
 import ThemeWelcomeModal from './ThemeWelcomeModal';
 import SettingsModal from './SettingsModal';
-import TutorialModal from './TutorialModal';
+import InteractiveTutorialOverlay from './InteractiveTutorialOverlay';
 import './DetectiveGame.css';
-import tutorialSystem from '../utils/tutorialSystem';
+import interactiveTutorial from '../utils/interactiveTutorial';
 
 // Import monetization utilities
 import {
@@ -170,18 +170,15 @@ const DetectiveGame = () => {
     };
   }, []);
 
-  // Tutorial system - initial state check only
+  // Interactive Tutorial system - initial state check
   useEffect(() => {
-    const isActive = tutorialSystem.isActive();
-    const step = tutorialSystem.getCurrentStep();
+    const isActive = interactiveTutorial.isActive();
+    const step = interactiveTutorial.getCurrentStep();
 
-    console.log('[Tutorial Init] Initial state - isActive:', isActive, 'step:', step?.id);
+    console.log('[InteractiveTutorial] Initial state:', { isActive, stepId: step?.id });
 
     setTutorialActive(isActive);
     setCurrentTutorialStep(step);
-
-    // Note: We don't use an interval anymore to avoid conflicts
-    // Tutorial state is updated directly when actions happen (startInvestigation, nextStep, etc.)
   }, []);
 
   // Notification system
@@ -419,27 +416,27 @@ const DetectiveGame = () => {
 
     // Play case start sound
     soundEngine.play('caseStart');
+
+    // Trigger tutorial event
+    if (interactiveTutorial.isActive()) {
+      const advanced = interactiveTutorial.triggerEvent('case_started');
+      if (advanced) {
+        setCurrentTutorialStep(interactiveTutorial.getCurrentStep());
+      }
+    }
   };
 
   const startInvestigation = () => {
     setGameState('investigation');
     addLog('🔍 Investigation started. Explore the crime scene and gather evidence.');
 
-    // Start tutorial for first-time players when they begin their first case
-    // Use setTimeout to ensure state updates happen after gameState change
-    setTimeout(() => {
-      if (!tutorialSystem.isActive() && tutorialSystem.enabled && !tutorialSystem.skipped) {
-        console.log('[Tutorial] Starting tutorial for first-time player');
-        tutorialSystem.start();
-        const step = tutorialSystem.getCurrentStep();
-        console.log('[Tutorial] Current step:', step?.id);
-        setCurrentTutorialStep(step);
-        setTutorialActive(true);
-      } else {
-        console.log('[Tutorial] Not starting - isActive:', tutorialSystem.isActive(),
-                    'enabled:', tutorialSystem.enabled, 'skipped:', tutorialSystem.skipped);
+    // Trigger tutorial event
+    if (interactiveTutorial.isActive()) {
+      const advanced = interactiveTutorial.triggerEvent('investigation_started');
+      if (advanced) {
+        setCurrentTutorialStep(interactiveTutorial.getCurrentStep());
       }
-    }, 100);
+    }
   };
 
   const investigateLocation = async (locationName) => {
@@ -452,15 +449,28 @@ const DetectiveGame = () => {
     if (undiscoveredEvidence.length > 0) {
       const found = undiscoveredEvidence[Math.floor(Math.random() * undiscoveredEvidence.length)];
       found.discovered = true;
+      const evidenceCount = currentCase.evidence.filter(e => e.discovered).length + 1; // Count including the one we just found
       setCurrentCase({ ...currentCase, cluesFound: currentCase.cluesFound + 1 });
       addLog(`🔍 Found evidence: ${found.type} - ${found.description}`);
       soundEngine.play('evidenceFound');
       showNotification(`✅ Evidence discovered!`, 'success');
 
       // Trigger tutorial event
-      if (tutorialSystem.isActive()) {
-        tutorialSystem.triggerStep('evidence_found');
-        setCurrentTutorialStep(tutorialSystem.getCurrentStep());
+      if (interactiveTutorial.isActive()) {
+        // First evidence found
+        if (evidenceCount === 1) {
+          const advanced = interactiveTutorial.triggerEvent('evidence_found');
+          if (advanced) {
+            setCurrentTutorialStep(interactiveTutorial.getCurrentStep());
+          }
+        }
+        // Second evidence found
+        else if (evidenceCount === 2) {
+          const advanced = interactiveTutorial.triggerEvent('second_evidence_found');
+          if (advanced) {
+            setCurrentTutorialStep(interactiveTutorial.getCurrentStep());
+          }
+        }
       }
     } else {
       addLog('🔍 No new evidence found in this location.');
@@ -478,9 +488,11 @@ const DetectiveGame = () => {
     addLog(`👤 Now interrogating: ${suspect.name}`);
 
     // Trigger tutorial event
-    if (tutorialSystem.isActive()) {
-      tutorialSystem.triggerStep('interrogation_started');
-      setCurrentTutorialStep(tutorialSystem.getCurrentStep());
+    if (interactiveTutorial.isActive()) {
+      const advanced = interactiveTutorial.triggerEvent('suspect_selected');
+      if (advanced) {
+        setCurrentTutorialStep(interactiveTutorial.getCurrentStep());
+      }
     }
   };
 
@@ -500,6 +512,14 @@ const DetectiveGame = () => {
     addLog(`❓ You: "${result.question}"`);
     addLog(`💬 ${selectedSuspect.name}: "${result.response}"`);
     addLog(`👁️ Body Language: ${result.bodyLanguage} | Nervousness: ${result.nervousness}%${result.nervousnessChange ? ` (${result.nervousnessChange > 0 ? '+' : ''}${result.nervousnessChange})` : ''}`);
+
+    // Trigger tutorial event
+    if (interactiveTutorial.isActive()) {
+      const advanced = interactiveTutorial.triggerEvent('question_asked');
+      if (advanced) {
+        setCurrentTutorialStep(interactiveTutorial.getCurrentStep());
+      }
+    }
   };
 
   const makeAccusation = (suspectId) => {
@@ -576,9 +596,11 @@ const DetectiveGame = () => {
     }
 
     // Trigger tutorial event
-    if (tutorialSystem.isActive()) {
-      tutorialSystem.triggerStep('accusation_made');
-      setCurrentTutorialStep(tutorialSystem.getCurrentStep());
+    if (interactiveTutorial.isActive()) {
+      const advanced = interactiveTutorial.triggerEvent('accusation_made');
+      if (advanced) {
+        setCurrentTutorialStep(interactiveTutorial.getCurrentStep());
+      }
     }
 
     setGameState('result');
@@ -638,10 +660,10 @@ const DetectiveGame = () => {
 
   // Tutorial handlers
   const handleTutorialNext = () => {
-    console.log('[Tutorial] Next step clicked');
-    tutorialSystem.nextStep();
-    const newStep = tutorialSystem.getCurrentStep();
-    console.log('[Tutorial] New step:', newStep?.id);
+    console.log('[InteractiveTutorial] Next step clicked');
+    interactiveTutorial.nextStep();
+    const newStep = interactiveTutorial.getCurrentStep();
+    console.log('[InteractiveTutorial] New step:', newStep?.id);
     setCurrentTutorialStep(newStep);
     if (!newStep) {
       setTutorialActive(false);
@@ -649,19 +671,19 @@ const DetectiveGame = () => {
   };
 
   const handleTutorialSkip = () => {
-    console.log('[Tutorial] Skip clicked');
-    tutorialSystem.skip();
+    console.log('[InteractiveTutorial] Skip clicked');
+    interactiveTutorial.skip();
     setTutorialActive(false);
     setCurrentTutorialStep(null);
-    showNotification('Tutorial skipped. You can restart it from Settings.', 'info');
+    showNotification('Tutorial skipped. You can restart it from Settings → Reset Tutorial.', 'info');
   };
 
   const handleTutorialComplete = () => {
-    console.log('[Tutorial] Complete clicked');
-    tutorialSystem.complete();
+    console.log('[InteractiveTutorial] Complete clicked');
+    interactiveTutorial.complete();
     setTutorialActive(false);
     setCurrentTutorialStep(null);
-    showNotification('🎉 Tutorial completed! Good luck, Detective!', 'success');
+    showNotification('🎉 Tutorial completed! Great detective work!', 'success');
   };
 
   const renderCaseLimitModal = () => {
@@ -935,8 +957,13 @@ const DetectiveGame = () => {
           </div>
         )}
 
-        <button className="menu-btn" onClick={() => startNewCase(false)} data-tooltip="Begin investigating a new case">
-          {isChiefDetective ? '⭐ NEW ELITE CASE' : '🎯 START NEW CASE'}
+        <button
+          className="menu-btn"
+          onClick={() => startNewCase(false)}
+          data-tooltip="Begin investigating a new case"
+          data-tutorial="new-case-btn"
+        >
+          {isChiefDetective ? '⭐ NEW ELITE CASE' : '🔍 NEW CASE'}
         </button>
 
         {isChiefDetective && legendaryChance && (
@@ -996,7 +1023,11 @@ const DetectiveGame = () => {
           <p>Gather evidence, interrogate suspects, and make your accusation.</p>
         </div>
       </div>
-      <button className="action-btn" onClick={startInvestigation}>
+      <button
+        className="action-btn"
+        onClick={startInvestigation}
+        data-tutorial="begin-investigation-btn"
+      >
         BEGIN INVESTIGATION →
       </button>
     </div>
@@ -1089,7 +1120,7 @@ const DetectiveGame = () => {
       <div className="investigation-main">
         <div className="suspects-panel">
           <h3>👥 SUSPECTS</h3>
-          <div className="suspects-list">
+          <div className="suspects-list" data-tutorial="suspect-list">
             {currentCase.suspects.map(suspect => (
               <div
                 key={suspect.id}
@@ -1120,6 +1151,7 @@ const DetectiveGame = () => {
             onClick={() => investigateLocation('Crime Scene')}
             disabled={loadingAction !== ''}
             data-tooltip="Search the crime scene for evidence"
+            data-tutorial="search-evidence-btn"
           >
             {loadingAction === 'Crime Scene' ? '🔄 Searching Crime Scene...' : '🔍 Search Crime Scene'}
           </button>
@@ -1142,12 +1174,29 @@ const DetectiveGame = () => {
           <button
             className="action-btn"
             onClick={() => {
-              setShowEvidence(!showEvidence);
-              if (!showEvidence) {
+              const willShowEvidence = !showEvidence;
+              setShowEvidence(willShowEvidence);
+              if (willShowEvidence) {
                 setTimeout(() => scrollToElement('evidence-board'), 100);
+                // Trigger tutorial event for opening evidence board
+                if (interactiveTutorial.isActive()) {
+                  const advanced = interactiveTutorial.triggerEvent('evidence_board_opened');
+                  if (advanced) {
+                    setCurrentTutorialStep(interactiveTutorial.getCurrentStep());
+                  }
+                }
+              } else {
+                // Trigger tutorial event for closing evidence board
+                if (interactiveTutorial.isActive()) {
+                  const advanced = interactiveTutorial.triggerEvent('evidence_board_closed');
+                  if (advanced) {
+                    setCurrentTutorialStep(interactiveTutorial.getCurrentStep());
+                  }
+                }
               }
             }}
             data-tooltip="Review all collected evidence"
+            data-tutorial="evidence-board-btn"
           >
             📋 {showEvidence ? 'Hide' : 'View'} Evidence Board
           </button>
@@ -1225,7 +1274,20 @@ const DetectiveGame = () => {
           🏠 HOME
         </button>
         <h2>💬 INTERROGATION</h2>
-        <button className="back-btn" onClick={() => setGameState('investigation')}>
+        <button
+          className="back-btn"
+          onClick={() => {
+            setGameState('investigation');
+            // Trigger tutorial event
+            if (interactiveTutorial.isActive()) {
+              const advanced = interactiveTutorial.triggerEvent('back_to_investigation');
+              if (advanced) {
+                setCurrentTutorialStep(interactiveTutorial.getCurrentStep());
+              }
+            }
+          }}
+          data-tutorial="back-to-investigation-btn"
+        >
           ← Back to Investigation
         </button>
       </div>
@@ -1272,7 +1334,11 @@ const DetectiveGame = () => {
           </div>
 
           <div className="interrogation-actions">
-            <button className="action-btn" onClick={askQuestion}>
+            <button
+              className="action-btn"
+              onClick={askQuestion}
+              data-tutorial="ask-question-btn"
+            >
               ❓ Ask Question
             </button>
             <button className="action-btn" onClick={() => addLog(`📄 You show evidence to ${selectedSuspect.name}. They seem ${selectedSuspect.isGuilty ? 'uncomfortable' : 'confused'}.`)}>
@@ -1444,7 +1510,21 @@ const DetectiveGame = () => {
       </div>
 
       <div className="result-actions">
-        <button className="action-btn" onClick={() => { setGameState('menu'); setShowRankUp(false); }}>
+        <button
+          className="action-btn"
+          onClick={() => {
+            setGameState('menu');
+            setShowRankUp(false);
+            // Trigger tutorial event
+            if (interactiveTutorial.isActive()) {
+              const advanced = interactiveTutorial.triggerEvent('returned_to_menu');
+              if (advanced) {
+                setCurrentTutorialStep(interactiveTutorial.getCurrentStep());
+              }
+            }
+          }}
+          data-tutorial="return-menu-btn"
+        >
           🏠 Return to Menu
         </button>
         <button className="action-btn" onClick={() => { startNewCase(); setShowRankUp(false); }}>
@@ -1656,26 +1736,15 @@ const DetectiveGame = () => {
         />
       )}
 
-      {/* Tutorial Modal - Only show during active case gameplay */}
-      {(() => {
-        const shouldShow = tutorialActive && currentTutorialStep &&
-          (gameState === 'investigation' || gameState === 'interrogation' || gameState === 'accusation');
-
-        if (tutorialActive || currentTutorialStep) {
-          console.log('[Tutorial Render] tutorialActive:', tutorialActive,
-                      'hasStep:', !!currentTutorialStep, 'stepId:', currentTutorialStep?.id,
-                      'gameState:', gameState, 'shouldShow:', shouldShow);
-        }
-
-        return shouldShow ? (
-          <TutorialModal
-            step={currentTutorialStep}
-            onNext={handleTutorialNext}
-            onSkip={handleTutorialSkip}
-            onComplete={handleTutorialComplete}
-          />
-        ) : null;
-      })()}
+      {/* Interactive Tutorial Overlay - Shows on any screen when active */}
+      {tutorialActive && currentTutorialStep && (
+        <InteractiveTutorialOverlay
+          step={currentTutorialStep}
+          onNext={handleTutorialNext}
+          onSkip={handleTutorialSkip}
+          onComplete={handleTutorialComplete}
+        />
+      )}
 
       {/* Notification System */}
       {notification && (

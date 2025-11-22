@@ -1,0 +1,339 @@
+/* Interactive Tutorial Overlay Styles */
+
+/* Main overlay container */
+.tutorial-overlay-interactive {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  pointer-events: auto;
+}
+
+/* Semi-transparent backdrop */
+.tutorial-backdrop-interactive {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  animation: fadeIn 0.3s ease-in;
+}
+
+/* Spotlight cutout (clear area around target) */
+.tutorial-spotlight-cutout {
+  position: absolute;
+  background: transparent;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.85);
+  border-radius: 8px;
+  z-index: 10001;
+  pointer-events: none;
+  animation: spotlightAppear 0.4s ease-out;
+}
+
+/* Pulsing border around target element */
+.tutorial-spotlight-border {
+  position: absolute;
+  border: 3px solid var(--color-primary, #f39c12);
+  border-radius: 12px;
+  z-index: 10002;
+  pointer-events: none;
+  animation: pulseBorder 2s infinite;
+  box-shadow: 0 0 20px rgba(243, 156, 18, 0.6),
+              inset 0 0 20px rgba(243, 156, 18, 0.3);
+}
+
+/* Tutorial modal */
+.tutorial-modal-interactive {
+  position: absolute;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 2px solid var(--color-primary, #f39c12);
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 400px;
+  width: 90%;
+  z-index: 10003;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8),
+              0 0 30px rgba(243, 156, 18, 0.4);
+  animation: slideIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  pointer-events: auto;
+}
+
+/* Modal header */
+.tutorial-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(243, 156, 18, 0.3);
+}
+
+.tutorial-modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-primary, #f39c12);
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.tutorial-skip-button {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.6);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tutorial-skip-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Modal body */
+.tutorial-modal-body {
+  margin-bottom: 20px;
+}
+
+.tutorial-modal-message {
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.6;
+  font-size: 15px;
+  margin: 0;
+  white-space: pre-line;
+}
+
+.tutorial-modal-message strong {
+  color: var(--color-primary, #f39c12);
+  font-weight: 600;
+}
+
+/* Modal footer */
+.tutorial-modal-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.tutorial-next-button {
+  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
+  width: 100%;
+}
+
+.tutorial-next-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(243, 156, 18, 0.4);
+  background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+}
+
+.tutorial-action-hint {
+  color: var(--color-primary, #f39c12);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  animation: bounce 2s infinite;
+  padding: 8px;
+}
+
+.tutorial-skip-link {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.tutorial-skip-link:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Arrow pointers */
+.tutorial-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.tutorial-arrow-top {
+  bottom: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 14px 14px 0 14px;
+  border-color: var(--color-primary, #f39c12) transparent transparent transparent;
+}
+
+.tutorial-arrow-bottom {
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 0 14px 14px 14px;
+  border-color: transparent transparent var(--color-primary, #f39c12) transparent;
+}
+
+.tutorial-arrow-left {
+  right: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 14px 0 14px 14px;
+  border-color: transparent transparent transparent var(--color-primary, #f39c12);
+}
+
+.tutorial-arrow-right {
+  left: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 14px 14px 14px 0;
+  border-color: transparent var(--color-primary, #f39c12) transparent transparent;
+}
+
+/* Progress indicator */
+.tutorial-progress-indicator {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(243, 156, 18, 0.3);
+  z-index: 10004;
+}
+
+.tutorial-progress-phase {
+  color: var(--color-primary, #f39c12);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Highlight class for target elements */
+.tutorial-target-highlight {
+  position: relative;
+  z-index: 10005 !important;
+  pointer-events: auto !important;
+}
+
+/* Shake animation when user clicks wrong area */
+@keyframes shake-attention {
+  0%, 100% { transform: translate(-50%, -50%) translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translate(-50%, -50%) translateX(-10px); }
+  20%, 40%, 60%, 80% { transform: translate(-50%, -50%) translateX(10px); }
+}
+
+.tutorial-modal-interactive.shake-attention {
+  animation: shake-attention 0.5s;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes spotlightAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseBorder {
+  0%, 100% {
+    border-color: var(--color-primary, #f39c12);
+    box-shadow: 0 0 20px rgba(243, 156, 18, 0.6),
+                inset 0 0 20px rgba(243, 156, 18, 0.3);
+  }
+  50% {
+    border-color: var(--color-accent, #3498db);
+    box-shadow: 0 0 30px rgba(52, 152, 219, 0.8),
+                inset 0 0 30px rgba(52, 152, 219, 0.4);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .tutorial-modal-interactive {
+    max-width: 90%;
+    padding: 20px;
+  }
+
+  .tutorial-modal-title {
+    font-size: 18px;
+  }
+
+  .tutorial-modal-message {
+    font-size: 14px;
+  }
+
+  .tutorial-progress-indicator {
+    top: 10px;
+    right: 10px;
+    padding: 6px 12px;
+  }
+
+  .tutorial-progress-phase {
+    font-size: 12px;
+  }
+
+  /* Force center positioning on mobile */
+  .tutorial-position-left,
+  .tutorial-position-right {
+    top: 50% !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translate(-50%, -50%) !important;
+  }
+
+  .tutorial-arrow-left,
+  .tutorial-arrow-right {
+    display: none;
+  }
+}
+
+/* Accessibility - Reduced motion */
+.reduce-motion .tutorial-spotlight-border,
+.reduce-motion .tutorial-action-hint {
+  animation: none !important;
+}
+
+.reduce-motion .tutorial-modal-interactive {
+  animation: fadeIn 0.2s ease-in !important;
+}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import soundEngine from '../utils/soundEngine';
 import accessibilityManager, { COLORBLIND_MODES } from '../utils/accessibilityManager';
-import tutorialSystem from '../utils/tutorialSystem';
+import interactiveTutorial from '../utils/interactiveTutorial';
 import './SettingsModal.css';
 
 const SettingsModal = ({ onClose, playerProfile }) => {
@@ -528,10 +528,10 @@ const SettingsModal = ({ onClose, playerProfile }) => {
                   <button
                     className="action-btn secondary-btn small-btn"
                     onClick={() => {
-                      if (confirm('Restart the tutorial? This will show all tutorial steps again.')) {
-                        tutorialSystem.reset();
+                      if (confirm('Restart the tutorial? This will show all tutorial steps again from the beginning.')) {
+                        interactiveTutorial.reset();
                         soundEngine.play('success');
-                        alert('✅ Tutorial reset! It will start on your next case.');
+                        alert('✅ Tutorial reset! Reload the page to start from the main menu.');
                       }
                     }}
                   >

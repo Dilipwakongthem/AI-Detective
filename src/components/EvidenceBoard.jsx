@@ -350,6 +350,87 @@ const EvidenceBoard = ({
   };
 
   /**
+   * Auto-arrange board by preset
+   */
+  const handleAutoArrange = (preset) => {
+    if (boardCards.length === 0) {
+      showNotification('No cards on board to arrange', 'info');
+      return;
+    }
+
+    let newPositions = [];
+
+    switch (preset) {
+      case 'type':
+        // Group by type (evidence vs suspects)
+        const evidence = boardCards.filter(c => c.type === 'evidence');
+        const suspects = boardCards.filter(c => c.type === 'suspect');
+
+        evidence.forEach((card, i) => {
+          newPositions.push({ ...card, position: { x: i % 3, y: Math.floor(i / 3) } });
+        });
+
+        suspects.forEach((card, i) => {
+          newPositions.push({ ...card, position: { x: 4 + (i % 2), y: Math.floor(i / 2) } });
+        });
+        break;
+
+      case 'grid':
+        // Simple grid layout
+        boardCards.forEach((card, i) => {
+          newPositions.push({ ...card, position: { x: i % GRID_COLS, y: Math.floor(i / GRID_COLS) } });
+        });
+        break;
+
+      case 'circular':
+        // Circular arrangement
+        const centerX = Math.floor(GRID_COLS / 2);
+        const centerY = Math.floor(GRID_ROWS / 2);
+        const radius = 2;
+
+        boardCards.forEach((card, i) => {
+          const angle = (i / boardCards.length) * Math.PI * 2;
+          const x = Math.round(centerX + radius * Math.cos(angle));
+          const y = Math.round(centerY + radius * Math.sin(angle));
+          newPositions.push({ ...card, position: { x, y } });
+        });
+        break;
+
+      case 'connections':
+        // Arrange by connection count (most connected in center)
+        const cardConnections = boardCards.map(card => ({
+          card,
+          count: connections.filter(c =>
+            c.from.cardId === card.id || c.to.cardId === card.id
+          ).length
+        })).sort((a, b) => b.count - a.count);
+
+        cardConnections.forEach((item, i) => {
+          const cx = Math.floor(GRID_COLS / 2);
+          const cy = Math.floor(GRID_ROWS / 2);
+          const ring = Math.floor(i / 4);
+          const pos = i % 4;
+
+          const positions = [
+            { x: cx, y: cy - ring },
+            { x: cx + ring, y: cy },
+            { x: cx, y: cy + ring },
+            { x: cx - ring, y: cy }
+          ];
+
+          newPositions.push({ ...item.card, position: positions[pos] || { x: i % GRID_COLS, y: Math.floor(i / GRID_COLS) } });
+        });
+        break;
+
+      default:
+        return;
+    }
+
+    setBoardCards(newPositions);
+    showNotification(`Arranged by ${preset}`, 'success');
+  };
+
+  /**
    * Start creating connection
    */
   const handleStartConnection = (cardId) => {
@@ -570,6 +651,23 @@ const EvidenceBoard = ({
               >
                 🧠 Insights
               </button>
+              <div className="preset-dropdown">
+                <button
+                  className="board-btn"
+                  onClick={(e) => {
+                    e.currentTarget.nextElementSibling.classList.toggle('show');
+                  }}
+                  title="Auto-arrange cards"
+                >
+                  🎯 Arrange ▾
+                </button>
+                <div className="preset-menu">
+                  <button onClick={() => handleAutoArrange('grid')}>📐 Grid Layout</button>
+                  <button onClick={() => handleAutoArrange('type')}>📦 Group by Type</button>
+                  <button onClick={() => handleAutoArrange('circular')}>⭕ Circular</button>
+                  <button onClick={() => handleAutoArrange('connections')}>🔗 By Connections</button>
+                </div>
+              </div>
               <button
                 className="board-btn board-btn-primary"
                 onClick={() => setShowHypothesisBuilder(true)}
@@ -594,10 +692,55 @@ const EvidenceBoard = ({
 
             {/* Evidence/Suspect list (left sidebar) */}
             <div className="evidence-board-sidebar">
+              {/* Filter Panel */}
+              <FilterPanel
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+                locationFilter={locationFilter}
+                onLocationChange={setLocationFilter}
+                typeFilter={typeFilter}
+                onTypeChange={setTypeFilter}
+                showConnectedOnly={showConnectedOnly}
+                onToggleConnected={setShowConnectedOnly}
+                onClearFilters={() => {
+                  setSearchTerm('');
+                  setLocationFilter('');
+                  setTypeFilter('');
+                  setShowConnectedOnly(false);
+                }}
+                evidence={caseData.evidence.filter(e => e.discovered)}
+              />
+
               <h3>📦 Available Evidence</h3>
               <div className="evidence-list">
                 {caseData.evidence
-                  .filter(e => e.discovered)
+                  .filter(e => {
+                    if (!e.discovered) return false;
+
+                    // Search filter
+                    if (searchTerm && !e.type.toLowerCase().includes(searchTerm.toLowerCase()) &&
+                        !e.description.toLowerCase().includes(searchTerm.toLowerCase())) {
+                      return false;
+                    }
+
+                    // Location filter
+                    if (locationFilter && e.location !== locationFilter) {
+                      return false;
+                    }
+
+                    // Type filter
+                    if (typeFilter && e.type !== typeFilter) {
+                      return false;
+                    }
+
+                    // Connected only filter
+                    if (showConnectedOnly) {
+                      const onBoard = boardCards.some(c => c.type === 'evidence' && c.dataId === e.id);
+                      if (!onBoard) return false;
+                    }
+
+                    return true;
+                  })
                   .map(evidence => (
                     <SidebarItem
                       key={evidence.id}
@@ -610,13 +753,30 @@ const EvidenceBoard = ({
 
               <h3 style={{ marginTop: '20px' }}>👥 Suspects</h3>
               <div className="suspect-list">
-                {caseData.suspects.map(suspect => (
-                  <SidebarItem
-                    key={suspect.id}
-                    item={suspect}
-                    itemType="suspect"
-                  />
-                ))}
+                {caseData.suspects
+                  .filter(s => {
+                    // Search filter
+                    if (searchTerm && !s.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+                        !s.occupation.toLowerCase().includes(searchTerm.toLowerCase())) {
+                      return false;
+                    }
+
+                    // Connected only filter
+                    if (showConnectedOnly) {
+                      const onBoard = boardCards.some(c => c.type === 'suspect' && c.dataId === s.id);
+                      if (!onBoard) return false;
+                    }
+
+                    return true;
+                  })
+                  .map(suspect => (
+                    <SidebarItem
+                      key={suspect.id}
+                      item={suspect}
+                      itemType="suspect"
+                    />
+                  ))
+                }
               </div>
             </div>
 
@@ -634,20 +794,27 @@ const EvidenceBoard = ({
                 {renderGrid()}
 
                 {/* Cards on board */}
-                {boardCards.map(card => (
-                  <EvidenceCard
-                    key={card.id}
-                    card={card}
-                    cellSize={CELL_SIZE}
-                    isSelected={selectedCard === card.id}
-                    isConnecting={isConnecting && connectionStart === card.id}
-                    onMove={handleCardMove}
-                    onRemove={handleRemoveCard}
-                    onStartConnection={handleStartConnection}
-                    onCompleteConnection={handleCompleteConnection}
-                    onEditNotes={handleEditNotes}
-                  />
-                ))}
+                {boardCards.map(card => {
+                  // Calculate connection count for strength indicators
+                  const connectionCount = connections.filter(conn =>
+                    conn.from.cardId === card.id || conn.to.cardId === card.id
+                  ).length;
+
+                  return (
+                    <EvidenceCard
+                      key={card.id}
+                      card={{...card, connectionCount}}
+                      cellSize={CELL_SIZE}
+                      isSelected={selectedCard === card.id}
+                      isConnecting={isConnecting && connectionStart === card.id}
+                      onMove={handleCardMove}
+                      onRemove={handleRemoveCard}
+                      onStartConnection={handleStartConnection}
+                      onCompleteConnection={handleCompleteConnection}
+                      onEditNotes={handleEditNotes}
+                    />
+                  );
+                })}
 
                 {/* SVG overlay for connections */}
                 <svg

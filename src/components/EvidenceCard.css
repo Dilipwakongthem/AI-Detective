@@ -44,6 +44,39 @@
   background: #ffe8e6;
 }
 
+/* Critical Evidence - Visual Strength Indicators */
+.evidence-card.critical-evidence {
+  border-color: #f39c12;
+  border-width: 3px;
+  background: linear-gradient(135deg, #fff9e6 0%, #ffffff 100%);
+  box-shadow: 0 0 20px rgba(243, 156, 18, 0.4), 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: criticalGlow 3s infinite alternate;
+}
+
+@keyframes criticalGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(243, 156, 18, 0.4), 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(243, 156, 18, 0.6), 0 6px 18px rgba(0, 0, 0, 0.25);
+  }
+}
+
+.evidence-card.critical-evidence:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 0 35px rgba(243, 156, 18, 0.7), 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Strongly Connected Evidence */
+.evidence-card.strongly-connected {
+  background: linear-gradient(135deg, #e8f4ff 0%, #ffffff 100%);
+  box-shadow: 0 0 15px rgba(52, 152, 219, 0.3), 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.evidence-card.strongly-connected:hover {
+  box-shadow: 0 0 25px rgba(52, 152, 219, 0.5), 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
 /* Card Content */
 .card-icon {
   font-size: 32px;
@@ -126,6 +159,76 @@
   font-weight: bold;
   white-space: nowrap;
   animation: bounce 0.5s infinite alternate;
+}
+
+/* Critical Indicator */
+.critical-indicator {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: #f39c12;
+  color: #1e1e2e;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 2px 8px rgba(243, 156, 18, 0.5);
+  z-index: 10;
+  animation: criticalPulse 2s infinite;
+}
+
+@keyframes criticalPulse {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.15) rotate(-10deg);
+  }
+  75% {
+    transform: scale(1.15) rotate(10deg);
+  }
+}
+
+/* Connection Strength Indicator */
+.connection-strength-indicator {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  background: rgba(52, 152, 219, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(52, 152, 219, 0.4);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  transition: all 0.2s;
+}
+
+.connection-strength-indicator:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.6);
+}
+
+.connection-strength-indicator.strong {
+  background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+  box-shadow: 0 2px 6px rgba(39, 174, 96, 0.4);
+  animation: strongConnectionPulse 2s infinite;
+}
+
+@keyframes strongConnectionPulse {
+  0%, 100% {
+    box-shadow: 0 2px 6px rgba(39, 174, 96, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.7);
+  }
 }
 
 /* Notes Indicator */

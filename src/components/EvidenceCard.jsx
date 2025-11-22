@@ -82,6 +82,13 @@ const EvidenceCard = ({
 
   const display = getCardDisplay();
 
+  // Check if evidence is critical
+  const isCritical = card.type === 'evidence' && card.data.critical;
+
+  // Calculate connection count (strength indicator)
+  const connectionCount = card.connectionCount || 0;
+  const isStronglyConnected = connectionCount >= 3;
+
   return (
     <div
       ref={drag}
@@ -91,6 +98,8 @@ const EvidenceCard = ({
         ${isSelected ? 'selected' : ''}
         ${isConnecting ? 'connecting' : ''}
         ${isDragging ? 'dragging' : ''}
+        ${isCritical ? 'critical-evidence' : ''}
+        ${isStronglyConnected ? 'strongly-connected' : ''}
       `}
       style={{
         position: 'absolute',
@@ -147,6 +156,23 @@ const EvidenceCard = ({
           ✕
         </button>
       </div>
+
+      {/* Critical Evidence indicator */}
+      {isCritical && (
+        <div className="critical-indicator" title="Critical Evidence">
+          ⭐
+        </div>
+      )}
+
+      {/* Connection Strength indicator */}
+      {connectionCount > 0 && (
+        <div
+          className={`connection-strength-indicator ${isStronglyConnected ? 'strong' : ''}`}
+          title={`${connectionCount} connection${connectionCount > 1 ? 's' : ''}`}
+        >
+          🔗 {connectionCount}
+        </div>
+      )}
 
       {/* Notes indicator */}
       {(card.notes || (card.observations && card.observations.length > 0)) && (

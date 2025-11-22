@@ -6,6 +6,7 @@ import ThemeSelectorModal from './ThemeSelectorModal';
 import ThemeWelcomeModal from './ThemeWelcomeModal';
 import SettingsModal from './SettingsModal';
 import InteractiveTutorialOverlay from './InteractiveTutorialOverlay';
+import EvidenceBoard from './EvidenceBoard';
 import './DetectiveGame.css';
 import interactiveTutorial from '../utils/interactiveTutorial';
 
@@ -85,6 +86,7 @@ const DetectiveGame = () => {
   const [showThemeSelector, setShowThemeSelector] = useState(false);
   const [showThemeWelcome, setShowThemeWelcome] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showEvidenceBoard, setShowEvidenceBoard] = useState(false);
 
   // Tutorial state
   const [tutorialActive, setTutorialActive] = useState(false);
@@ -1278,6 +1280,13 @@ const DetectiveGame = () => {
               📓 DETECTIVE'S NOTEBOOK
             </button>
           )}
+          <button
+            className="action-btn evidence-board-btn"
+            onClick={() => setShowEvidenceBoard(true)}
+            data-tooltip="Open Evidence Board - Build your deduction visually"
+          >
+            🔍 EVIDENCE BOARD
+          </button>
           <button className="action-btn accusation-btn" onClick={() => setGameState('accusation')} data-tooltip="Accuse a suspect of the crime">
             ⚖️ MAKE ACCUSATION
           </button>
@@ -1758,6 +1767,16 @@ const DetectiveGame = () => {
         <NotebookModal
           caseId={currentCase.caseNumber}
           onClose={() => setShowNotebook(false)}
+          showNotification={showNotification}
+        />
+      )}
+
+      {/* Evidence Board */}
+      {showEvidenceBoard && currentCase && (
+        <EvidenceBoard
+          caseData={currentCase}
+          onUpdateCase={setCurrentCase}
+          onClose={() => setShowEvidenceBoard(false)}
           showNotification={showNotification}
         />
       )}

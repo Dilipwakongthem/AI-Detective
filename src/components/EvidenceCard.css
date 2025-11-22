@@ -1,0 +1,171 @@
+/* Evidence Card Styling */
+
+.evidence-card {
+  background: white;
+  border: 2px solid #3498db;
+  border-radius: 8px;
+  padding: 10px;
+  cursor: grab;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.evidence-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.evidence-card.dragging {
+  opacity: 0.6;
+  cursor: grabbing;
+  transform: rotate(5deg);
+}
+
+.evidence-card.selected {
+  border-width: 3px;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+}
+
+.evidence-card.connecting {
+  animation: pulse 1.5s infinite;
+  box-shadow: 0 0 0 4px rgba(243, 156, 18, 0.4);
+}
+
+/* Card Types */
+.evidence-card-evidence {
+  border-color: #3498db;
+}
+
+.evidence-card-suspect {
+  border-color: #e74c3c;
+  background: #ffe8e6;
+}
+
+/* Card Content */
+.card-icon {
+  font-size: 32px;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.card-content {
+  flex: 1;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-subtitle {
+  font-size: 11px;
+  color: #7f8c8d;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Card Actions */
+.card-actions {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.evidence-card:hover .card-actions {
+  opacity: 1;
+}
+
+.card-action-btn {
+  background: #3d3d5c;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.card-action-btn:hover {
+  background: #4d4d6c;
+  transform: scale(1.1);
+}
+
+.card-action-danger {
+  background: #e74c3c;
+}
+
+.card-action-danger:hover {
+  background: #c0392b;
+}
+
+/* Connection Indicator */
+.connection-indicator {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #f39c12;
+  color: #1e1e2e;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: bold;
+  white-space: nowrap;
+  animation: bounce 0.5s infinite alternate;
+}
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 4px rgba(243, 156, 18, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(243, 156, 18, 0.1);
+  }
+}
+
+@keyframes bounce {
+  from {
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    transform: translateX(-50%) translateY(-5px);
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .evidence-card {
+    padding: 8px;
+  }
+
+  .card-icon {
+    font-size: 24px;
+  }
+
+  .card-title {
+    font-size: 12px;
+  }
+
+  .card-subtitle {
+    font-size: 10px;
+  }
+
+  .card-actions {
+    opacity: 1; /* Always visible on mobile */
+  }
+}

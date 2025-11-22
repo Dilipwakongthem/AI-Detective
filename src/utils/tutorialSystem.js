@@ -208,16 +208,16 @@ class TutorialSystem {
         this.completedSteps = state.completedSteps || [];
         this.skipped = state.skipped || false;
       } else {
-        // First time player - enable tutorial
+        // First time player - tutorial will be enabled when they start their first case
         this.enabled = true;
-        this.currentStep = 'welcome';
+        this.currentStep = null; // Don't show tutorial on main menu
         this.completedSteps = [];
         this.skipped = false;
       }
     } catch (error) {
       console.error('Error loading tutorial state:', error);
       this.enabled = true;
-      this.currentStep = 'welcome';
+      this.currentStep = null;
     }
   }
 
@@ -233,6 +233,14 @@ class TutorialSystem {
       localStorage.setItem('ai_detective_tutorial', JSON.stringify(state));
     } catch (error) {
       console.error('Error saving tutorial state:', error);
+    }
+  }
+
+  // Start the tutorial (called when player starts their first case)
+  start() {
+    if (this.enabled && !this.skipped && this.completedSteps.length === 0) {
+      this.currentStep = 'welcome';
+      this.saveState();
     }
   }
 

@@ -433,6 +433,13 @@ const DetectiveGame = () => {
   const startInvestigation = () => {
     setGameState('investigation');
     addLog('🔍 Investigation started. Explore the crime scene and gather evidence.');
+
+    // Start tutorial for first-time players when they begin their first case
+    if (!tutorialSystem.isActive() && tutorialSystem.enabled && !tutorialSystem.skipped) {
+      tutorialSystem.start();
+      setCurrentTutorialStep(tutorialSystem.getCurrentStep());
+      setTutorialActive(tutorialSystem.isActive());
+    }
   };
 
   const investigateLocation = async (locationName) => {
@@ -1641,8 +1648,9 @@ const DetectiveGame = () => {
         />
       )}
 
-      {/* Tutorial Modal */}
-      {tutorialActive && currentTutorialStep && (
+      {/* Tutorial Modal - Only show during active case gameplay */}
+      {tutorialActive && currentTutorialStep &&
+       (gameState === 'investigation' || gameState === 'interrogation' || gameState === 'accusation') && (
         <TutorialModal
           step={currentTutorialStep}
           onNext={handleTutorialNext}

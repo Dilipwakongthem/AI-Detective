@@ -54,7 +54,7 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
         setTimeout(() => {
           const newRect = target.getBoundingClientRect();
           updateTargetRect(newRect);
-        }, 300);
+        }, 400);
       } else {
         updateTargetRect(rect);
       }
@@ -314,9 +314,16 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
   // Recalculate modal position when modal renders or target rect changes
   useEffect(() => {
     if (modalRef.current) {
-      // Small delay to ensure modal has rendered with content
-      const timer = setTimeout(calculateModalPosition, 50);
-      return () => clearTimeout(timer);
+      // Initial calculation with delay to ensure modal has rendered
+      const timer1 = setTimeout(calculateModalPosition, 100);
+
+      // Second recalculation to catch any layout shifts or animations
+      const timer2 = setTimeout(calculateModalPosition, 300);
+
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+      };
     }
   }, [step, targetRect, calculateModalPosition]);
 
@@ -417,10 +424,10 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
           <div
             className="tutorial-spotlight-cutout"
             style={{
-              top: `${targetRect.top - 8}px`,
-              left: `${targetRect.left - 8}px`,
-              width: `${targetRect.width + 16}px`,
-              height: `${targetRect.height + 16}px`,
+              top: `${targetRect.top - 6}px`,
+              left: `${targetRect.left - 6}px`,
+              width: `${targetRect.width + 12}px`,
+              height: `${targetRect.height + 12}px`,
             }}
           ></div>
 
@@ -428,10 +435,10 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
           <div
             className="tutorial-spotlight-border"
             style={{
-              top: `${targetRect.top - 12}px`,
-              left: `${targetRect.left - 12}px`,
-              width: `${targetRect.width + 24}px`,
-              height: `${targetRect.height + 24}px`,
+              top: `${targetRect.top - 10}px`,
+              left: `${targetRect.left - 10}px`,
+              width: `${targetRect.width + 20}px`,
+              height: `${targetRect.height + 20}px`,
             }}
           ></div>
         </>

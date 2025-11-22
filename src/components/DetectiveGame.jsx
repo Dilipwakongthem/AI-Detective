@@ -209,12 +209,19 @@ const DetectiveGame = () => {
   };
 
   const scrollLogToBottom = () => {
-    // Scroll the investigation log to show the latest entries
+    // First, scroll the page to bring the investigation log into view
     const logContainer = document.getElementById('investigation-log');
     if (logContainer) {
+      // Scroll the log into view on the page
+      logContainer.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+
+      // Then scroll within the log to show latest entries
       setTimeout(() => {
         logContainer.scrollTop = logContainer.scrollHeight;
-      }, 100);
+      }, 300); // Delay to allow scrollIntoView to complete first
     }
   };
 

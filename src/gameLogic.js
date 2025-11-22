@@ -47,8 +47,28 @@ const lastNames = [
 // Track recently used names to avoid repetition (stored globally)
 let recentlyUsedNames = [];
 const occupations = [
+  // White Collar
   'Business Partner', 'Art Collector', 'Former Partner', 'Assistant',
-  'Investor', 'Curator', 'Manager', 'Accountant', 'Consultant', 'Attorney'
+  'Investor', 'Curator', 'Manager', 'Accountant', 'Consultant', 'Attorney',
+  'Architect', 'Engineer', 'Real Estate Agent', 'Financial Advisor', 'Insurance Agent',
+
+  // Blue Collar
+  'Firefighter', 'Construction Worker', 'Truck Driver', 'Taxi Driver', 'Delivery Driver',
+  'Mechanic', 'Electrician', 'Plumber', 'Factory Worker', 'Warehouse Worker',
+
+  // Service Industry
+  'Nurse', 'Teacher', 'Chef', 'Bartender', 'Waiter', 'Security Guard',
+  'Hotel Manager', 'Janitor', 'Retail Manager', 'Pharmacist',
+
+  // Creative/Media
+  'Photographer', 'Journalist', 'Actor', 'Musician', 'Artist', 'Writer',
+
+  // Medical/Legal/Academic
+  'Doctor', 'Lawyer', 'Professor', 'Scientist', 'Therapist',
+
+  // Other
+  'Personal Trainer', 'Flight Attendant', 'Sales Representative', 'IT Specialist',
+  'Social Worker', 'Veterinarian', 'Librarian', 'Event Planner'
 ];
 
 const evidenceTypes = [

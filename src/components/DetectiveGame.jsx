@@ -208,6 +208,16 @@ const DetectiveGame = () => {
     });
   };
 
+  const scrollLogToBottom = () => {
+    // Scroll the investigation log to show the latest entries
+    const logContainer = document.getElementById('investigation-log');
+    if (logContainer) {
+      setTimeout(() => {
+        logContainer.scrollTop = logContainer.scrollHeight;
+      }, 100);
+    }
+  };
+
   // Calculate theory strength
   const calculateTheoryStrength = () => {
     if (!currentCase) return { label: 'Unknown', stars: 0, percentage: 0 };
@@ -430,6 +440,9 @@ const DetectiveGame = () => {
     setGameState('investigation');
     addLog('🔍 Investigation started. Explore the crime scene and gather evidence.');
 
+    // Scroll to latest log entry
+    setTimeout(() => scrollLogToBottom(), 200);
+
     // Trigger tutorial event
     if (interactiveTutorial.isActive()) {
       const advanced = interactiveTutorial.triggerEvent('investigation_started');
@@ -484,8 +497,8 @@ const DetectiveGame = () => {
     }
 
     setLoadingAction('');
-    // Auto-scroll to investigation log
-    setTimeout(() => scrollToElement('investigation-log'), 100);
+    // Auto-scroll to investigation log (bottom to show latest entries)
+    setTimeout(() => scrollLogToBottom(), 100);
   };
 
   const selectSuspect = (suspect) => {
@@ -1284,6 +1297,8 @@ const DetectiveGame = () => {
           className="back-btn"
           onClick={() => {
             setGameState('investigation');
+            // Scroll to latest log entry
+            setTimeout(() => scrollLogToBottom(), 200);
             // Trigger tutorial event
             if (interactiveTutorial.isActive()) {
               const advanced = interactiveTutorial.triggerEvent('back_to_investigation');

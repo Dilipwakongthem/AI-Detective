@@ -3,8 +3,10 @@ import './InteractiveTutorialOverlay.css';
 
 const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
   const [targetRect, setTargetRect] = useState(null);
+  const [modalPosition, setModalPosition] = useState(null);
   const [isElementVisible, setIsElementVisible] = useState(true);
   const overlayRef = useRef(null);
+  const modalRef = useRef(null);
   const retryTimeoutRef = useRef(null);
 
   // Enhanced element finding with retry mechanism and scroll handling
@@ -83,9 +85,197 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
       top: Math.max(0, rect.top),
       left: Math.max(0, rect.left),
       width: rect.width,
-      height: rect.height
+      height: rect.height,
+      bottom: rect.bottom,
+      right: rect.right
     });
   };
+
+  // Calculate modal position dynamically based on actual modal dimensions
+  const calculateModalPosition = useCallback(() => {
+    if (!modalRef.current) return;
+
+    const modal = modalRef.current;
+    const modalRect = modal.getBoundingClientRect();
+    const modalWidth = modalRect.width;
+    const modalHeight = modalRect.height;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const padding = 20;
+    const gap = 30; // Gap between modal and target
+
+    // If no target or center position, always center
+    if (step.position === 'center' || !targetRect) {
+      setModalPosition({
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        position: 'fixed'
+      });
+      return;
+    }
+
+    // Calculate available space in each direction
+    const spaceAbove = targetRect.top;
+    const spaceBelow = viewportHeight - targetRect.bottom;
+    const spaceLeft = targetRect.left;
+    const spaceRight = viewportWidth - targetRect.right;
+
+    let newPosition = {};
+    let actualPosition = step.position; // Track which position we end up using
+
+    // Try to position according to intended position, with smart fallbacks
+    switch (step.position) {
+      case 'top':
+        // Try above first
+        if (spaceAbove >= modalHeight + gap + padding) {
+          newPosition = {
+            top: `${targetRect.top - modalHeight - gap}px`,
+            left: `${Math.min(Math.max(padding, targetRect.left + targetRect.width / 2 - modalWidth / 2), viewportWidth - modalWidth - padding)}px`,
+            transform: 'none',
+            position: 'fixed'
+          };
+          actualPosition = 'top';
+        }
+        // Not enough space above, try below
+        else if (spaceBelow >= modalHeight + gap + padding) {
+          newPosition = {
+            top: `${targetRect.bottom + gap}px`,
+            left: `${Math.min(Math.max(padding, targetRect.left + targetRect.width / 2 - modalWidth / 2), viewportWidth - modalWidth - padding)}px`,
+            transform: 'none',
+            position: 'fixed'
+          };
+          actualPosition = 'bottom';
+        }
+        // Not enough space above or below, center on screen
+        else {
+          newPosition = {
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            position: 'fixed'
+          };
+          actualPosition = 'center';
+        }
+        break;
+
+      case 'bottom':
+        // Try below first
+        if (spaceBelow >= modalHeight + gap + padding) {
+          newPosition = {
+            top: `${targetRect.bottom + gap}px`,
+            left: `${Math.min(Math.max(padding, targetRect.left + targetRect.width / 2 - modalWidth / 2), viewportWidth - modalWidth - padding)}px`,
+            transform: 'none',
+            position: 'fixed'
+          };
+          actualPosition = 'bottom';
+        }
+        // Not enough space below, try above
+        else if (spaceAbove >= modalHeight + gap + padding) {
+          newPosition = {
+            top: `${targetRect.top - modalHeight - gap}px`,
+            left: `${Math.min(Math.max(padding, targetRect.left + targetRect.width / 2 - modalWidth / 2), viewportWidth - modalWidth - padding)}px`,
+            transform: 'none',
+            position: 'fixed'
+          };
+          actualPosition = 'top';
+        }
+        // Not enough space, center on screen
+        else {
+          newPosition = {
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            position: 'fixed'
+          };
+          actualPosition = 'center';
+        }
+        break;
+
+      case 'left':
+        // Try left first (on mobile, this will fall back to center)
+        if (viewportWidth < 768 || spaceLeft < modalWidth + gap + padding) {
+          // Not enough space on left or mobile, center instead
+          newPosition = {
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            position: 'fixed'
+          };
+          actualPosition = 'center';
+        } else {
+          newPosition = {
+            top: `${Math.min(Math.max(padding, targetRect.top + targetRect.height / 2 - modalHeight / 2), viewportHeight - modalHeight - padding)}px`,
+            left: `${targetRect.left - modalWidth - gap}px`,
+            transform: 'none',
+            position: 'fixed'
+          };
+          actualPosition = 'left';
+        }
+        break;
+
+      case 'right':
+        // Try right first (on mobile, this will fall back to center)
+        if (viewportWidth < 768 || spaceRight < modalWidth + gap + padding) {
+          // Not enough space on right or mobile, center instead
+          newPosition = {
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            position: 'fixed'
+          };
+          actualPosition = 'center';
+        } else {
+          newPosition = {
+            top: `${Math.min(Math.max(padding, targetRect.top + targetRect.height / 2 - modalHeight / 2), viewportHeight - modalHeight - padding)}px`,
+            left: `${targetRect.right + gap}px`,
+            transform: 'none',
+            position: 'fixed'
+          };
+          actualPosition = 'right';
+        }
+        break;
+
+      default:
+        newPosition = {
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          position: 'fixed'
+        };
+        actualPosition = 'center';
+    }
+
+    // Final boundary check - ensure modal is fully visible
+    if (newPosition.left && typeof newPosition.left === 'string' && newPosition.left.endsWith('px')) {
+      const leftValue = parseFloat(newPosition.left);
+      if (leftValue < padding) {
+        newPosition.left = `${padding}px`;
+      } else if (leftValue + modalWidth > viewportWidth - padding) {
+        newPosition.left = `${viewportWidth - modalWidth - padding}px`;
+      }
+    }
+
+    if (newPosition.top && typeof newPosition.top === 'string' && newPosition.top.endsWith('px')) {
+      const topValue = parseFloat(newPosition.top);
+      if (topValue < padding) {
+        newPosition.top = `${padding}px`;
+      } else if (topValue + modalHeight > viewportHeight - padding) {
+        newPosition.top = `${viewportHeight - modalHeight - padding}px`;
+      }
+    }
+
+    // Store actual position for arrow rendering
+    newPosition.actualPosition = actualPosition;
+    setModalPosition(newPosition);
+
+    console.log('[Tutorial] Modal positioned:', {
+      intended: step.position,
+      actual: actualPosition,
+      modalSize: { width: modalWidth, height: modalHeight },
+      position: newPosition
+    });
+  }, [step, targetRect]);
 
   // Retry mechanism for finding elements (with exponential backoff)
   useEffect(() => {
@@ -121,6 +311,15 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
     };
   }, [step, findAndHighlightTarget]);
 
+  // Recalculate modal position when modal renders or target rect changes
+  useEffect(() => {
+    if (modalRef.current) {
+      // Small delay to ensure modal has rendered with content
+      const timer = setTimeout(calculateModalPosition, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [step, targetRect, calculateModalPosition]);
+
   // Update positions on resize and scroll
   useEffect(() => {
     if (!step || !step.targetElement) return;
@@ -131,6 +330,7 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
         const rect = target.getBoundingClientRect();
         updateTargetRect(rect);
       }
+      calculateModalPosition();
     };
 
     // Use requestAnimationFrame for smooth updates
@@ -153,7 +353,7 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
         cancelAnimationFrame(rafId);
       }
     };
-  }, [step]);
+  }, [step, calculateModalPosition]);
 
   // Auto-advance for informational steps (with longer delay for steps with highlighted elements)
   useEffect(() => {
@@ -186,10 +386,9 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
       e.preventDefault();
 
       // Add shake animation to modal to indicate they need to click the highlighted element
-      const modal = document.querySelector('.tutorial-modal-interactive');
-      if (modal) {
-        modal.classList.add('shake-attention');
-        setTimeout(() => modal.classList.remove('shake-attention'), 500);
+      if (modalRef.current) {
+        modalRef.current.classList.add('shake-attention');
+        setTimeout(() => modalRef.current.classList.remove('shake-attention'), 500);
       }
     }
   };
@@ -198,7 +397,10 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
 
   // Show continue button if explicitly requested or if highlighting without requiring action
   const shouldShowContinueButton = step.showContinueButton ||
-    (!step.requiresAction && step.highlightElement && !step.isFinal);
+    (!step.requiresAction && !step.isFinal);
+
+  // Determine arrow direction based on actual position
+  const arrowDirection = modalPosition?.actualPosition || step.position || 'bottom';
 
   return (
     <div
@@ -237,8 +439,9 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
 
       {/* Tutorial modal with instructions */}
       <div
-        className={`tutorial-modal-interactive tutorial-position-${step.position || 'center'}`}
-        style={getModalPosition(step.position, targetRect)}
+        ref={modalRef}
+        className={`tutorial-modal-interactive tutorial-position-${arrowDirection}`}
+        style={modalPosition || { opacity: 0 }} // Hide until positioned
       >
         <div className="tutorial-modal-header">
           <h3 className="tutorial-modal-title">{step.title}</h3>
@@ -293,9 +496,9 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
           )}
         </div>
 
-        {/* Arrow pointing to target */}
-        {targetRect && step.highlightElement && isElementVisible && (
-          <div className={`tutorial-arrow tutorial-arrow-${getArrowDirection(step.position, targetRect)}`}></div>
+        {/* Arrow pointing to target - only show if we have a target and it's visible */}
+        {targetRect && step.highlightElement && isElementVisible && arrowDirection !== 'center' && (
+          <div className={`tutorial-arrow tutorial-arrow-${arrowDirection}`}></div>
         )}
       </div>
 
@@ -308,128 +511,6 @@ const InteractiveTutorialOverlay = ({ step, onNext, onSkip, onComplete }) => {
     </div>
   );
 };
-
-// Calculate modal position based on target element with viewport boundary checking
-function getModalPosition(position, targetRect) {
-  // If center or no target element, always center
-  if (position === 'center' || !targetRect) {
-    return {
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)'
-    };
-  }
-
-  const padding = 20;
-  const arrowOffset = 30;
-  const modalWidth = 400; // Max modal width
-  const modalHeight = 300; // Estimated modal height
-  const viewportWidth = window.innerWidth;
-  const viewportHeight = window.innerHeight;
-
-  let style = {};
-
-  switch (position) {
-    case 'top':
-      // Position above target
-      let topY = targetRect.top - modalHeight - arrowOffset;
-
-      // Check if modal would go above viewport
-      if (topY < padding) {
-        // Not enough space above, position below instead
-        topY = targetRect.top + targetRect.height + arrowOffset;
-      }
-
-      style = {
-        top: `${Math.max(padding, topY)}px`,
-        left: `${Math.min(Math.max(modalWidth / 2 + padding, targetRect.left + targetRect.width / 2), viewportWidth - modalWidth / 2 - padding)}px`,
-        transform: 'translateX(-50%)'
-      };
-      break;
-
-    case 'bottom':
-      // Position below target
-      let bottomY = targetRect.top + targetRect.height + arrowOffset;
-
-      // Check if modal would go below viewport
-      if (bottomY + modalHeight > viewportHeight - padding) {
-        // Not enough space below, position above instead
-        bottomY = targetRect.top - modalHeight - arrowOffset;
-      }
-
-      style = {
-        top: `${Math.max(padding, bottomY)}px`,
-        left: `${Math.min(Math.max(modalWidth / 2 + padding, targetRect.left + targetRect.width / 2), viewportWidth - modalWidth / 2 - padding)}px`,
-        transform: 'translateX(-50%)'
-      };
-      break;
-
-    case 'left':
-      // Position to the left of target
-      let leftX = targetRect.left - modalWidth - arrowOffset;
-
-      // Check if modal would go off left edge
-      if (leftX < padding) {
-        // Not enough space on left, center instead
-        return {
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)'
-        };
-      }
-
-      style = {
-        top: `${Math.min(Math.max(padding, targetRect.top + targetRect.height / 2), viewportHeight - padding)}px`,
-        left: `${Math.max(padding, leftX)}px`,
-        transform: 'translateY(-50%)'
-      };
-      break;
-
-    case 'right':
-      // Position to the right of target
-      let rightX = targetRect.left + targetRect.width + arrowOffset;
-
-      // Check if modal would go off right edge
-      if (rightX + modalWidth > viewportWidth - padding) {
-        // Not enough space on right, center instead
-        return {
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)'
-        };
-      }
-
-      style = {
-        top: `${Math.min(Math.max(padding, targetRect.top + targetRect.height / 2), viewportHeight - padding)}px`,
-        left: `${rightX}px`,
-        transform: 'translateY(-50%)'
-      };
-      break;
-
-    default:
-      return {
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)'
-      };
-  }
-
-  return style;
-}
-
-// Determine arrow direction based on actual modal position relative to target
-function getArrowDirection(intendedPosition, targetRect) {
-  if (!targetRect) return intendedPosition;
-
-  // For mobile, arrows are hidden anyway
-  if (window.innerWidth < 768) {
-    return intendedPosition;
-  }
-
-  // Use intended position as arrow direction
-  // The CSS will handle hiding arrows if they don't make sense
-  return intendedPosition || 'bottom';
-}
 
 // Get display text for phase
 function getPhaseDisplay(phase) {

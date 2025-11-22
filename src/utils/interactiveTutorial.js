@@ -193,13 +193,16 @@ When you're confident you know who did it:
 • Consider their nervousness patterns
 • Trust your detective instincts
 
-Click on a suspect card and then **"Accuse"** to make your decision.`,
+Click on a suspect card and then **"Accuse"** to make your decision.
+
+Or click Continue to keep investigating.`,
     position: 'top',
     targetElement: '[data-tutorial="suspect-list"]',
     highlightElement: true,
-    blockOtherClicks: false, // Allow them to choose any suspect
-    requiresAction: true,
-    nextTrigger: 'accusation_made',
+    blockOtherClicks: false, // Allow them to investigate freely
+    requiresAction: false, // Changed to false so Continue button shows
+    showContinueButton: true, // Explicitly show Continue button
+    nextTrigger: 'click_continue',
     phase: 'investigation'
   },
 

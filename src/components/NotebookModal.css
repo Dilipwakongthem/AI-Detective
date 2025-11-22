@@ -760,3 +760,12 @@
     height: 28px;
   }
 }
+
+/* Timeline Container */
+.notebook-timeline-container {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: #1a1a2e;
+}

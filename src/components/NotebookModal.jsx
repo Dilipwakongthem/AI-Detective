@@ -13,9 +13,15 @@ import {
   deleteTheory,
   sortTheories
 } from '../utils/theoryManager';
+import {
+  getEventsForCase
+} from '../utils/timelineManager';
 import TheoryBuilder from './TheoryBuilder';
 import TheoryCard from './TheoryCard';
 import TheoryComparison from './TheoryComparison';
+import TimelineBuilder from './TimelineBuilder';
+import EventEditor from './EventEditor';
+import AlibiValidator from './AlibiValidator';
 import './NotebookModal.css';
 
 /**
@@ -24,7 +30,7 @@ import './NotebookModal.css';
  */
 const NotebookModal = ({ caseId, caseData, onClose, showNotification }) => {
   // Tab state
-  const [activeTab, setActiveTab] = useState('notes'); // 'notes' or 'theories'
+  const [activeTab, setActiveTab] = useState('notes'); // 'notes', 'theories', or 'timeline'
 
   // Notes state
   const [notes, setNotes] = useState([]);
@@ -45,12 +51,19 @@ const NotebookModal = ({ caseId, caseData, onClose, showNotification }) => {
   const [selectedTheoryIds, setSelectedTheoryIds] = useState([]);
   const [showTheoryComparison, setShowTheoryComparison] = useState(false);
 
+  // Timeline state
+  const [timelineEvents, setTimelineEvents] = useState([]);
+  const [showEventEditor, setShowEventEditor] = useState(false);
+  const [editingEvent, setEditingEvent] = useState(null);
+  const [showAlibiValidator, setShowAlibiValidator] = useState(false);
+
   /**
    * Load notes on mount and when caseId changes
    */
   useEffect(() => {
     loadNotes();
     loadTheories();
+    loadTimeline();
   }, [caseId]);
 
   /**
@@ -76,6 +89,14 @@ const NotebookModal = ({ caseId, caseData, onClose, showNotification }) => {
     const caseTheories = getTheoriesForCase(caseId);
     const sorted = sortTheories(caseTheories, 'updated');
     setTheories(sorted);
+  };
+
+  /**
+   * Load timeline events for current case
+   */
+  const loadTimeline = () => {
+    const events = getEventsForCase(caseId);
+    setTimelineEvents(events);
   };
 
   /**
@@ -292,6 +313,33 @@ const NotebookModal = ({ caseId, caseData, onClose, showNotification }) => {
   };
 
   /**
+   * Handle event edit (create or edit)
+   */
+  const handleEventEdit = (event) => {
+    setEditingEvent(event);
+    setShowEventEditor(true);
+  };
+
+  /**
+   * Handle event saved (from EventEditor)
+   */
+  const handleEventSaved = () => {
+    loadTimeline();
+    showNotification(editingEvent ? '✅ Event updated!' : '✅ Event added to timeline!', 'success');
+  };
+
+  /**
+   * Handle show alibi validator
+   */
+  const handleShowAlibiValidator = () => {
+    if (!caseData.suspects || caseData.suspects.length === 0) {
+      showNotification('No suspects available to check alibis', 'info');
+      return;
+    }
+    setShowAlibiValidator(true);
+  };
+
+  /**
    * Render note card
    */
   const renderNoteCard = (note) => {
@@ -477,6 +525,12 @@ const NotebookModal = ({ caseId, caseData, onClose, showNotification }) => {
           >
             📘 Theories ({theories.length})
           </button>
+          <button
+            className={`notebook-tab ${activeTab === 'timeline' ? 'active' : ''}`}
+            onClick={() => setActiveTab('timeline')}
+          >
+            ⏰ Timeline ({timelineEvents.length})
+          </button>
         </div>
 
         {/* Notes Tab Content */}
@@ -644,6 +698,19 @@ const NotebookModal = ({ caseId, caseData, onClose, showNotification }) => {
           </>
         )}
 
+        {/* Timeline Tab Content */}
+        {activeTab === 'timeline' && (
+          <div className="notebook-timeline-container">
+            <TimelineBuilder
+              caseId={caseId}
+              evidence={caseData.evidence || []}
+              suspects={caseData.suspects || []}
+              onEventEdit={handleEventEdit}
+              onShowAlibiValidator={handleShowAlibiValidator}
+            />
+          </div>
+        )}
+
         {/* Theory Builder Modal */}
         {showTheoryBuilder && (
           <TheoryBuilder
@@ -668,6 +735,30 @@ const NotebookModal = ({ caseId, caseData, onClose, showNotification }) => {
             onDeselect={(theoryId) => {
               setSelectedTheoryIds(prev => prev.filter(id => id !== theoryId));
             }}
+          />
+        )}
+
+        {/* Event Editor Modal */}
+        {showEventEditor && (
+          <EventEditor
+            caseId={caseId}
+            event={editingEvent}
+            evidence={caseData.evidence || []}
+            suspects={caseData.suspects || []}
+            onSave={handleEventSaved}
+            onClose={() => {
+              setShowEventEditor(false);
+              setEditingEvent(null);
+            }}
+          />
+        )}
+
+        {/* Alibi Validator Modal */}
+        {showAlibiValidator && (
+          <AlibiValidator
+            caseId={caseId}
+            suspects={caseData.suspects || []}
+            onClose={() => setShowAlibiValidator(false)}
           />
         )}
       </div>

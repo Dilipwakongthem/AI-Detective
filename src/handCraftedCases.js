@@ -2812,6 +2812,1258 @@ Seven suspects emerge, each with potential motive: the bitter ex-husband, the fi
       moderate: 'Check the ransom note separately from the disappearance. Michael has custody motive but no financial need. Who benefits from ransom money?',
       major: 'Michael Chen took Emma (DNA in basement, security footage, witness testimony, email premeditation). Linda Chen sent fake ransom note (fingerprints, burner phone, handwriting, financial motive). Two separate crimes.'
     }
+  },
+
+  {
+    id: 'corporate_spy',
+    title: 'The Corporate Spy',
+    difficulty: 5,
+    crimeType: 'Espionage',
+    priority: 'HIGH',
+    location: 'NeuralTech Industries - AI Startup',
+    narrative: {
+      opening: `NeuralTech Industries, a promising AI startup valued at $2 billion, discovered a devastating security breach when their proprietary machine learning algorithms appeared in a competitor's patent filing three weeks before their own scheduled release. The stolen intellectual property represented five years of research and development worth an estimated $500 million.
+
+The investigation revealed that someone with internal access had been systematically copying source code, research papers, and training data over a six-month period. Digital forensics traced the theft to after-hours downloads using legitimate employee credentials, but identifying which of the eight suspects committed the espionage proved challenging.
+
+The suspects range from disgruntled engineers to ambitious executives, each with technical access and potential motive. The corporate spy covered their tracks well - using VPNs, encrypted communications, and careful timing to avoid detection. But investigators found traces: unusual network activity patterns, encrypted file transfers to offshore servers, and financial connections to competing firms.`,
+
+      twist: `The spy is Senior Engineer David Kim, who was secretly recruited by competitor QuantumAI six months ago with promises of $2M payment plus executive position. He used his legitimate access to copy files after hours, routing data through personal encrypted servers before delivering to QuantumAI. The twist: his manager Rachel Torres suspected the theft and has been documenting evidence to blackmail David for a cut of his payment, making her an accessory after the fact.`,
+
+      conclusion: `David Kim committed corporate espionage (guilty). Evidence: encrypted file transfers to his personal server, $500K deposit from shell company linked to QuantumAI, after-hours access logs matching theft times, encrypted communications with QuantumAI recruiter, and source code fragments found on his personal devices. Rachel Torres guilty of extortion and conspiracy after discovering theft and demanding $300K to stay silent (emails and text messages prove blackmail). Seven others innocent despite various suspicious behaviors.`
+    },
+    victim: {
+      name: 'NeuralTech Industries',
+      age: 'N/A',
+      occupation: 'AI Startup Company',
+      background: '$2B valuation, 150 employees, revolutionary ML algorithms stolen worth $500M. Victim of industrial espionage.',
+      personality: 'N/A - Corporate victim'
+    },
+    suspects: [
+      {
+        name: 'David Kim',
+        age: 34,
+        occupation: 'Senior ML Engineer',
+        personality: 'Ambitious',
+        motive: 'Financial Gain',
+        alibi: 'Claims late night work was legitimate',
+        isGuilty: true,
+        backstory: 'Talented engineer recruited by competitor QuantumAI. Offered $2M plus VP position to steal NeuralTech\'s algorithms. Systematically copied code over 6 months using legitimate access.',
+        secret: 'Corporate spy paid by QuantumAI. Has received $500K down payment with $1.5M pending delivery. Plans to resign and join QuantumAI next month.',
+        attributes: {
+          physical: { height: '5\'9"-6\'0"', build: 'Slim build', hairColor: 'Black', eyeColor: 'Dark brown', bloodType: 'A+', handedness: 'Right', shoeSize: 10, hasGlasses: true },
+          behavioral: { phoneArea: '650', voiceQuality: 'Confident', shoeType: 'Sneakers', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Rachel Torres',
+        age: 41,
+        occupation: 'Engineering Manager',
+        personality: 'Sharp',
+        motive: 'Blackmail',
+        alibi: 'Has management access but claims innocence',
+        isGuilty: true,
+        backstory: 'David\'s manager who noticed suspicious activity and investigated privately. Discovered his espionage and is blackmailing him for $300K cut rather than reporting to company.',
+        secret: 'Knows about David\'s espionage. Demanding $300K to stay silent. Accessory after the fact and guilty of extortion.',
+        attributes: {
+          physical: { height: '5\'7"-5\'10"', build: 'Athletic build', hairColor: 'Dark brown', eyeColor: 'Brown', bloodType: 'O+', handedness: 'Right', shoeSize: 9, hasGlasses: false },
+          behavioral: { phoneArea: '408', voiceQuality: 'Authoritative', shoeType: 'Heels', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Jennifer Wu',
+        age: 29,
+        occupation: 'Junior Engineer',
+        personality: 'Nervous',
+        motive: 'False Lead - Student Debt',
+        alibi: 'Works late often, seems suspicious',
+        isGuilty: false,
+        backstory: 'Hardworking engineer with $180K student loans. Works late nights legitimately. Her financial stress and late hours make her seem guilty but she\'s innocent.',
+        secret: 'Struggling with debt but would never betray company. Classic red herring.',
+        attributes: {
+          physical: { height: '5\'5"-5\'8"', build: 'Slim build', hairColor: 'Black', eyeColor: 'Dark brown', bloodType: 'B+', handedness: 'Right', shoeSize: 7, hasGlasses: true },
+          behavioral: { phoneArea: '415', voiceQuality: 'Soft', shoeType: 'Sneakers', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Marcus Chen',
+        age: 38,
+        occupation: 'VP of Product',
+        personality: 'Aggressive',
+        motive: 'Career Competition',
+        alibi: 'Has executive access but solid reputation',
+        isGuilty: false,
+        backstory: 'Ambitious VP competing for CTO role. Seemed like obvious suspect due to access level and competitive nature, but investigation cleared him.',
+        secret: 'Was interviewing with other companies but never stole IP. Innocent of espionage.',
+        attributes: {
+          physical: { height: '6\'0"-6\'3"', build: 'Athletic build', hairColor: 'Black', eyeColor: 'Dark brown', bloodType: 'AB+', handedness: 'Right', shoeSize: 11, hasGlasses: false },
+          behavioral: { phoneArea: '650', voiceQuality: 'Loud', shoeType: 'Dress shoes', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Dr. Sarah Mitchell',
+        age: 52,
+        occupation: 'Chief Scientist',
+        personality: 'Eccentric',
+        motive: 'Academic Freedom',
+        alibi: 'Believes research should be open',
+        isGuilty: false,
+        backstory: 'Brilliant scientist who advocates for open-source AI. Her philosophy makes her seem suspicious but she respects IP laws and didn\'t leak anything.',
+        secret: 'Plans to publish academic papers after patent filing. Believes in open research but followed legal protocols.',
+        attributes: {
+          physical: { height: '5\'8"-5\'11"', build: 'Medium build', hairColor: 'Gray', eyeColor: 'Blue', bloodType: 'A-', handedness: 'Right', shoeSize: 9, hasGlasses: true },
+          behavioral: { phoneArea: '650', voiceQuality: 'Enthusiastic', shoeType: 'Comfortable shoes', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Alex Rivera',
+        age: 26,
+        occupation: 'DevOps Engineer',
+        personality: 'Paranoid',
+        motive: 'System Access',
+        alibi: 'Has root access to all systems',
+        isGuilty: false,
+        backstory: 'Infrastructure specialist with highest level system access. His technical capabilities make him suspect, but logs prove he didn\'t access research data.',
+        secret: 'Discovered the data breach through network monitoring but didn\'t report it immediately, fearing being blamed. Innocent of theft.',
+        attributes: {
+          physical: { height: '5\'10"-6\'1"', build: 'Slim build', hairColor: 'Brown', eyeColor: 'Hazel', bloodType: 'O-', handedness: 'Left', shoeSize: 10, hasGlasses: true },
+          behavioral: { phoneArea: '408', voiceQuality: 'Monotone', shoeType: 'Sandals', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Linda Park',
+        age: 45,
+        occupation: 'HR Director',
+        personality: 'Professional',
+        motive: 'False Lead - Layoff Info',
+        alibi: 'No technical background',
+        isGuilty: false,
+        backstory: 'HR director who knew about upcoming layoffs (confidential). Her secretive behavior about layoffs made her seem suspicious, but she lacks technical expertise for IP theft.',
+        secret: 'Knew company was planning to lay off 30 people. Her stress was about this, not espionage.',
+        attributes: {
+          physical: { height: '5\'6"-5\'9"', build: 'Medium build', hairColor: 'Black', eyeColor: 'Brown', bloodType: 'B-', handedness: 'Right', shoeSize: 8, hasGlasses: false },
+          behavioral: { phoneArea: '650', voiceQuality: 'Calm', shoeType: 'Professional heels', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Robert Zhang',
+        age: 31,
+        occupation: 'Security Engineer',
+        personality: 'Methodical',
+        motive: 'Inside Knowledge',
+        alibi: 'Investigating breach professionally',
+        isGuilty: false,
+        backstory: 'Security specialist investigating the breach. His deep knowledge of the theft makes him seem involved, but he\'s actually trying to solve the case.',
+        secret: 'Suspects David but lacks conclusive proof. Frustrated by slow internal investigation.',
+        attributes: {
+          physical: { height: '5\'11"-6\'2"', build: 'Athletic build', hairColor: 'Black', eyeColor: 'Dark brown', bloodType: 'A+', handedness: 'Right', shoeSize: 11, hasGlasses: true },
+          behavioral: { phoneArea: '415', voiceQuality: 'Precise', shoeType: 'Sneakers', smokingHabit: false }
+        }
+      }
+    ],
+    evidence: [
+      {
+        type: 'Network Logs',
+        description: 'After-hours file transfers from research servers to external IP. Pattern matches David Kim\'s workstation and access times.',
+        location: 'IT Infrastructure',
+        critical: true,
+        connectedSuspect: 'David Kim'
+      },
+      {
+        type: 'Financial Documents',
+        description: 'David Kim received $500K deposit from shell company "Tech Innovations Ltd" registered in Cayman Islands. Company traced to QuantumAI funding.',
+        location: 'Bank Records',
+        critical: true,
+        connectedSuspect: 'David Kim'
+      },
+      {
+        type: 'Digital Forensics',
+        description: 'Encrypted files found on David\'s personal laptop contain NeuralTech source code fragments. Encryption keys match files sent to QuantumAI servers.',
+        location: 'David\'s Devices',
+        critical: true,
+        connectedSuspect: 'David Kim'
+      },
+      {
+        type: 'Email Records',
+        description: 'Encrypted emails between David and QuantumAI recruiter "Alex Johnson" discussing "project delivery timeline" and "final payment schedule."',
+        location: 'Email Server',
+        critical: true,
+        connectedSuspect: 'David Kim'
+      },
+      {
+        type: 'Access Logs',
+        description: 'David accessed research database 47 times between 10 PM and 2 AM over 6 months. Pattern inconsistent with legitimate work.',
+        location: 'Security System',
+        critical: true,
+        connectedSuspect: 'David Kim'
+      },
+      {
+        type: 'Text Messages',
+        description: 'Rachel Torres texted David: "I know what you\'ve been doing. We need to talk about my cut - $300K keeps this quiet." Proves blackmail.',
+        location: 'Phone Records',
+        critical: true,
+        connectedSuspect: 'Rachel Torres'
+      },
+      {
+        type: 'Email Records',
+        description: 'Rachel emailed David detailed evidence of his theft with subject "Partnership Opportunity." Clear extortion attempt.',
+        location: 'Email Server',
+        critical: true,
+        connectedSuspect: 'Rachel Torres'
+      },
+      {
+        type: 'Witness Testimony',
+        description: 'QuantumAI whistleblower (granted immunity) confirms they paid David Kim for NeuralTech algorithms. Provides payment records and delivery confirmations.',
+        location: 'Federal Investigation',
+        critical: true,
+        connectedSuspect: 'David Kim'
+      },
+      {
+        type: 'Network Forensics',
+        description: 'VPN traffic analysis shows David routing stolen files through personal encrypted server before delivery to QuantumAI.',
+        location: 'FBI Cyber Division',
+        critical: true,
+        connectedSuspect: 'David Kim'
+      },
+      {
+        type: 'Financial Documents',
+        description: 'Jennifer Wu has $180K student debt but no unusual income or spending. Financial profile inconsistent with espionage.',
+        location: 'Bank Records',
+        critical: false,
+        connectedSuspect: 'Jennifer Wu'
+      },
+      {
+        type: 'Interview Records',
+        description: 'Marcus Chen was interviewing with other startups but never accessed research systems inappropriately. Logs clear him.',
+        location: 'HR Records',
+        critical: false,
+        connectedSuspect: 'Marcus Chen'
+      },
+      {
+        type: 'Access Logs',
+        description: 'Alex Rivera discovered breach through network monitoring on March 15th but delayed reporting for 3 days. Worried about being blamed.',
+        location: 'Security Logs',
+        critical: false,
+        connectedSuspect: 'Alex Rivera'
+      },
+      {
+        type: 'Expert Analysis',
+        description: 'Dr. Mitchell\'s research publication schedule aligns with company patent filing strategy. No evidence of premature disclosure.',
+        location: 'Legal Department',
+        critical: false,
+        connectedSuspect: 'Dr. Sarah Mitchell'
+      }
+    ],
+    hints: {
+      subtle: 'Look for someone with both technical access and sudden unexplained wealth. The after-hours access patterns are key.',
+      moderate: 'David Kim has unusual after-hours database access and recent large deposits. Check who might know about his activities - blackmailers often become accomplices.',
+      major: 'David Kim stole IP (network logs, $500K payment from QuantumAI shell company, encrypted files on personal devices, access patterns, whistleblower testimony). Rachel Torres blackmailing him for $300K cut (text messages, emails). Both guilty.'
+    }
+  },
+
+  {
+    id: 'perfect_alibi',
+    title: 'The Perfect Alibi',
+    difficulty: 9,
+    crimeType: 'Murder',
+    priority: 'URGENT',
+    location: 'Rosewood Country Club Annual Gala',
+    narrative: {
+      opening: `Billionaire real estate developer Malcolm Prescott was found dead in the country club's wine cellar at 10:47 PM during the annual charity gala. He'd been stabbed once in the chest with a vintage letter opener from the club's display collection. Time of death: between 9:30 PM and 9:45 PM.
+
+The challenge: All 10 suspects have seemingly perfect alibis supported by multiple witnesses, security cameras, and digital records. The gala's strict schedule and extensive documentation creates a timeline puzzle - everyone appears to be accounted for during the murder window.
+
+The victim had made enemies throughout his ruthless business career: developers he bankrupted, politicians he blackmailed, family members he disinherited, and competitors he crushed. The gala provided the perfect opportunity for revenge, but the meticulous timeline seems to eliminate every suspect.
+
+**USE TIMELINE BUILDER**: This case requires precise timeline analysis. Build a detailed timeline of every suspect's movements using security footage timestamps, witness statements, phone GPS data, and car tracking. The key to solving this case is finding the impossible gap - the 14-minute window where someone's alibi doesn't quite add up.`,
+
+      twist: `The killer is Senator Patricia Hayes, who claimed to be giving her keynote speech from 9:15-9:50 PM with 300 witnesses. The deception: Her speech was pre-recorded and played from backstage speakers while she slipped away to the wine cellar. Sound engineer Mark Reeves was her accomplice, playing the recording while Patricia killed Malcolm (who was blackmailing her over campaign finance violations).
+
+The timeline reveals the truth: Patricia's car GPS shows her vehicle moved in the parking lot at 9:33 PM (impossible if she was on stage). Her phone pinged a cell tower near the wine cellar at 9:38 PM. Security footage shows a figure in Patricia's distinctive dress entering the service corridor at 9:32 PM. Her speech recording has a 2.3-second audio loop at the 18-minute mark - technical glitch from the pre-recording.`,
+
+      conclusion: `Senator Patricia Hayes murdered Malcolm Prescott with accomplice Mark Reeves (sound engineer). Timeline analysis proves: (1) Car GPS movement during speech, (2) Phone cell tower data placing her near wine cellar, (3) Security footage of her dress in service corridor, (4) Audio analysis showing pre-recorded speech with technical glitch, (5) Witness who saw her "leaving stage area" at 9:31 PM (dismissed initially as mistaken), (6) Wine cellar security camera disabled at 9:29 PM using Mark's backstage access, (7) Malcolm's calendar showing he was meeting "P.H." about "arrangement" at 9:30 PM. Mark guilty of conspiracy and evidence tampering.`
+    },
+    victim: {
+      name: 'Malcolm Prescott',
+      age: 67,
+      occupation: 'Real Estate Billionaire',
+      background: 'Ruthless developer worth $3.4 billion. Made enemies through hostile takeovers, blackmail, and crushing competitors. Was blackmailing Senator Hayes over illegal campaign donations.',
+      personality: 'Ruthless businessman with no moral boundaries'
+    },
+    suspects: [
+      {
+        name: 'Senator Patricia Hayes',
+        age: 54,
+        occupation: 'US Senator',
+        personality: 'Charismatic',
+        motive: 'Blackmail',
+        alibi: 'Giving keynote speech 9:15-9:50 PM, 300 witnesses',
+        isGuilty: true,
+        backstory: 'Respected senator being blackmailed by Malcolm over illegal $2M campaign donation. Malcolm demanded $5M to stay silent or threatened to destroy her career. She arranged to meet him in wine cellar, pre-recorded her speech, and killed him while recording played.',
+        secret: 'Murdered Malcolm during her "speech" using pre-recorded audio. Sound engineer Mark Reeves helped execute plan.',
+        attributes: {
+          physical: { height: '5\'8"-5\'11"', build: 'Slim build', hairColor: 'Blonde', eyeColor: 'Blue', bloodType: 'O+', handedness: 'Right', shoeSize: 9, hasGlasses: false },
+          behavioral: { phoneArea: '202', voiceQuality: 'Commanding', shoeType: 'Designer heels', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Mark Reeves',
+        age: 38,
+        occupation: 'AV Sound Engineer',
+        personality: 'Nervous',
+        motive: 'Accomplice',
+        alibi: 'Running sound booth entire evening',
+        isGuilty: true,
+        backstory: 'Country club\'s AV technician having affair with Patricia. Helped her pre-record speech and disabled wine cellar camera. Guilty of conspiracy, evidence tampering, and accessory to murder.',
+        secret: 'Disabled security camera at 9:29 PM, played pre-recorded speech for Patricia, and provided her alibi cover.',
+        attributes: {
+          physical: { height: '5\'10"-6\'1"', build: 'Medium build', hairColor: 'Brown', eyeColor: 'Hazel', bloodType: 'A+', handedness: 'Right', shoeSize: 10, hasGlasses: true },
+          behavioral: { phoneArea: '555', voiceQuality: 'Quiet', shoeType: 'Sneakers', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Richard Prescott',
+        age: 42,
+        occupation: 'Malcolm\'s Estranged Son',
+        personality: 'Bitter',
+        motive: 'Inheritance',
+        alibi: 'At bar 9:00-10:00 PM, bartender confirms',
+        isGuilty: false,
+        backstory: 'Disinherited son cut off financially. Malcolm changed will to leave everything to foundation. Has $800K gambling debts. Seems like obvious suspect but alibi holds.',
+        secret: 'Was planning to contest will in court. Innocent of murder but benefits from death.',
+        attributes: {
+          physical: { height: '6\'0"-6\'3"', build: 'Athletic build', hairColor: 'Dark brown', eyeColor: 'Blue', bloodType: 'B+', handedness: 'Right', shoeSize: 11, hasGlasses: false },
+          behavioral: { phoneArea: '310', voiceQuality: 'Sharp', shoeType: 'Dress shoes', smokingHabit: true }
+        }
+      },
+      {
+        name: 'Diana Chen',
+        age: 38,
+        occupation: 'Rival Developer',
+        personality: 'Aggressive',
+        motive: 'Business Rivalry',
+        alibi: 'Dancing on ballroom floor, 50+ witnesses',
+        isGuilty: false,
+        backstory: 'Competitor bankrupted by Malcolm\'s hostile takeover of her company. Lost $40M and her life\'s work. Was seen arguing with Malcolm at 8:45 PM.',
+        secret: 'Confronted Malcolm earlier threatening lawsuit, but didn\'t kill him. Strong motive, solid alibi.',
+        attributes: {
+          physical: { height: '5\'7"-5\'10"', build: 'Athletic build', hairColor: 'Black', eyeColor: 'Dark brown', bloodType: 'O-', handedness: 'Right', shoeSize: 9, hasGlasses: false },
+          behavioral: { phoneArea: '415', voiceQuality: 'Forceful', shoeType: 'Heels', smokingHabit: false }
+        }
+      },
+      {
+        name: 'James Morrison',
+        age: 56,
+        occupation: 'Former Business Partner',
+        personality: 'Cold',
+        motive: 'Betrayal',
+        alibi: 'Playing poker in card room, 7 players confirm',
+        isGuilty: false,
+        backstory: 'Ex-partner who Malcolm forced out through legal manipulation, stealing his 50% stake in billion-dollar company. Has never recovered financially or emotionally.',
+        secret: 'Hired private investigator to find dirt on Malcolm but didn\'t act on it. Innocent.',
+        attributes: {
+          physical: { height: '5\'9"-6\'0"', build: 'Heavy build', hairColor: 'Gray', eyeColor: 'Brown', bloodType: 'AB+', handedness: 'Right', shoeSize: 10, hasGlasses: true },
+          behavioral: { phoneArea: '617', voiceQuality: 'Gruff', shoeType: 'Loafers', smokingHabit: true }
+        }
+      },
+      {
+        name: 'Dr. Rebecca Stone',
+        age: 49,
+        occupation: 'Charity Director',
+        personality: 'Idealistic',
+        motive: 'Moral Outrage',
+        alibi: 'Greeting guests at entrance, security footage confirms',
+        isGuilty: false,
+        backstory: 'Director of charity benefiting from gala. Malcolm promised $10M donation then reneged, devastating the charity. She publicly confronted him about broken promise.',
+        secret: 'Was furious at Malcolm but focused on saving charity through other donors. Innocent.',
+        attributes: {
+          physical: { height: '5\'6"-5\'9"', build: 'Medium build', hairColor: 'Red', eyeColor: 'Green', bloodType: 'A-', handedness: 'Right', shoeSize: 8, hasGlasses: false },
+          behavioral: { phoneArea: '212', voiceQuality: 'Passionate', shoeType: 'Comfortable heels', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Thomas Blackwell',
+        age: 61,
+        occupation: 'Club President',
+        personality: 'Dignified',
+        motive: 'Club Reputation',
+        alibi: 'Making rounds talking to donors, multiple witnesses',
+        isGuilty: false,
+        backstory: 'Country club president who Malcolm threatened to sue over membership dispute. Malcolm\'s legal threats could cost club millions and destroy Thomas\'s reputation.',
+        secret: 'Was planning to resign rather than face lawsuit. Innocent but under immense pressure.',
+        attributes: {
+          physical: { height: '6\'1"-6\'4"', build: 'Medium build', hairColor: 'White', eyeColor: 'Blue', bloodType: 'O+', handedness: 'Right', shoeSize: 12, hasGlasses: true },
+          behavioral: { phoneArea: '555', voiceQuality: 'Refined', shoeType: 'Dress shoes', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Angela Torres',
+        age: 33,
+        occupation: 'Malcolm\'s Executive Assistant',
+        personality: 'Professional',
+        motive: 'Harassment',
+        alibi: 'Working coat check, continuous witness coverage',
+        isGuilty: false,
+        backstory: 'Assistant who endured years of Malcolm\'s harassment. Recently filed HR complaint that Malcolm was trying to bury. Feared losing job and being blacklisted in industry.',
+        secret: 'Was planning to sue for harassment after securing new job. Innocent but happy he\'s dead.',
+        attributes: {
+          physical: { height: '5\'5"-5\'8"', build: 'Slim build', hairColor: 'Dark brown', eyeColor: 'Brown', bloodType: 'B-', handedness: 'Right', shoeSize: 7, hasGlasses: false },
+          behavioral: { phoneArea: '310', voiceQuality: 'Soft-spoken', shoeType: 'Professional heels', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Victor Kozlov',
+        age: 58,
+        occupation: 'Art Dealer',
+        personality: 'Sophisticated',
+        motive: 'Fraud Exposure',
+        alibi: 'Auction participation, timestamped bids',
+        isGuilty: false,
+        backstory: 'Art dealer who sold Malcolm forged paintings worth $15M. Malcolm discovered fraud and threatened criminal prosecution unless Victor paid $20M restitution.',
+        secret: 'Facing financial ruin and prison if Malcolm exposed him. Strong motive, but auction records prove presence elsewhere.',
+        attributes: {
+          physical: { height: '5\'10"-6\'1"', build: 'Slim build', hairColor: 'Salt and pepper', eyeColor: 'Gray', bloodType: 'A+', handedness: 'Left', shoeSize: 10, hasGlasses: false },
+          behavioral: { phoneArea: '212', voiceQuality: 'Accented (Russian)', shoeType: 'Designer shoes', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Sarah Prescott',
+        age: 39,
+        occupation: 'Malcolm\'s Third Wife',
+        personality: 'Calculating',
+        motive: 'Prenup',
+        alibi: 'Mingling in ballroom, constant photos/videos',
+        isGuilty: false,
+        backstory: 'Trophy wife with ironclad prenup giving her nothing in divorce. Malcolm was planning to divorce her for younger woman. She would get $500M from his death but nothing from divorce.',
+        secret: 'Knew about divorce plans and stood to lose everything. Massive financial motive but photographic evidence places her elsewhere.',
+        attributes: {
+          physical: { height: '5\'9"-6\'0"', build: 'Slim build', hairColor: 'Platinum blonde', eyeColor: 'Blue', bloodType: 'O-', handedness: 'Right', shoeSize: 9, hasGlasses: false },
+          behavioral: { phoneArea: '310', voiceQuality: 'Breathy', shoeType: 'Designer heels', smokingHabit: false }
+        }
+      }
+    ],
+    evidence: [
+      {
+        type: 'GPS Data',
+        description: 'Patricia Hayes\' car GPS shows vehicle moved in parking lot at 9:33 PM. Impossible if she was on stage giving speech.',
+        location: 'Car Tracking System',
+        critical: true,
+        connectedSuspect: 'Senator Patricia Hayes'
+      },
+      {
+        type: 'Cell Tower Data',
+        description: 'Patricia\'s phone pinged cell tower near wine cellar at 9:38 PM, not near ballroom stage. Proves she wasn\'t where she claimed.',
+        location: 'Phone Company',
+        critical: true,
+        connectedSuspect: 'Senator Patricia Hayes'
+      },
+      {
+        type: 'Security Footage',
+        description: 'Figure in dress matching Patricia\'s distinctive red gown seen entering service corridor at 9:32 PM. Face obscured but dress is unique.',
+        location: 'Security System',
+        critical: true,
+        connectedSuspect: 'Senator Patricia Hayes'
+      },
+      {
+        type: 'Audio Analysis',
+        description: 'Patricia\'s speech recording has 2.3-second audio loop at 18-minute mark. Technical glitch impossible in live speech, proves pre-recording.',
+        location: 'Forensic Audio Lab',
+        critical: true,
+        connectedSuspect: 'Senator Patricia Hayes'
+      },
+      {
+        type: 'Witness Testimony',
+        description: 'Waiter saw woman matching Patricia\'s description "leaving stage area" at 9:31 PM. Initially dismissed as mistaken but now corroborates timeline.',
+        location: 'Witness Interview',
+        critical: true,
+        connectedSuspect: 'Senator Patricia Hayes'
+      },
+      {
+        type: 'Security System',
+        description: 'Wine cellar security camera disabled at 9:29 PM using backstage technical access. Only Mark Reeves had this capability.',
+        location: 'Security Logs',
+        critical: true,
+        connectedSuspect: 'Mark Reeves'
+      },
+      {
+        type: 'Calendar Evidence',
+        description: 'Malcolm\'s phone calendar shows meeting with "P.H." at 9:30 PM in wine cellar regarding "final arrangement." Matches Patricia Hayes initials.',
+        location: 'Victim\'s Phone',
+        critical: true,
+        connectedSuspect: 'Senator Patricia Hayes'
+      },
+      {
+        type: 'Financial Documents',
+        description: 'Malcolm was blackmailing Patricia over illegal $2M campaign donation. Email demands $5M payment or exposure. Dated one week before murder.',
+        location: 'Email Server',
+        critical: true,
+        connectedSuspect: 'Senator Patricia Hayes'
+      },
+      {
+        type: 'Text Messages',
+        description: 'Encrypted messages between Patricia and Mark planning "the recording" and "9:30 timing." Proves conspiracy.',
+        location: 'Phone Forensics',
+        critical: true,
+        connectedSuspect: 'Senator Patricia Hayes'
+      },
+      {
+        type: 'AV Equipment Logs',
+        description: 'Mark\'s sound board shows pre-recorded track loaded at 9:10 PM and played at 9:15 PM. Labeled "PH_Speech_Final.mp3."',
+        location: 'Sound Booth',
+        critical: true,
+        connectedSuspect: 'Mark Reeves'
+      },
+      {
+        type: 'Witness Testimony',
+        description: 'Richard Prescott at bar 9:00-10:00 PM. Bartender and security footage confirm continuous presence. Alibi solid.',
+        location: 'Bar Area',
+        critical: false,
+        connectedSuspect: 'Richard Prescott'
+      },
+      {
+        type: 'Security Footage',
+        description: 'Diana Chen dancing in ballroom 9:25-9:50 PM. Multiple camera angles and 50+ witness statements confirm. Impossible to reach wine cellar.',
+        location: 'Ballroom Cameras',
+        critical: false,
+        connectedSuspect: 'Diana Chen'
+      },
+      {
+        type: 'Witness Testimony',
+        description: 'James Morrison playing poker 9:15-10:15 PM. Seven players provide detailed account of continuous play. Alibi unbreakable.',
+        location: 'Card Room',
+        critical: false,
+        connectedSuspect: 'James Morrison'
+      },
+      {
+        type: 'Security Footage',
+        description: 'Dr. Stone greeting guests at entrance 9:15-9:55 PM. Continuous camera coverage shows her never leaving position.',
+        location: 'Entrance Cameras',
+        critical: false,
+        connectedSuspect: 'Dr. Rebecca Stone'
+      },
+      {
+        type: 'Timeline Analysis',
+        description: 'TIMELINE BUILDER shows only Patricia Hayes has 14-minute gap (9:31-9:45 PM) where alibi breaks down when cross-referencing GPS, phone, and visual evidence.',
+        location: 'Investigation Timeline',
+        critical: true,
+        connectedSuspect: 'Senator Patricia Hayes'
+      }
+    ],
+    hints: {
+      subtle: 'Use Timeline Builder to map every suspect\'s exact location minute-by-minute. Look for the impossible: someone who should be in two places at once.',
+      moderate: 'Patricia\'s speech alibi seems perfect with 300 witnesses, but check GPS data, cell tower pings, and security footage timing. Pre-recorded audio can fool an audience.',
+      major: 'Patricia Hayes gave pre-recorded speech while killing Malcolm. Evidence: car GPS moved at 9:33 PM (impossible during speech), phone pinged wine cellar tower at 9:38 PM, security footage shows red dress in service corridor 9:32 PM, audio has 2.3-sec loop proving recording, witness saw her leaving stage, camera disabled by accomplice Mark Reeves.'
+    }
+  },
+
+  {
+    id: 'seven_suspects',
+    title: 'The Seven Suspects',
+    difficulty: 9,
+    crimeType: 'Conspiracy',
+    priority: 'URGENT',
+    location: 'PharmaCorp Research Facility',
+    narrative: {
+      opening: `Dr. Jennifer Martinez, lead researcher at PharmaCorp, was found dead in her laboratory at 3:42 AM on a Monday morning. Initial assessment suggested accidental overdose from experimental drugs she was testing. However, forensic analysis revealed something far more sinister: she'd been injected with a lethal combination of three different compounds that could only have been administered intentionally by someone with access to the secure lab.
+
+The victim was on the verge of exposing a conspiracy: PharmaCorp's new miracle drug "Vitalux" had dangerous side effects being concealed to protect the company's $12 billion valuation and upcoming IPO. Dr. Martinez had compiled evidence of falsified clinical trials, suppressed adverse event reports, and bribed regulatory officials. She was planning to go public the following week.
+
+Twelve suspects had the means, motive, and access to kill her. Each person's career, fortune, or freedom depended on Vitalux's success. The challenge: this wasn't a single murderer - it was a conspiracy of SEVEN people working together to silence Dr. Martinez and bury the truth.
+
+**USE SUSPECT PROFILER**: This case requires psychological analysis to identify the conspirators. Build detailed profiles analyzing personality traits, behavioral patterns, stress responses, and moral frameworks. The seven guilty parties share specific psychological markers: high risk tolerance, ends-justify-means morality, financial desperation, and prior unethical behavior. Cross-reference their profiles with evidence of coordination, shared motives, and complementary skills that enabled the conspiracy.`,
+
+      twist: `Seven suspects form an actual murder conspiracy, each contributing different expertise: CEO Richard Vale (ordered the murder), CFO Margaret Chen (provided $2M conspiracy funding), Chief Scientist Dr. Paul Rivera (created untraceable poison), Head of Security Thomas Kane (disabled security systems), Regulatory Affairs Director Sandra Kim (coordinate cover-up), Lead Trial Coordinator Maria Lopez (falsified Martinez's lab notes to suggest accident), and Marketing VP James Wu (coordinated communications between conspirators).
+
+The conspiracy was sophisticated: They met secretly off-site, used encrypted communications, and each had plausible deniability. Profiling reveals shared traits: all seven show narcissistic tendencies, weak ethical boundaries, financial stress/greed, and history of cutting corners. The five innocent suspects lack these markers despite having motive.`,
+
+      conclusion: `Seven-person murder conspiracy solved through psychological profiling and evidence correlation:
+
+GUILTY (7):
+1. CEO Richard Vale - Ordered murder, $200M personal stake in IPO
+2. CFO Margaret Chen - Funded conspiracy, embezzling to cover personal losses
+3. Dr. Paul Rivera - Created untraceable poison using his chemistry expertise
+4. Thomas Kane - Disabled security cameras and lab alarms
+5. Sandra Kim - Planned regulatory cover-up strategy
+6. Maria Lopez - Falsified lab notes to fake accidental overdose
+7. James Wu - Coordinated encrypted communications between conspirators
+
+EVIDENCE: Encrypted chat logs (recovered by FBI), $2M transferred through shell companies (Chen), poison compound analysis (Rivera's lab), security system tampering (Kane's credentials), falsified documents (Lopez's handwriting), coordination timeline (Wu's phone records). Profiling shows all seven share psychological traits: narcissism, financial desperation, prior ethics violations, high risk tolerance.
+
+INNOCENT (5): Lab Assistant (lacks sophistication), Junior Researcher (strong ethics profile), IT Manager (no motive), QA Director (whistleblower personality type), Board Member (already wealthy, risk-averse profile).`
+    },
+    victim: {
+      name: 'Dr. Jennifer Martinez',
+      age: 42,
+      occupation: 'Lead Clinical Researcher',
+      background: 'Brilliant scientist who discovered Vitalux caused fatal heart complications in 8% of patients. Compiled evidence of fraud. Was planning to expose conspiracy to FDA and media.',
+      personality: 'Principled whistleblower with strong ethical compass'
+    },
+    suspects: [
+      {
+        name: 'Richard Vale',
+        age: 56,
+        occupation: 'CEO',
+        personality: 'Ruthless',
+        motive: 'IPO Protection',
+        alibi: 'Claims he was home, no witnesses',
+        isGuilty: true,
+        backstory: 'CEO with $200M personal stake in IPO. Ordered the murder when Martinez threatened to expose Vitalux problems. Classic corporate narcissist willing to kill to protect fortune.',
+        secret: 'Ordered the hit. Assembled the seven-person conspiracy. Primary orchestrator.',
+        attributes: {
+          physical: { height: '6\'1"-6\'4"', build: 'Athletic build', hairColor: 'Gray', eyeColor: 'Blue', bloodType: 'O+', handedness: 'Right', shoeSize: 12, hasGlasses: false },
+          behavioral: { phoneArea: '650', voiceQuality: 'Commanding', shoeType: 'Expensive dress shoes', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Margaret Chen',
+        age: 51,
+        occupation: 'CFO',
+        personality: 'Calculating',
+        motive: 'Embezzlement Cover',
+        alibi: 'Working late at office, badge logs verify',
+        isGuilty: true,
+        backstory: 'CFO embezzling to cover gambling losses. Provided $2M conspiracy funding through shell companies. IPO collapse would expose her theft.',
+        secret: 'Funded the murder conspiracy. Laundered $2M through offshore accounts.',
+        attributes: {
+          physical: { height: '5\'7"-5\'10"', build: 'Medium build', hairColor: 'Black', eyeColor: 'Dark brown', bloodType: 'A+', handedness: 'Right', shoeSize: 9, hasGlasses: true },
+          behavioral: { phoneArea: '408', voiceQuality: 'Sharp', shoeType: 'Professional heels', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Dr. Paul Rivera',
+        age: 48,
+        occupation: 'Chief Scientist',
+        personality: 'Amoral',
+        motive: 'Scientific Legacy',
+        alibi: 'At home with family',
+        isGuilty: true,
+        backstory: 'Brilliant chemist who knew Vitalux was dangerous but prioritized his legacy over safety. Created untraceable poison that killed Martinez.',
+        secret: 'Formulated the murder weapon - three-compound injectable that mimics overdose.',
+        attributes: {
+          physical: { height: '5\'10"-6\'1"', build: 'Slim build', hairColor: 'Dark brown', eyeColor: 'Brown', bloodType: 'AB+', handedness: 'Right', shoeSize: 10, hasGlasses: true },
+          behavioral: { phoneArea: '650', voiceQuality: 'Monotone', shoeType: 'Casual shoes', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Thomas Kane',
+        age: 44,
+        occupation: 'Head of Security',
+        personality: 'Loyal',
+        motive: 'Career Advancement',
+        alibi: 'On-call, at home',
+        isGuilty: true,
+        backstory: 'Former military who values loyalty over law. Disabled security systems using his credentials. Promised VP role after IPO.',
+        secret: 'Disabled cameras and alarms in lab wing from 2:30-4:00 AM allowing murder.',
+        attributes: {
+          physical: { height: '6\'0"-6\'3"', build: 'Athletic build', hairColor: 'Blonde', eyeColor: 'Blue', bloodType: 'B+', handedness: 'Right', shoeSize: 11, hasGlasses: false },
+          behavioral: { phoneArea: '555', voiceQuality: 'Military precise', shoeType: 'Tactical boots', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Sandra Kim',
+        age: 39,
+        occupation: 'Regulatory Affairs Director',
+        personality: 'Manipulative',
+        motive: 'Regulatory Bribery',
+        alibi: 'At conference in DC, hotel confirms',
+        isGuilty: true,
+        backstory: 'Already bribed FDA officials to approve Vitalux. Martinez\'s exposure would mean prison. Coordinated cover-up strategy remotely.',
+        secret: 'Planned the regulatory cover-up. Directed falsification of Martinez\'s records.',
+        attributes: {
+          physical: { height: '5\'6"-5\'9"', build: 'Slim build', hairColor: 'Black', eyeColor: 'Dark brown', bloodType: 'O-', handedness: 'Right', shoeSize: 8, hasGlasses: false },
+          behavioral: { phoneArea: '202', voiceQuality: 'Smooth', shoeType: 'Designer heels', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Maria Lopez',
+        age: 35,
+        occupation: 'Clinical Trial Coordinator',
+        personality: 'Desperate',
+        motive: 'Job Security',
+        alibi: 'Home alone, no corroboration',
+        isGuilty: true,
+        backstory: 'Single mother drowning in debt. Already falsified trial data for bonuses. Falsified Martinez\'s lab notes to suggest accidental overdose.',
+        secret: 'Created fake lab documentation making death look like accident. Handwriting expert.',
+        attributes: {
+          physical: { height: '5\'5"-5\'8"', build: 'Medium build', hairColor: 'Dark brown', eyeColor: 'Brown', bloodType: 'A-', handedness: 'Right', shoeSize: 7, hasGlasses: false },
+          behavioral: { phoneArea: '650', voiceQuality: 'Nervous', shoeType: 'Flats', smokingHabit: false }
+        }
+      },
+      {
+        name: 'James Wu',
+        age: 42,
+        occupation: 'VP Marketing',
+        personality: 'Conniving',
+        motive: 'Campaign Investment',
+        alibi: 'Late marketing meeting, colleagues verify',
+        isGuilty: true,
+        backstory: 'Marketing executive who invested personally in Vitalux ad campaign ($3M). Coordinated conspiracy communications using encrypted apps.',
+        secret: 'Communications coordinator for conspiracy. Set up encrypted channels and meeting schedules.',
+        attributes: {
+          physical: { height: '5\'9"-6\'0"', build: 'Medium build', hairColor: 'Black', eyeColor: 'Dark brown', bloodType: 'B-', handedness: 'Right', shoeSize: 10, hasGlasses: false },
+          behavioral: { phoneArea: '310', voiceQuality: 'Fast-talking', shoeType: 'Designer sneakers', smokingHabit: false }
+        }
+      },
+      {
+        name: 'David Park',
+        age: 28,
+        occupation: 'Lab Assistant',
+        personality: 'Timid',
+        motive: 'False Suspicion',
+        alibi: 'At home, roommate confirms',
+        isGuilty: false,
+        backstory: 'Junior lab worker who found the body. His knowledge of lab procedures makes him suspect, but profiling shows strong ethics and risk-averse personality. Innocent.',
+        secret: 'Was helping Martinez gather evidence against the company. Devastated by her death.',
+        attributes: {
+          physical: { height: '5\'7"-5\'10"', build: 'Slim build', hairColor: 'Black', eyeColor: 'Dark brown', bloodType: 'O+', handedness: 'Right', shoeSize: 9, hasGlasses: true },
+          behavioral: { phoneArea: '650', voiceQuality: 'Quiet', shoeType: 'Sneakers', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Dr. Emily Foster',
+        age: 36,
+        occupation: 'Junior Researcher',
+        personality: 'Principled',
+        motive: 'Career Competition',
+        alibi: 'At yoga class until 10 PM, then home',
+        isGuilty: false,
+        backstory: 'Competed with Martinez for promotions. Seems motivated by jealousy, but profiling reveals strong ethical code and low risk tolerance. Innocent.',
+        secret: 'Envied Martinez\'s success but admired her integrity. Would never harm her.',
+        attributes: {
+          physical: { height: '5\'6"-5\'9"', build: 'Athletic build', hairColor: 'Blonde', eyeColor: 'Green', bloodType: 'A+', handedness: 'Left', shoeSize: 8, hasGlasses: false },
+          behavioral: { phoneArea: '415', voiceQuality: 'Calm', shoeType: 'Athletic shoes', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Robert Zhang',
+        age: 41,
+        occupation: 'IT Security Manager',
+        personality: 'Methodical',
+        motive: 'System Access',
+        alibi: 'On-call from home',
+        isGuilty: false,
+        backstory: 'Has administrative access to all systems. Could have helped disable security but profiling shows rule-following personality and ethical hacker background. Innocent.',
+        secret: 'Discovered the security breach but feared being blamed for not preventing it.',
+        attributes: {
+          physical: { height: '5\'10"-6\'1"', build: 'Medium build', hairColor: 'Black', eyeColor: 'Dark brown', bloodType: 'B+', handedness: 'Right', shoeSize: 10, hasGlasses: true },
+          behavioral: { phoneArea: '408', voiceQuality: 'Technical', shoeType: 'Casual shoes', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Patricia Morrison',
+        age: 54,
+        occupation: 'QA Director',
+        personality: 'Strict',
+        motive: 'Quality Control Failures',
+        alibi: 'Business dinner until 11 PM',
+        isGuilty: false,
+        backstory: 'Quality director who should have caught the Vitalux problems. Seems motivated by cover-up but profiling shows whistleblower personality type. Would expose problems, not hide them.',
+        secret: 'Was planning to support Martinez\'s whistleblowing. Innocent.',
+        attributes: {
+          physical: { height: '5\'8"-5\'11"', build: 'Medium build', hairColor: 'Red', eyeColor: 'Hazel', bloodType: 'O-', handedness: 'Right', shoeSize: 9, hasGlasses: true },
+          behavioral: { phoneArea: '650', voiceQuality: 'Firm', shoeType: 'Comfortable heels', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Harold Blackstone',
+        age: 68,
+        occupation: 'Board Member',
+        personality: 'Detached',
+        motive: 'Investment Protection',
+        alibi: 'At home, security system confirms',
+        isGuilty: false,
+        backstory: 'Wealthy board member with $50M invested. Seems motivated by financial loss but profiling shows risk-averse, law-abiding personality. Too wealthy to risk prison.',
+        secret: 'Was planning to sell shares before IPO anyway. No motive despite appearances.',
+        attributes: {
+          physical: { height: '6\'0"-6\'3"', build: 'Heavy build', hairColor: 'White', eyeColor: 'Gray', bloodType: 'AB-', handedness: 'Right', shoeSize: 11, hasGlasses: true },
+          behavioral: { phoneArea: '617', voiceQuality: 'Aristocratic', shoeType: 'Expensive loafers', smokingHabit: false }
+        }
+      }
+    ],
+    evidence: [
+      {
+        type: 'Encrypted Communications',
+        description: 'FBI recovered encrypted chat group with seven members planning "the Martinez problem solution." Messages coordinated timing, roles, and cover-up.',
+        location: 'Digital Forensics',
+        critical: true,
+        connectedSuspect: 'Richard Vale'
+      },
+      {
+        type: 'Financial Documents',
+        description: 'Margaret Chen transferred $2M through shell companies to fund conspiracy. Payments to Rivera ($400K lab equipment), Kane ($200K), Lopez ($150K).',
+        location: 'Forensic Accounting',
+        critical: true,
+        connectedSuspect: 'Margaret Chen'
+      },
+      {
+        type: 'Toxicology Report',
+        description: 'Three-compound poison found in Martinez. Chemical signature matches experimental compounds only Dr. Rivera had expertise to create.',
+        location: 'Medical Examiner',
+        critical: true,
+        connectedSuspect: 'Dr. Paul Rivera'
+      },
+      {
+        type: 'Security System Logs',
+        description: 'Lab wing cameras and alarms disabled 2:30-4:00 AM using Thomas Kane\'s admin credentials. Exactly during murder window.',
+        location: 'Security Logs',
+        critical: true,
+        connectedSuspect: 'Thomas Kane'
+      },
+      {
+        type: 'Document Analysis',
+        description: 'Martinez\'s lab notes falsified post-mortem. Handwriting expert confirms Maria Lopez created fake entries suggesting accidental drug testing.',
+        location: 'Forensics Lab',
+        critical: true,
+        connectedSuspect: 'Maria Lopez'
+      },
+      {
+        type: 'Phone Records',
+        description: 'James Wu coordinated six encrypted conference calls between conspirators in weeks before murder. Call participants match the seven guilty parties.',
+        location: 'Phone Company',
+        critical: true,
+        connectedSuspect: 'James Wu'
+      },
+      {
+        type: 'Email Records',
+        description: 'Sandra Kim sent encrypted emails to conspirators with subject "Regulatory Strategy" outlining cover-up plan and falsified autopsy requests.',
+        location: 'Email Server',
+        critical: true,
+        connectedSuspect: 'Sandra Kim'
+      },
+      {
+        type: 'Psychological Profile',
+        description: 'SUSPECT PROFILER analysis: All seven guilty parties show narcissistic traits, weak ethical boundaries, financial stress, and prior unethical behavior. Five innocent suspects lack these markers.',
+        location: 'FBI Behavioral Analysis',
+        critical: true,
+        connectedSuspect: 'Richard Vale'
+      },
+      {
+        type: 'Witness Testimony',
+        description: 'David Park (lab assistant) testifies Martinez confided her whistleblowing plans. He was helping gather evidence. Psychological profile shows strong ethics - innocent.',
+        location: 'Witness Interview',
+        critical: false,
+        connectedSuspect: 'David Park'
+      },
+      {
+        type: 'Background Check',
+        description: 'Dr. Emily Foster has history of reporting ethical violations at previous jobs. Whistleblower personality type. Profile inconsistent with conspiracy.',
+        location: 'HR Records',
+        critical: false,
+        connectedSuspect: 'Dr. Emily Foster'
+      },
+      {
+        type: 'System Logs',
+        description: 'Robert Zhang discovered security breach immediately and reported to superiors. Behavior consistent with ethical IT professional.',
+        location: 'IT Logs',
+        critical: false,
+        connectedSuspect: 'Robert Zhang'
+      },
+      {
+        type: 'Email Records',
+        description: 'Patricia Morrison emailed Martinez offering support for FDA report. Profile shows quality-focused, rule-following personality. Innocent.',
+        location: 'Email Server',
+        critical: false,
+        connectedSuspect: 'Patricia Morrison'
+      },
+      {
+        type: 'Financial Documents',
+        description: 'Harold Blackstone already planned to sell shares before Martinez\'s death. Wealthy enough not to risk criminal exposure. Risk-averse profile.',
+        location: 'Trading Records',
+        critical: false,
+        connectedSuspect: 'Harold Blackstone'
+      }
+    ],
+    hints: {
+      subtle: 'Use Suspect Profiler to analyze personality traits, ethics, risk tolerance, and behavioral patterns. Look for clusters of people with similar psychological profiles and evidence of coordination.',
+      moderate: 'Build profiles for all 12 suspects focusing on narcissistic traits, financial desperation, prior unethical behavior, and risk tolerance. Seven people share these markers and have evidence connecting them.',
+      major: 'Seven-person conspiracy: Vale (ordered), Chen (funded $2M), Rivera (created poison), Kane (disabled security), Kim (planned cover-up), Lopez (falsified documents), Wu (coordinated communications). All show narcissistic traits, weak ethics, financial stress. Innocent suspects lack these psychological markers.'
+    }
+  },
+
+  {
+    id: 'impossible_murder',
+    title: 'The Impossible Murder',
+    difficulty: 10,
+    crimeType: 'Murder',
+    priority: 'URGENT',
+    location: 'Snowpeak Lodge - Isolated Mountain Resort',
+    narrative: {
+      opening: `A blizzard trapped 15 people at Snowpeak Lodge, an exclusive mountain resort accessible only by helicopter. On the second night of the storm, tech billionaire Marcus Thorne was found dead in his locked suite at 7:18 AM. He'd been poisoned sometime between midnight and 6 AM. The lodge manager immediately sealed the property - the killer was still inside.
+
+The impossible elements stacked up: Marcus's suite was locked from the inside with a chain lock requiring physical presence to engage. His SmartWatch logged his final heartbeat at 2:47 AM. His room's balcony door was bolted shut, and the suite was on the third floor with a 40-foot drop to snow-covered rocks below. No tracks in the fresh snow. The window seals were intact. Yet someone had poisoned him.
+
+Marcus Thorne had arrived at the lodge with enemies: the business partner he'd betrayed, the ex-wife he'd destroyed in divorce, the whistleblower he'd tried to silence, the rival he'd bankrupted, the politician he'd blackmailed, and family members he'd disinherited. Each person trapped at the lodge had motive. Each had opportunity during the night. Each claimed alibis that needed verification.
+
+**USE ALL NOTEBOOK FEATURES**: This ultimate challenge requires Theory Building (multiple competing theories about how the impossible murder was committed), Timeline Analysis (precise reconstruction of every person's movements during the 6-hour murder window), and Suspect Profiling (psychological analysis to identify who had the capability for such sophisticated deception). Only by combining all three investigative tools can you solve the impossible murder.
+
+The evidence contradicts itself: security footage shows no one entered the hallway. Digital door logs confirm only Marcus used his keycard. His last meal was shared with others who didn't get poisoned. His medication was tested and found clean. Yet he died of a poison that takes effect in 30-60 minutes, suggesting he ingested it sometime between 1:47-2:47 AM.`,
+
+      twist: `The impossible murder was executed by THREE conspirators working together, each contributing critical skills: Dr. Sarah Chen (Marcus's personal physician, poisoner), David Thorne (Marcus's son, tech expert), and Helena Volkov (resort manager, inside access).
+
+The method: Dr. Chen poisoned Marcus's insulin supply during his routine check-up at 1:45 AM (she had medical access to his suite). David hacked Marcus's SmartWatch to fake the 2:47 AM heartbeat timestamp (actual death was 1:47 AM, giving Chen alibi as she was at public bar 2:30-3:00 AM). Helena provided master keycards and disabled hallway cameras from 1:40-1:50 AM.
+
+The locked room was theater: Marcus locked his own door before bed, unaware his insulin was poisoned. He died an hour earlier than evidence suggested. The three conspirators had 20+ years of collective grudges and shared $180M inheritance motive.`,
+
+      conclusion: `Three-person conspiracy solved through combined analysis:
+
+THEORY BUILDER: Identified "Early Death + Faked Timestamp" theory as most consistent with evidence. Smart device manipulation explains impossible timing.
+
+TIMELINE BUILDER: Precise reconstruction shows Chen accessed suite 1:45 AM (medical check), hallway cameras disabled 1:40-1:50 AM (Helena), David in tech room 1:30-2:00 AM (watch hacking), Chen at bar 2:30 AM (false alibi for "actual" murder time).
+
+SUSPECT PROFILER: All three show technological sophistication, medical knowledge, shared inheritance motive, long-term grievances, and capability for complex deception.
+
+EVIDENCE: Poisoned insulin (Chen's access), hacked SmartWatch with falsified timestamp (David's coding signature), disabled camera logs (Helena's credentials), encrypted messages between three planning "the arrangement," shared $180M inheritance ($60M each), and timeline proving Chen's bar alibi works only if death occurred earlier than stated.
+
+GUILTY (3): Dr. Chen, David Thorne, Helena Volkov
+INNOCENT (12): All others despite strong motives and suspicious behavior.`
+    },
+    victim: {
+      name: 'Marcus Thorne',
+      age: 58,
+      occupation: 'Tech Billionaire',
+      background: 'Founded CloudCore Systems worth $15B. Ruthless businessman who destroyed competitors and betrayed partners. Made countless enemies. $180M estate split between son David (1/3) and two grandchildren (2/3 in trust).',
+      personality: 'Brilliant but ruthless sociopath who treated people as obstacles'
+    },
+    suspects: [
+      {
+        name: 'Dr. Sarah Chen',
+        age: 51,
+        occupation: 'Personal Physician',
+        personality: 'Professional',
+        motive: 'Medical Malpractice Coverup',
+        alibi: 'At lodge bar 2:30-3:00 AM, witnesses confirm',
+        isGuilty: true,
+        backstory: 'Marcus\'s doctor for 10 years. He was blackmailing her over fatal prescription error she made with another patient. Faced license loss and prison. Poisoned his insulin during routine check-up.',
+        secret: 'Poisoned Marcus\'s insulin at 1:45 AM during medical check. Alibi works because he died earlier than SmartWatch suggested.',
+        attributes: {
+          physical: { height: '5\'7"-5\'10"', build: 'Slim build', hairColor: 'Black', eyeColor: 'Dark brown', bloodType: 'O+', handedness: 'Right', shoeSize: 9, hasGlasses: true },
+          behavioral: { phoneArea: '415', voiceQuality: 'Clinical', shoeType: 'Professional heels', smokingHabit: false }
+        }
+      },
+      {
+        name: 'David Thorne',
+        age: 29,
+        occupation: 'Marcus\'s Son / Software Engineer',
+        personality: 'Resentful',
+        motive: 'Inheritance',
+        alibi: 'In room coding, no witnesses',
+        isGuilty: true,
+        backstory: 'Estranged son Marcus emotionally abused. Marcus changed will leaving 2/3 to grandchildren, only 1/3 to David. Expert hacker who manipulated father\'s SmartWatch to fake death time.',
+        secret: 'Hacked SmartWatch to show death at 2:47 AM instead of 1:47 AM. Created fake timeline giving conspirators alibis.',
+        attributes: {
+          physical: { height: '5\'10"-6\'1"', build: 'Slim build', hairColor: 'Dark brown', eyeColor: 'Blue', bloodType: 'A+', handedness: 'Right', shoeSize: 10, hasGlasses: false },
+          behavioral: { phoneArea: '650', voiceQuality: 'Bitter', shoeType: 'Sneakers', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Helena Volkov',
+        age: 46,
+        occupation: 'Lodge Manager',
+        personality: 'Efficient',
+        motive: 'Sexual Harassment',
+        alibi: 'Managing lodge operations all night',
+        isGuilty: true,
+        backstory: 'Resort manager Marcus sexually harassed for years. He threatened her job when she reported him. Provided master keycards and disabled cameras enabling conspiracy.',
+        secret: 'Gave conspirators access. Disabled hallway cameras 1:40-1:50 AM allowing Chen to enter suite unrecorded.',
+        attributes: {
+          physical: { height: '5\'8"-5\'11"', build: 'Athletic build', hairColor: 'Blonde', eyeColor: 'Gray', bloodType: 'B+', handedness: 'Right', shoeSize: 9, hasGlasses: false },
+          behavioral: { phoneArea: '555', voiceQuality: 'Accented (Russian)', shoeType: 'Professional shoes', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Rebecca Thorne',
+        age: 52,
+        occupation: 'Ex-Wife',
+        personality: 'Bitter',
+        motive: 'Divorce Settlement',
+        alibi: 'Reading in library until 3 AM',
+        isGuilty: false,
+        backstory: 'Ex-wife destroyed in divorce. Prenup gave her nothing despite 20-year marriage. Has massive financial motive but alibi holds and profiling shows she lacks deception capability.',
+        secret: 'Hoped Marcus would die but didn\'t kill him. Legitimately reading in library (security footage confirms).',
+        attributes: {
+          physical: { height: '5\'9"-6\'0"', build: 'Slim build', hairColor: 'Auburn', eyeColor: 'Green', bloodType: 'O-', handedness: 'Right', shoeSize: 9, hasGlasses: false },
+          behavioral: { phoneArea: '212', voiceQuality: 'Sharp', shoeType: 'Designer shoes', smokingHabit: false }
+        }
+      },
+      {
+        name: 'James Morrison',
+        age: 54,
+        occupation: 'Former Business Partner',
+        personality: 'Vengeful',
+        motive: 'Business Betrayal',
+        alibi: 'Playing chess with another guest until 2 AM',
+        isGuilty: false,
+        backstory: 'Partner Marcus forced out through legal manipulation, stealing his 40% stake worth $2B. Obvious suspect with strong motive but chess game (observed by staff) provides alibi.',
+        secret: 'Was planning civil lawsuit. Innocent despite appearances.',
+        attributes: {
+          physical: { height: '6\'0"-6\'3"', build: 'Athletic build', hairColor: 'Gray', eyeColor: 'Brown', bloodType: 'AB+', handedness: 'Right', shoeSize: 11, hasGlasses: true },
+          behavioral: { phoneArea: '617', voiceQuality: 'Deep', shoeType: 'Dress shoes', smokingHabit: true }
+        }
+      },
+      // 10 more innocent suspects with various motives
+      {
+        name: 'Senator Patricia Hayes',
+        age: 56,
+        occupation: 'US Senator',
+        personality: 'Poised',
+        motive: 'Political Blackmail',
+        alibi: 'Video call with staff until 1 AM, then asleep',
+        isGuilty: false,
+        backstory: 'Marcus blackmailed her over campaign finance violations. Strong motive but video call logs verified.',
+        secret: 'Planning to expose Marcus\'s own crimes. Innocent.',
+        attributes: {
+          physical: { height: '5\'8"-5\'11"', build: 'Slim build', hairColor: 'Blonde', eyeColor: 'Blue', bloodType: 'A-', handedness: 'Right', shoeSize: 9, hasGlasses: false },
+          behavioral: { phoneArea: '202', voiceQuality: 'Commanding', shoeType: 'Heels', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Diana Wu',
+        age: 42,
+        occupation: 'Competitor CEO',
+        personality: 'Aggressive',
+        motive: 'Market Competition',
+        alibi: 'Working on laptop in room, digital footprint verified',
+        isGuilty: false,
+        backstory: 'CEO of rival company Marcus tried to bankrupt through predatory pricing. Innocent - laptop activity timestamps confirmed.',
+        secret: 'Was planning hostile takeover of CloudCore. Didn\'t need Marcus dead.',
+        attributes: {
+          physical: { height: '5\'6"-5\'9"', build: 'Athletic build', hairColor: 'Black', eyeColor: 'Dark brown', bloodType: 'B-', handedness: 'Right', shoeSize: 8, hasGlasses: false },
+          behavioral: { phoneArea: '650', voiceQuality: 'Forceful', shoeType: 'Sneakers', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Robert Zhang',
+        age: 38,
+        occupation: 'Whistleblower',
+        personality: 'Principled',
+        motive: 'Career Destruction',
+        alibi: 'Writing in journal, timestamped entries',
+        isGuilty: false,
+        backstory: 'Former CloudCore employee Marcus destroyed for exposing fraud. Profiling shows ethical personality inconsistent with murder.',
+        secret: 'Was documenting Marcus\'s crimes for book. Innocent.',
+        attributes: {
+          physical: { height: '5\'10"-6\'1"', build: 'Medium build', hairColor: 'Black', eyeColor: 'Dark brown', bloodType: 'A+', handedness: 'Right', shoeSize: 10, hasGlasses: true },
+          behavioral: { phoneArea: '408', voiceQuality: 'Measured', shoeType: 'Casual shoes', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Margaret Foster',
+        age: 67,
+        occupation: 'Marcus\'s Sister',
+        personality: 'Cold',
+        motive: 'Family Feud',
+        alibi: 'Sleeping pills (verified by staff)',
+        isGuilty: false,
+        backstory: 'Sister who Marcus cut out of family inheritance. Staff confirmed she took sleeping medication at 11 PM and was unconscious until 9 AM.',
+        secret: 'Hated Marcus but physically incapable during murder window.',
+        attributes: {
+          physical: { height: '5\'7"-5\'10"', build: 'Medium build', hairColor: 'Gray', eyeColor: 'Blue', bloodType: 'O+', handedness: 'Right', shoeSize: 9, hasGlasses: true },
+          behavioral: { phoneArea: '310', voiceQuality: 'Icy', shoeType: 'Comfortable shoes', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Thomas Kane',
+        age: 44,
+        occupation: 'Head of Security',
+        personality: 'Vigilant',
+        motive: 'False Lead - Investigating',
+        alibi: 'Monitoring security systems all night',
+        isGuilty: false,
+        backstory: 'Lodge security chief. His knowledge makes him suspect but he was legitimately working. Logs show continuous activity.',
+        secret: 'Discovered camera tampering but suspects wrong people.',
+        attributes: {
+          physical: { height: '6\'1"-6\'4"', build: 'Athletic build', hairColor: 'Blonde', eyeColor: 'Blue', bloodType: 'O-', handedness: 'Right', shoeSize: 12, hasGlasses: false },
+          behavioral: { phoneArea: '555', voiceQuality: 'Alert', shoeType: 'Tactical boots', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Dr. Alan Foster',
+        age: 62,
+        occupation: 'Medical Researcher',
+        personality: 'Eccentric',
+        motive: 'Research Funding',
+        alibi: 'Reading in his room all night',
+        isGuilty: false,
+        backstory: 'Researcher whose funding Marcus cut. Has poison knowledge but lacks opportunity. Room next to Marcus would make noise noticeable.',
+        secret: 'Knows about deadly compounds but didn\'t use knowledge.',
+        attributes: {
+          physical: { height: '5\'9"-6\'0"', build: 'Slim build', hairColor: 'White', eyeColor: 'Gray', bloodType: 'AB-', handedness: 'Left', shoeSize: 10, hasGlasses: true },
+          behavioral: { phoneArea: '617', voiceQuality: 'Thoughtful', shoeType: 'Slippers', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Linda Martinez',
+        age: 35,
+        occupation: 'Environmental Activist',
+        personality: 'Passionate',
+        motive: 'Eco-terrorism',
+        alibi: 'Live-tweeting climate articles until 4 AM',
+        isGuilty: false,
+        backstory: 'Activist opposing Marcus\'s environmentally destructive projects. Twitter timestamps prove continuous activity. Innocent.',
+        secret: 'Confronted Marcus verbally but committed to non-violence.',
+        attributes: {
+          physical: { height: '5\'5"-5\'8"', build: 'Slim build', hairColor: 'Dark brown', eyeColor: 'Brown', bloodType: 'B+', handedness: 'Right', shoeSize: 7, hasGlasses: false },
+          behavioral: { phoneArea: '310', voiceQuality: 'Passionate', shoeType: 'Hiking boots', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Victor Petrov',
+        age: 49,
+        occupation: 'Art Dealer',
+        personality: 'Sophisticated',
+        motive: 'Fraud Exposure',
+        alibi: 'On phone with Moscow (time zone verified)',
+        isGuilty: false,
+        backstory: 'Sold Marcus forged art worth $20M. Marcus threatened prosecution. Strong motive but phone logs to Moscow (10-hour time difference) provide alibi.',
+        secret: 'Facing financial ruin but didn\'t murder Marcus.',
+        attributes: {
+          physical: { height: '5\'11"-6\'2"', build: 'Slim build', hairColor: 'Gray', eyeColor: 'Blue', bloodType: 'A+', handedness: 'Right', shoeSize: 11, hasGlasses: false },
+          behavioral: { phoneArea: '212', voiceQuality: 'Accented', shoeType: 'Designer shoes', smokingHabit: true }
+        }
+      },
+      {
+        name: 'Angela Torres',
+        age: 31,
+        occupation: 'Personal Assistant',
+        personality: 'Professional',
+        motive: 'Harassment',
+        alibi: 'Sleeping (roommate confirms)',
+        isGuilty: false,
+        backstory: 'Assistant Marcus harassed. Shares room with another guest who confirms she was asleep all night. Innocent.',
+        secret: 'Happy he\'s dead but didn\'t kill him.',
+        attributes: {
+          physical: { height: '5\'6"-5\'9"', build: 'Slim build', hairColor: 'Dark brown', eyeColor: 'Brown', bloodType: 'O+', handedness: 'Right', shoeSize: 8, hasGlasses: false },
+          behavioral: { phoneArea: '650', voiceQuality: 'Soft', shoeType: 'Flats', smokingHabit: false }
+        }
+      },
+      {
+        name: 'Christopher Vale',
+        age: 39,
+        occupation: 'Hedge Fund Manager',
+        personality: 'Calculating',
+        motive: 'Investment Loss',
+        alibi: 'Trading Asian markets (activity logs verified)',
+        isGuilty: false,
+        backstory: 'Lost $50M on Marcus\'s bad investment tip. Strong motive but trading platform shows continuous activity 1 AM-6 AM (Asian market hours).',
+        secret: 'Planning lawsuit. Innocent.',
+        attributes: {
+          physical: { height: '6\'0"-6\'3"', build: 'Athletic build', hairColor: 'Dark brown', eyeColor: 'Green', bloodType: 'B-', handedness: 'Right', shoeSize: 11, hasGlasses: false },
+          behavioral: { phoneArea: '212', voiceQuality: 'Smooth', shoeType: 'Loafers', smokingHabit: false }
+        }
+      }
+    ],
+    evidence: [
+      {
+        type: 'Toxicology',
+        description: 'Marcus poisoned with insulin overdose. Poison was in his insulin supply, not food. Death occurred 30-60 minutes after injection.',
+        location: 'Medical Examiner',
+        critical: true,
+        connectedSuspect: 'Dr. Sarah Chen'
+      },
+      {
+        type: 'Digital Forensics',
+        description: 'SmartWatch data manipulated. Coding signature matches David Thorne\'s style. Real death time: 1:47 AM (not 2:47 AM as watch showed).',
+        location: 'FBI Cyber Lab',
+        critical: true,
+        connectedSuspect: 'David Thorne'
+      },
+      {
+        type: 'Security Logs',
+        description: 'Hallway cameras disabled 1:40-1:50 AM using Helena Volkov\'s administrator credentials. Exactly when Dr. Chen accessed suite.',
+        location: 'Security System',
+        critical: true,
+        connectedSuspect: 'Helena Volkov'
+      },
+      {
+        type: 'Medical Records',
+        description: 'Dr. Chen performed routine check-up on Marcus at 1:45 AM (he was diabetic, needed insulin). Had legitimate access to his suite and medication.',
+        location: 'Medical Logs',
+        critical: true,
+        connectedSuspect: 'Dr. Sarah Chen'
+      },
+      {
+        type: 'Encrypted Messages',
+        description: 'Messages between Chen, David, and Helena discussing "the arrangement" and "2:47 timing." Proves conspiracy and planned timeline manipulation.',
+        location: 'Phone Forensics',
+        critical: true,
+        connectedSuspect: 'David Thorne'
+      },
+      {
+        type: 'Financial Documents',
+        description: 'All three conspirators share $180M inheritance: David gets 1/3 directly ($60M), Helena to receive $60M from David (agreement found), Chen paid $60M for "medical services" (contract).',
+        location: 'Estate Planning',
+        critical: true,
+        connectedSuspect: 'Dr. Sarah Chen'
+      },
+      {
+        type: 'Witness Testimony',
+        description: 'Staff confirms Dr. Chen at lodge bar 2:30-3:00 AM. Alibi works perfectly IF Marcus died at 2:47 AM. Impossible if he died at 1:47 AM.',
+        location: 'Witness Interviews',
+        critical: true,
+        connectedSuspect: 'Dr. Sarah Chen'
+      },
+      {
+        type: 'Timeline Analysis',
+        description: 'TIMELINE BUILDER reconstruction shows Chen accessed suite 1:45 AM (cameras disabled), David in tech room 1:30-2:00 AM (hacking window), Helena in security office 1:35-1:55 AM (disabling cameras).',
+        location: 'Investigation Timeline',
+        critical: true,
+        connectedSuspect: 'Helena Volkov'
+      },
+      {
+        type: 'Psychological Profile',
+        description: 'SUSPECT PROFILER shows all three have technological sophistication, medical knowledge (Chen), coding expertise (David), security access (Helena), shared grudges, and capability for complex deception.',
+        location: 'FBI Behavioral Analysis',
+        critical: true,
+        connectedSuspect: 'Dr. Sarah Chen'
+      },
+      {
+        type: 'Theory Analysis',
+        description: 'THEORY BUILDER: "Early Death + Faked SmartWatch" theory is only explanation that reconciles all evidence. Competing theories of poisoned food, intruder, or suicide all fail evidence tests.',
+        location: 'Investigation Notes',
+        critical: true,
+        connectedSuspect: 'David Thorne'
+      },
+      {
+        type: 'Room Access Logs',
+        description: 'Digital door lock shows Marcus used keycard at 11:47 PM (going to bed), then Dr. Chen\'s medical override at 1:45 AM, then no further access. Chen had legitimate medical override capability.',
+        location: 'Electronic Locks',
+        critical: true,
+        connectedSuspect: 'Dr. Sarah Chen'
+      },
+      {
+        type: 'Security Footage',
+        description: 'Rebecca Thorne (ex-wife) visible in library 1 AM-3 AM continuously reading. Multiple camera angles confirm. Alibi solid.',
+        location: 'Security Cameras',
+        critical: false,
+        connectedSuspect: 'Rebecca Thorne'
+      },
+      {
+        type: 'Chess Game Record',
+        description: 'James Morrison played chess with guest 11 PM-2 AM. Game recorded, witnesses confirm continuous play. Alibi verified.',
+        location: 'Game Room',
+        critical: false,
+        connectedSuspect: 'James Morrison'
+      },
+      {
+        type: 'Video Conference Logs',
+        description: 'Senator Hayes on video call with DC staff 11 PM-1 AM. Call records and participants verified. Asleep after 1 AM (hotel room neighbor confirms).',
+        location: 'Video Platform',
+        critical: false,
+        connectedSuspect: 'Senator Patricia Hayes'
+      },
+      {
+        type: 'Digital Activity',
+        description: 'Diana Wu\'s laptop shows continuous coding activity 11 PM-4 AM. Git commits timestamped. Impossible to fake while committing murder.',
+        location: 'Digital Forensics',
+        critical: false,
+        connectedSuspect: 'Diana Wu'
+      }
+    ],
+    hints: {
+      subtle: 'Use ALL notebook features. Build theories about how locked room was defeated, create precise timeline of all 15 suspects, profile who has capability for sophisticated technological deception. The answer requires combining all three tools.',
+      moderate: 'The SmartWatch timestamp might be manipulated - who has coding skills? The locked room isn\'t the real puzzle - focus on poison delivery method. Someone with medical access could enter legitimately. Build timeline assuming death occurred EARLIER than stated.',
+      major: 'Three-person conspiracy: Dr. Chen poisoned insulin at 1:45 AM during legitimate medical check (cameras disabled by Helena), David hacked SmartWatch to show death at 2:47 AM instead of 1:47 AM (giving Chen false alibi), Helena disabled cameras and provided access. All three share $180M inheritance. Use Timeline Builder for precise reconstruction, Theory Builder for "Early Death + Faked Timestamp" theory, Profiler for technological sophistication analysis.'
+    }
   }
 ];
 

@@ -769,3 +769,12 @@
   flex-direction: column;
   background: #1a1a2e;
 }
+
+/* Profiles Container */
+.notebook-profiles-container {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: #1a1a2e;
+}

@@ -16,12 +16,17 @@ import {
 import {
   getEventsForCase
 } from '../utils/timelineManager';
+import {
+  getAllProfiles
+} from '../utils/suspectProfileManager';
 import TheoryBuilder from './TheoryBuilder';
 import TheoryCard from './TheoryCard';
 import TheoryComparison from './TheoryComparison';
 import TimelineBuilder from './TimelineBuilder';
 import EventEditor from './EventEditor';
 import AlibiValidator from './AlibiValidator';
+import SuspectProfiler from './SuspectProfiler';
+import ProfileEditor from './ProfileEditor';
 import './NotebookModal.css';
 
 /**
@@ -30,7 +35,7 @@ import './NotebookModal.css';
  */
 const NotebookModal = ({ caseId, caseData, onClose, showNotification }) => {
   // Tab state
-  const [activeTab, setActiveTab] = useState('notes'); // 'notes', 'theories', or 'timeline'
+  const [activeTab, setActiveTab] = useState('notes'); // 'notes', 'theories', 'timeline', or 'profiles'
 
   // Notes state
   const [notes, setNotes] = useState([]);
@@ -57,6 +62,11 @@ const NotebookModal = ({ caseId, caseData, onClose, showNotification }) => {
   const [editingEvent, setEditingEvent] = useState(null);
   const [showAlibiValidator, setShowAlibiValidator] = useState(false);
 
+  // Profiles state
+  const [profiles, setProfiles] = useState([]);
+  const [showProfileEditor, setShowProfileEditor] = useState(false);
+  const [editingSuspect, setEditingSuspect] = useState(null);
+
   /**
    * Load notes on mount and when caseId changes
    */
@@ -64,6 +74,7 @@ const NotebookModal = ({ caseId, caseData, onClose, showNotification }) => {
     loadNotes();
     loadTheories();
     loadTimeline();
+    loadProfiles();
   }, [caseId]);
 
   /**
@@ -97,6 +108,14 @@ const NotebookModal = ({ caseId, caseData, onClose, showNotification }) => {
   const loadTimeline = () => {
     const events = getEventsForCase(caseId);
     setTimelineEvents(events);
+  };
+
+  /**
+   * Load profiles for current case
+   */
+  const loadProfiles = () => {
+    const caseProfiles = getAllProfiles(caseId);
+    setProfiles(caseProfiles);
   };
 
   /**
@@ -340,6 +359,21 @@ const NotebookModal = ({ caseId, caseData, onClose, showNotification }) => {
   };
 
   /**
+   * Handle edit profile
+   */
+  const handleEditProfile = (suspect) => {
+    setEditingSuspect(suspect);
+    setShowProfileEditor(true);
+  };
+
+  /**
+   * Handle profile saved
+   */
+  const handleProfileSaved = () => {
+    loadProfiles();
+  };
+
+  /**
    * Render note card
    */
   const renderNoteCard = (note) => {
@@ -531,6 +565,12 @@ const NotebookModal = ({ caseId, caseData, onClose, showNotification }) => {
           >
             ⏰ Timeline ({timelineEvents.length})
           </button>
+          <button
+            className={`notebook-tab ${activeTab === 'profiles' ? 'active' : ''}`}
+            onClick={() => setActiveTab('profiles')}
+          >
+            👤 Profiles ({caseData.suspects?.length || 0})
+          </button>
         </div>
 
         {/* Notes Tab Content */}
@@ -711,6 +751,20 @@ const NotebookModal = ({ caseId, caseData, onClose, showNotification }) => {
           </div>
         )}
 
+        {/* Profiles Tab Content */}
+        {activeTab === 'profiles' && (
+          <div className="notebook-profiles-container">
+            <SuspectProfiler
+              caseId={caseId}
+              suspects={caseData.suspects || []}
+              onEditProfile={handleEditProfile}
+              onViewRelationships={(suspect) => {
+                showNotification?.('Relationship map coming soon!', 'info');
+              }}
+            />
+          </div>
+        )}
+
         {/* Theory Builder Modal */}
         {showTheoryBuilder && (
           <TheoryBuilder
@@ -759,6 +813,20 @@ const NotebookModal = ({ caseId, caseData, onClose, showNotification }) => {
             caseId={caseId}
             suspects={caseData.suspects || []}
             onClose={() => setShowAlibiValidator(false)}
+          />
+        )}
+
+        {/* Profile Editor Modal */}
+        {showProfileEditor && editingSuspect && (
+          <ProfileEditor
+            caseId={caseId}
+            suspect={editingSuspect}
+            onClose={() => {
+              setShowProfileEditor(false);
+              setEditingSuspect(null);
+            }}
+            onSave={handleProfileSaved}
+            showNotification={showNotification}
           />
         )}
       </div>

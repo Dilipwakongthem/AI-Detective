@@ -43,7 +43,7 @@ Click the **"🔍 NEW CASE"** button to begin your first investigation.`,
 • **Suspects** - People to investigate
 
 Read through the details, then click **"Begin Investigation"** to start.`,
-    position: 'center',
+    position: 'top',
     targetElement: '[data-tutorial="begin-investigation-btn"]',
     highlightElement: true,
     blockOtherClicks: true,
@@ -92,13 +92,14 @@ Evidence is crucial - it connects suspects to the crime through physical traits 
 
 Check the **Investigation Log** below to see what you discovered. The log tracks all your findings and interrogation notes.
 
-Now let's interrogate a suspect to gather more information.`,
-    position: 'top',
+Click Continue when ready to interrogate a suspect.`,
+    position: 'bottom',
     targetElement: '[data-tutorial="investigation-log"]',
     highlightElement: true,
     blockOtherClicks: false,
     requiresAction: false,
     nextTrigger: 'click_continue',
+    showContinueButton: true,
     phase: 'investigation'
   },
 
@@ -113,8 +114,8 @@ Each suspect has:
 • **Nervousness Level** - How anxious they appear
 • **Alibi** - Their claim about whereabouts
 
-Click on **any suspect card** to begin interrogation.`,
-    position: 'center',
+Click on **any suspect card** below to begin interrogation.`,
+    position: 'top',
     targetElement: '[data-tutorial="suspect-list"]',
     highlightElement: true,
     blockOtherClicks: true,
@@ -193,7 +194,7 @@ When you're confident you know who did it:
 • Trust your detective instincts
 
 Click on a suspect card and then **"Accuse"** to make your decision.`,
-    position: 'left',
+    position: 'top',
     targetElement: '[data-tutorial="suspect-list"]',
     highlightElement: true,
     blockOtherClicks: false, // Allow them to choose any suspect

@@ -114,6 +114,23 @@
   font-weight: 600;
 }
 
+.tutorial-element-warning {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: rgba(243, 156, 18, 0.1);
+  border: 1px solid rgba(243, 156, 18, 0.3);
+  border-radius: 6px;
+  color: var(--color-primary, #f39c12);
+  font-size: 13px;
+  text-align: center;
+  animation: pulseWarning 1.5s infinite;
+}
+
+@keyframes pulseWarning {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
 /* Modal footer */
 .tutorial-modal-footer {
   display: flex;

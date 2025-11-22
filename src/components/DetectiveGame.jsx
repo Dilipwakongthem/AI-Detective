@@ -133,8 +133,13 @@ const DetectiveGame = () => {
   const calculateTheoryStrength = () => {
     if (!currentCase) return { label: 'Unknown', stars: 0, percentage: 0 };
 
-    const evidenceScore = (currentCase.evidence.filter(e => e.discovered).length / currentCase.evidence.length) * 40;
-    const interrogationScore = (currentCase.suspects.filter(s => s.questioned).length / currentCase.suspects.length) * 30;
+    // Prevent division by zero for cases with empty arrays
+    const evidenceScore = currentCase.evidence.length > 0
+      ? (currentCase.evidence.filter(e => e.discovered).length / currentCase.evidence.length) * 40
+      : 0;
+    const interrogationScore = currentCase.suspects.length > 0
+      ? (currentCase.suspects.filter(s => s.questioned).length / currentCase.suspects.length) * 30
+      : 0;
     const connectionScore = 30; // Simplified for now
 
     const total = evidenceScore + interrogationScore + connectionScore;
@@ -195,7 +200,10 @@ const DetectiveGame = () => {
   const generateHint = () => {
     if (!currentCase) return '';
 
-    const guiltySuspect = currentCase.suspects[currentCase.guiltyIndex];
+    // Safely access guilty suspect - prevent array index out of bounds
+    const guiltySuspect = currentCase.suspects && currentCase.suspects.length > 0 && currentCase.guiltyIndex !== undefined
+      ? currentCase.suspects[currentCase.guiltyIndex]
+      : null;
     const evidenceFound = currentCase.evidence.filter(e => e.discovered).length;
     const totalEvidence = currentCase.evidence.length;
 
@@ -206,10 +214,12 @@ const DetectiveGame = () => {
       return `💡 Hint: Pay attention to suspects with high nervousness levels during interrogation. The guilty party often shows signs of stress.`;
     } else if (hintLevel === 2) {
       return `💡 Hint: Look for contradictions in alibis. The perpetrator is someone with opportunity and motive. Check who was present at the crime scene.`;
-    } else if (hintLevel === 3) {
+    } else if (hintLevel === 3 && guiltySuspect) {
       return `💡 Hint: The guilty party is ${guiltySuspect.age} years old and works as a ${guiltySuspect.occupation}. Look for evidence connecting them to the crime.`;
-    } else {
+    } else if (guiltySuspect) {
       return `💡 Hint: All evidence points to ${guiltySuspect.name}. Review the clues carefully before making your accusation.`;
+    } else {
+      return `💡 Hint: Gather more evidence and interrogate the suspects to build your case.`;
     }
   };
 
@@ -357,12 +367,16 @@ const DetectiveGame = () => {
     if (result.correct) points += 100;
     if (result.stars === 5) points += 50;
 
-    // Evidence Analysis (max 40 pts)
-    const evidenceRatio = caseData.evidence.filter(e => e.discovered).length / caseData.evidence.length;
+    // Evidence Analysis (max 40 pts) - prevent division by zero
+    const evidenceRatio = caseData.evidence.length > 0
+      ? caseData.evidence.filter(e => e.discovered).length / caseData.evidence.length
+      : 0;
     points += Math.floor(evidenceRatio * 40);
 
-    // Interrogation Skill (max 30 pts)
-    const interrogationRatio = caseData.suspects.filter(s => s.questioned).length / caseData.suspects.length;
+    // Interrogation Skill (max 30 pts) - prevent division by zero
+    const interrogationRatio = caseData.suspects.length > 0
+      ? caseData.suspects.filter(s => s.questioned).length / caseData.suspects.length
+      : 0;
     points += Math.floor(interrogationRatio * 30);
 
     // Speed bonus (max 30 pts) - assume average case takes 30 min
@@ -882,7 +896,11 @@ const DetectiveGame = () => {
 
         <div className="result-section">
           <h3>🔍 THE TRUTH</h3>
-          <p>The guilty party was: <strong>{currentCase.suspects[currentCase.guiltyIndex].name}</strong></p>
+          <p>The guilty party was: <strong>
+            {currentCase.suspects && currentCase.suspects.length > 0 && currentCase.guiltyIndex !== undefined
+              ? currentCase.suspects[currentCase.guiltyIndex].name
+              : 'Unknown'}
+          </strong></p>
           <p>Motive: Professional rivalry and financial gain</p>
         </div>
       </div>

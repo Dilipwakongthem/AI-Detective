@@ -43,7 +43,7 @@ Click the **"🔍 NEW CASE"** button to begin your first investigation.`,
 • **Suspects** - People to investigate
 
 Read through the details, then click **"Begin Investigation"** to start.`,
-    position: 'top',
+    position: 'center',
     targetElement: '[data-tutorial="begin-investigation-btn"]',
     highlightElement: true,
     blockOtherClicks: true,
@@ -279,7 +279,6 @@ const TUTORIAL_SEQUENCE = [
   'investigation_overview',
   'search_evidence',
   'evidence_found',
-  'evidence_board_explained',
   'select_suspect',
   'interrogation_intro',
   'interrogation_response',

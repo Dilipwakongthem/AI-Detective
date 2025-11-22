@@ -197,6 +197,45 @@
   box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
 }
 
+.menu-btn-featured {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+  border: 2px solid #f39c12;
+  font-size: 1.3em;
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 10px rgba(243, 156, 18, 0.5); }
+  to { box-shadow: 0 0 20px rgba(243, 156, 18, 0.8); }
+}
+
+.menu-btn-featured:hover {
+  background: linear-gradient(135deg, #c0392b, #a93226);
+  transform: scale(1.05);
+}
+
+.menu-btn-store {
+  background: linear-gradient(135deg, #27ae60, #229954);
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  font-size: 1em;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin: 10px 0;
+  font-family: 'Courier New', monospace;
+  width: 100%;
+}
+
+.menu-btn-store:hover {
+  background: linear-gradient(135deg, #229954, #1e8449);
+  transform: scale(1.02);
+  box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+}
+
 /* Briefing Screen */
 .briefing-screen {
   position: relative;

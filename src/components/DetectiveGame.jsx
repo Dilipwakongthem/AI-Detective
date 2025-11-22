@@ -1,6 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { generateCase, interrogateSuspect, evaluateAccusation } from '../gameLogic';
 import './DetectiveGame.css';
+import CaseLibraryScreen from './CaseLibraryScreen';
+import CasePackStore from './CasePackStore';
+import { initializeCaseLibrary, getDailyCase, isCaseUnlocked, markCaseCompleted } from '../utils/caseLibraryManager';
+import { HAND_CRAFTED_CASES } from '../handCraftedCases';
 
 const DetectiveGame = () => {
   const [gameState, setGameState] = useState('menu'); // menu, briefing, investigation, interrogation, accusation, result, profile
@@ -30,11 +34,81 @@ const DetectiveGame = () => {
   const [caseDetailsExpanded, setCaseDetailsExpanded] = useState(false);
   const [loadingAction, setLoadingAction] = useState('');
   const [notification, setNotification] = useState(null);
+  const [showCaseLibrary, setShowCaseLibrary] = useState(false);
+  const [showCasePackStore, setShowCasePackStore] = useState(false);
+  const [selectedCaseType, setSelectedCaseType] = useState(null); // 'procedural', 'hand-crafted', 'daily'
+
+  // Initialize systems on mount
+  useEffect(() => {
+    initializeCaseLibrary();
+  }, []);
 
   // Notification system
   const showNotification = (message, type = 'info') => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 3000);
+  };
+
+  // Case Library handlers
+  const handleStartCaseFromLibrary = (caseData) => {
+    setShowCaseLibrary(false);
+
+    if (caseData.type === 'procedural') {
+      // Start a procedural case (existing random generation)
+      setSelectedCaseType('procedural');
+      startNewCase(false);
+    } else {
+      // Start a hand-crafted case
+      setSelectedCaseType('hand-crafted');
+      const handCraftedCase = caseData.case || caseData;
+
+      // Convert hand-crafted case to game format
+      const gameCase = convertHandCraftedCaseToGameFormat(handCraftedCase);
+      setCurrentCase(gameCase);
+      setGameState('briefing');
+      setHintsUsed(0);
+      setHintLevel(0);
+      scrollToTop();
+    }
+  };
+
+  const convertHandCraftedCaseToGameFormat = (handCraftedCase) => {
+    // Convert the hand-crafted case structure to match the game's expected format
+    return {
+      ...handCraftedCase,
+      caseNumber: Date.now(), // Unique ID
+      suspects: handCraftedCase.suspects.map(s => ({
+        ...s,
+        questioned: false,
+        nervousness: 50,
+        lastResponse: null
+      })),
+      evidence: handCraftedCase.evidence.map(e => ({
+        ...e,
+        discovered: false,
+        examined: false
+      })),
+      hints: handCraftedCase.hints || [],
+      isHandCrafted: true,
+      handCraftedId: handCraftedCase.id
+    };
+  };
+
+  const handleCaseCompletion = (stars, wasCorrect) => {
+    if (currentCase?.isHandCrafted && currentCase.handCraftedId) {
+      // Track completion in case library
+      const timeSpent = Math.floor(Math.random() * 1800) + 600; // 10-40 minutes (demo)
+      markCaseCompleted(currentCase.handCraftedId, stars, timeSpent, wasCorrect);
+    }
+  };
+
+  const handleOpenStore = (section = 'case_packs') => {
+    setShowCaseLibrary(false);
+    setShowCasePackStore(true);
+  };
+
+  const handlePurchaseComplete = (result) => {
+    showNotification(`Successfully unlocked! ${result.premiumAccess ? 'Full library access granted!' : ''}`, 'success');
   };
 
   // Scroll utility functions
@@ -384,8 +458,21 @@ const DetectiveGame = () => {
           </div>
         )}
 
-        <button className="menu-btn" onClick={() => startNewCase(false)} data-tooltip="Begin investigating a new case">
-          {isChiefDetective ? '⭐ NEW ELITE CASE' : '🎯 START NEW CASE'}
+        <button className="menu-btn" onClick={() => startNewCase(false)} data-tooltip="Start a random procedural case">
+          🎲 QUICK PLAY
+        </button>
+
+        <button className="menu-btn menu-btn-featured" onClick={() => setShowCaseLibrary(true)} data-tooltip="Browse hand-crafted cases and your completed cases">
+          📚 CASE LIBRARY
+        </button>
+
+        <button className="menu-btn-secondary" onClick={() => {
+          const dailyCase = getDailyCase();
+          if (dailyCase && dailyCase.case) {
+            handleStartCaseFromLibrary(dailyCase);
+          }
+        }} data-tooltip="Play today's special case">
+          📅 DAILY CASE
         </button>
 
         {isChiefDetective && legendaryChance && (
@@ -396,6 +483,10 @@ const DetectiveGame = () => {
 
         <button className="menu-btn-secondary" onClick={() => setGameState('profile')} data-tooltip="View your detective statistics and progression">
           👤 DETECTIVE PROFILE
+        </button>
+
+        <button className="menu-btn-store" onClick={() => setShowCasePackStore(true)} data-tooltip="Purchase case packs and premium content">
+          🛒 STORE
         </button>
 
         <div className="menu-info">
@@ -935,6 +1026,23 @@ const DetectiveGame = () => {
         <div className={`notification ${notification.type}`}>
           {notification.message}
         </div>
+      )}
+
+      {/* Case Library Screen */}
+      {showCaseLibrary && (
+        <CaseLibraryScreen
+          onStartCase={handleStartCaseFromLibrary}
+          onClose={() => setShowCaseLibrary(false)}
+          onOpenStore={handleOpenStore}
+        />
+      )}
+
+      {/* Case Pack Store */}
+      {showCasePackStore && (
+        <CasePackStore
+          onClose={() => setShowCasePackStore(false)}
+          onPurchaseComplete={handlePurchaseComplete}
+        />
       )}
     </div>
   );

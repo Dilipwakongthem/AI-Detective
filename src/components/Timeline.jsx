@@ -19,7 +19,7 @@ const Timeline = ({ caseData, timelineEvents, onUpdateTimeline, onClose }) => {
     // Auto-save timeline to localStorage
     const autoSave = setInterval(() => {
       if (caseData && events.length > 0) {
-        localStorage.setItem(`timeline_${caseData.id}`, JSON.stringify(events));
+        localStorage.setItem(`timeline_${caseData.caseNumber}`, JSON.stringify(events));
       }
     }, 30000); // Every 30 seconds
 
@@ -29,7 +29,7 @@ const Timeline = ({ caseData, timelineEvents, onUpdateTimeline, onClose }) => {
   // Load timeline from localStorage
   useEffect(() => {
     if (caseData) {
-      const saved = localStorage.getItem(`timeline_${caseData.id}`);
+      const saved = localStorage.getItem(`timeline_${caseData.caseNumber}`);
       if (saved) {
         try {
           setEvents(JSON.parse(saved));

@@ -637,7 +637,7 @@ const DetectiveGame = () => {
     const result = evaluateAccusation(suspectId, currentCase, hintsUsed);
 
     // Add Evidence Board validation to result
-    const boardValidation = validateEvidenceBoardConnections(currentCase.id, currentCase.guiltyIndex);
+    const boardValidation = validateEvidenceBoardConnections(currentCase.caseNumber, currentCase.guiltyIndex);
     result.boardValidation = boardValidation;
 
     setAccusationResult(result);

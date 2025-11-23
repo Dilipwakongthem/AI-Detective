@@ -1,5 +1,45 @@
 // Game Logic Engine for Detective Game
 
+// Difficulty Configuration
+export const DIFFICULTY_LEVELS = {
+  EASY: {
+    name: 'Easy',
+    suspects: 5,
+    evidence: 10,
+    redHerrings: 1,
+    freeHints: Infinity,
+    contradictionsObvious: true,
+    description: 'Perfect for beginners'
+  },
+  NORMAL: {
+    name: 'Normal',
+    suspects: 8,
+    evidence: 15,
+    redHerrings: 3,
+    freeHints: 3,
+    contradictionsObvious: false,
+    description: 'Balanced challenge'
+  },
+  HARD: {
+    name: 'Hard',
+    suspects: 12,
+    evidence: 20,
+    redHerrings: 5,
+    freeHints: 0,
+    contradictionsObvious: false,
+    description: 'For experienced detectives'
+  },
+  COLD_CASE: {
+    name: 'Cold Case',
+    suspects: 15,
+    evidence: 25,
+    redHerrings: 7,
+    freeHints: 0,
+    contradictionsObvious: false,
+    description: 'Ultimate challenge - no time limits'
+  }
+};
+
 const crimeTypes = ['Murder', 'Theft', 'Fraud', 'Kidnapping', 'Arson'];
 const locations = [
   'Mansion', 'Gallery', 'Office Building', 'Restaurant', 'Hotel',
@@ -25,20 +65,25 @@ const evidenceTypes = [
   'Phone Records', 'Threatening Letter', 'Receipts', 'Toxicology Report'
 ];
 
-export function generateCase(caseNumber, difficulty = 1, isLegendary = false) {
+export function generateCase(caseNumber, difficultyConfig = null, isLegendary = false) {
+  // If no difficulty config provided, use NORMAL as default
+  const config = difficultyConfig || DIFFICULTY_LEVELS.NORMAL;
+
   const crimeType = crimeTypes[Math.floor(Math.random() * crimeTypes.length)];
   const location = locations[Math.floor(Math.random() * locations.length)];
 
-  // Scale complexity based on difficulty (1-10)
-  const minSuspects = Math.min(3 + Math.floor(difficulty / 3), 8);
-  const maxSuspects = Math.min(minSuspects + 2, 10);
-  const numSuspects = minSuspects + Math.floor(Math.random() * (maxSuspects - minSuspects + 1));
+  // Use configured difficulty parameters
+  const numSuspects = config.suspects;
+  const numEvidence = config.evidence;
+  const numRedHerrings = config.redHerrings;
 
   const shuffledNames = [...names].sort(() => Math.random() - 0.5);
   const guiltyIndex = Math.floor(Math.random() * numSuspects);
 
-  // Higher difficulty = harder to identify guilty party
-  const baseSuspicion = Math.max(1, 5 - Math.floor(difficulty / 2));
+  // Base suspicion level (harder difficulties = less obvious)
+  const baseSuspicion = config === DIFFICULTY_LEVELS.EASY ? 5 :
+                        config === DIFFICULTY_LEVELS.NORMAL ? 4 :
+                        config === DIFFICULTY_LEVELS.HARD ? 3 : 2;
   const suspects = Array.from({ length: numSuspects }, (_, i) => ({
     id: i,
     name: shuffledNames[i % shuffledNames.length] + (i >= shuffledNames.length ? ` ${String.fromCharCode(65 + Math.floor(i / shuffledNames.length))}` : ''),
@@ -48,9 +93,7 @@ export function generateCase(caseNumber, difficulty = 1, isLegendary = false) {
     alibi: generateAlibi(location),
     isGuilty: i === guiltyIndex,
     suspicionLevel: i === guiltyIndex ? baseSuspicion : Math.floor(Math.random() * baseSuspicion) + 1,
-    nervousness: i === guiltyIndex ?
-      (70 - difficulty * 3) : // Guilty party calmer at higher difficulties
-      Math.floor(Math.random() * 40) + 10,
+    nervousness: i === guiltyIndex ? 60 : Math.floor(Math.random() * 40) + 10,
     questioned: false,
     // Trust/Fear/Respect system
     trust: 0,      // -50 to +50
@@ -58,21 +101,26 @@ export function generateCase(caseNumber, difficulty = 1, isLegendary = false) {
     respect: 0     // -25 to +25
   }));
 
-  // More evidence at higher difficulty
-  const numEvidence = 8 + Math.floor(difficulty * 1.5) + Math.floor(Math.random() * 5);
-  const evidence = Array.from({ length: numEvidence }, (_, i) => ({
-    id: i,
-    type: evidenceTypes[Math.floor(Math.random() * evidenceTypes.length)],
-    description: generateEvidenceDescription(i, suspects[guiltyIndex]),
-    location: i < 3 ? 'Crime Scene' : ['Office', 'Storage Room', 'Parking Lot', 'Nearby Street'][Math.floor(Math.random() * 4)],
-    connectedTo: i % 3 === 0 ? guiltyIndex : null,
-    discovered: false,
-    critical: i < Math.max(2, Math.floor(difficulty / 3))
-  }));
+  // Generate evidence based on configured amount
+  const evidence = Array.from({ length: numEvidence }, (_, i) => {
+    const isRedHerring = i >= (numEvidence - numRedHerrings);
+    return {
+      id: i,
+      type: evidenceTypes[Math.floor(Math.random() * evidenceTypes.length)],
+      description: generateEvidenceDescription(i, suspects[guiltyIndex], isRedHerring),
+      location: i < 3 ? 'Crime Scene' : ['Office', 'Storage Room', 'Parking Lot', 'Nearby Street'][Math.floor(Math.random() * 4)],
+      connectedTo: isRedHerring ? null : (i % 3 === 0 ? guiltyIndex : null),
+      discovered: false,
+      critical: !isRedHerring && (i < 3), // First 3 non-red-herrings are critical
+      isRedHerring: isRedHerring
+    };
+  });
 
   return {
     caseNumber,
-    difficulty,
+    difficulty: config,
+    difficultyName: config.name,
+    isColdCase: config === DIFFICULTY_LEVELS.COLD_CASE,
     isLegendary,
     crimeType: isLegendary ? `⭐ LEGENDARY: ${crimeType}` : crimeType,
     location,
@@ -85,7 +133,8 @@ export function generateCase(caseNumber, difficulty = 1, isLegendary = false) {
     guiltyIndex,
     startTime: new Date().toLocaleString(),
     cluesFound: 0,
-    interrogationCount: 0
+    interrogationCount: 0,
+    freeHintsRemaining: config.freeHints === Infinity ? Infinity : config.freeHints
   };
 }
 
@@ -101,18 +150,36 @@ function generateAlibi(location) {
   return alibis[Math.floor(Math.random() * alibis.length)];
 }
 
-function generateEvidenceDescription(index, guiltySuspect) {
+function generateEvidenceDescription(index, guiltySuspect, isRedHerring = false) {
+  if (isRedHerring) {
+    // Red herrings - misleading evidence
+    const redHerringDescriptions = [
+      `Unidentified fingerprints on unrelated object`,
+      `Witness statement later proven unreliable`,
+      `Security camera malfunction during key timeframe`,
+      `Phone records from wrong date`,
+      `Financial transaction unrelated to crime`,
+      `DNA sample from contaminated scene`,
+      `Old threatening message from years ago`,
+      `Timeline discrepancy due to clock error`,
+      `Physical evidence from previous incident`,
+      `Inconclusive forensic analysis`
+    ];
+    return redHerringDescriptions[index % redHerringDescriptions.length];
+  }
+
+  // Real evidence
   const descriptions = [
     `Fingerprints found on key object - matches ${guiltySuspect.name}`,
     `Witness saw someone matching ${guiltySuspect.name}'s description`,
-    `Security footage shows suspicious activity`,
-    `Phone records indicate calls made around the time of incident`,
-    `Financial records show motive`,
-    `DNA evidence found at the scene`,
-    `Threatening message discovered`,
-    `Timeline contradicts alibi`,
-    `Physical evidence links to suspect`,
-    `Forensic analysis reveals crucial detail`
+    `Security footage shows ${guiltySuspect.name} at the scene`,
+    `Phone records place ${guiltySuspect.name} nearby during incident`,
+    `Financial records show ${guiltySuspect.name} had clear motive`,
+    `DNA evidence links ${guiltySuspect.name} to crime scene`,
+    `Threatening message written by ${guiltySuspect.name} discovered`,
+    `Timeline contradicts ${guiltySuspect.name}'s alibi`,
+    `Physical evidence directly links to ${guiltySuspect.name}`,
+    `Forensic analysis implicates ${guiltySuspect.name}`
   ];
   return descriptions[index % descriptions.length];
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { generateCase, interrogateSuspect, evaluateAccusation } from '../gameLogic';
+import { generateCase, interrogateSuspect, evaluateAccusation, DIFFICULTY_LEVELS } from '../gameLogic';
 import './DetectiveGame.css';
 import CaseLibraryScreen from './CaseLibraryScreen';
 import CasePackStore from './CasePackStore';
@@ -43,6 +43,10 @@ const DetectiveGame = () => {
   const [contradictionsFound, setContradictionsFound] = useState([]);
   const [showContradictionReveal, setShowContradictionReveal] = useState(false);
   const [currentContradiction, setCurrentContradiction] = useState(null);
+
+  // Difficulty system state
+  const [selectedDifficulty, setSelectedDifficulty] = useState(DIFFICULTY_LEVELS.NORMAL);
+  const [showDifficultySelector, setShowDifficultySelector] = useState(false);
 
   // Initialize systems on mount
   useEffect(() => {
@@ -264,14 +268,14 @@ const DetectiveGame = () => {
   };
 
   const startNewCase = (isLegendary = false) => {
-    const difficulty = isLegendary ? 10 : getCaseDifficulty();
-    const newCase = generateCase(playerProfile.casesSolved + 1, difficulty, isLegendary);
+    const newCase = generateCase(playerProfile.casesSolved + 1, selectedDifficulty, isLegendary);
     setCurrentCase(newCase);
     setGameState('briefing');
     setGameLog([]);
     setAccusationResult(null);
     setHintsUsed(0);
     setHintLevel(0);
+    setShowDifficultySelector(false);
   };
 
   const startInvestigation = () => {
@@ -582,7 +586,7 @@ const DetectiveGame = () => {
           </div>
         )}
 
-        <button className="menu-btn" onClick={() => startNewCase(false)} data-tooltip="Start a random procedural case">
+        <button className="menu-btn" onClick={() => setShowDifficultySelector(true)} data-tooltip="Start a random procedural case">
           🎲 QUICK PLAY
         </button>
 
@@ -1341,6 +1345,43 @@ const DetectiveGame = () => {
               </div>
               <div className="suspect-reaction">
                 <p>😰 {currentContradiction.suspect.name}'s nervousness increased to {currentContradiction.suspect.nervousness}%!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Difficulty Selector Modal */}
+      {showDifficultySelector && (
+        <div className="modal-overlay" onClick={() => setShowDifficultySelector(false)}>
+          <div className="modal-content difficulty-selector-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>🎯 SELECT DIFFICULTY</h2>
+              <button className="modal-close" onClick={() => setShowDifficultySelector(false)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <div className="difficulty-grid">
+                {Object.values(DIFFICULTY_LEVELS).map((diff) => (
+                  <div
+                    key={diff.name}
+                    className={`difficulty-card ${selectedDifficulty === diff ? 'selected' : ''}`}
+                    onClick={() => {
+                      setSelectedDifficulty(diff);
+                      startNewCase(false);
+                    }}
+                  >
+                    <h3 className="difficulty-name">{diff.name}</h3>
+                    <p className="difficulty-description">{diff.description}</p>
+                    <div className="difficulty-stats">
+                      <div className="stat-item">👥 {diff.suspects} Suspects</div>
+                      <div className="stat-item">🔍 {diff.evidence} Evidence</div>
+                      <div className="stat-item">❌ {diff.redHerrings} Red Herrings</div>
+                      <div className="stat-item">
+                        💡 {diff.freeHints === Infinity ? '∞' : diff.freeHints} Free Hints
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

@@ -2137,3 +2137,91 @@
     gap: 10px;
   }
 }
+
+/* ============================================
+   DIFFICULTY SELECTOR MODAL
+   ============================================ */
+
+.difficulty-selector-modal {
+  max-width: 900px;
+}
+
+.difficulty-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.difficulty-card {
+  background: linear-gradient(135deg, rgba(30, 144, 255, 0.1), rgba(0, 100, 200, 0.05));
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.difficulty-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: #FFD700;
+  box-shadow: 0 12px 30px rgba(255, 215, 0, 0.4);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
+}
+
+.difficulty-card.selected {
+  border-color: #00FF00;
+  background: linear-gradient(135deg, rgba(0, 255, 0, 0.2), rgba(0, 200, 0, 0.1));
+  box-shadow: 0 8px 25px rgba(0, 255, 0, 0.4);
+}
+
+.difficulty-name {
+  font-size: 1.8em;
+  color: #FFD700;
+  margin: 0 0 15px 0;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.difficulty-description {
+  color: #CCC;
+  font-size: 1.1em;
+  margin: 0 0 20px 0;
+  font-style: italic;
+}
+
+.difficulty-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.stat-item {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 0.95em;
+  color: #FFF;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Mobile responsiveness for difficulty selector */
+@media (max-width: 768px) {
+  .difficulty-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .difficulty-card {
+    padding: 20px;
+  }
+
+  .difficulty-name {
+    font-size: 1.5em;
+  }
+
+  .difficulty-stats {
+    grid-template-columns: 1fr;
+  }
+}

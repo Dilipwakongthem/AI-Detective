@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
 import { generateCase, interrogateSuspect, evaluateAccusation, DIFFICULTY_LEVELS } from '../gameLogic';
 import './DetectiveGame.css';
-import CaseLibraryScreen from './CaseLibraryScreen';
-import CasePackStore from './CasePackStore';
 import { initializeCaseLibrary, getDailyCase, isCaseUnlocked, markCaseCompleted } from '../utils/caseLibraryManager';
 import { HAND_CRAFTED_CASES } from '../handCraftedCases';
+
+// Code splitting: Lazy load heavy components
+const CaseLibraryScreen = lazy(() => import('./CaseLibraryScreen'));
+const CasePackStore = lazy(() => import('./CasePackStore'));
 
 const DetectiveGame = () => {
   const [gameState, setGameState] = useState('menu'); // menu, briefing, investigation, interrogation, accusation, result, profile
@@ -163,36 +165,14 @@ const DetectiveGame = () => {
     reader.readAsText(file);
   };
 
-  // Notification system
-  const showNotification = (message, type = 'info') => {
+  // Notification system (memoized)
+  const showNotification = useCallback((message, type = 'info') => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 3000);
-  };
+  }, []);
 
-  // Case Library handlers
-  const handleStartCaseFromLibrary = (caseData) => {
-    setShowCaseLibrary(false);
-
-    if (caseData.type === 'procedural') {
-      // Start a procedural case (existing random generation)
-      setSelectedCaseType('procedural');
-      startNewCase(false);
-    } else {
-      // Start a hand-crafted case
-      setSelectedCaseType('hand-crafted');
-      const handCraftedCase = caseData.case || caseData;
-
-      // Convert hand-crafted case to game format
-      const gameCase = convertHandCraftedCaseToGameFormat(handCraftedCase);
-      setCurrentCase(gameCase);
-      setGameState('briefing');
-      setHintsUsed(0);
-      setHintLevel(0);
-      scrollToTop();
-    }
-  };
-
-  const convertHandCraftedCaseToGameFormat = (handCraftedCase) => {
+  // Convert hand-crafted case to game format (memoized)
+  const convertHandCraftedCaseToGameFormat = useCallback((handCraftedCase) => {
     // Convert the hand-crafted case structure to match the game's expected format
     return {
       ...handCraftedCase,
@@ -216,24 +196,47 @@ const DetectiveGame = () => {
       isHandCrafted: true,
       handCraftedId: handCraftedCase.id
     };
-  };
+  }, []);
 
-  const handleCaseCompletion = (stars, wasCorrect) => {
+  // Case Library handlers (memoized)
+  const handleStartCaseFromLibrary = useCallback((caseData) => {
+    setShowCaseLibrary(false);
+
+    if (caseData.type === 'procedural') {
+      // Start a procedural case (existing random generation)
+      setSelectedCaseType('procedural');
+      startNewCase(false);
+    } else {
+      // Start a hand-crafted case
+      setSelectedCaseType('hand-crafted');
+      const handCraftedCase = caseData.case || caseData;
+
+      // Convert hand-crafted case to game format
+      const gameCase = convertHandCraftedCaseToGameFormat(handCraftedCase);
+      setCurrentCase(gameCase);
+      setGameState('briefing');
+      setHintsUsed(0);
+      setHintLevel(0);
+      scrollToTop();
+    }
+  }, [convertHandCraftedCaseToGameFormat]);
+
+  const handleCaseCompletion = useCallback((stars, wasCorrect) => {
     if (currentCase?.isHandCrafted && currentCase.handCraftedId) {
       // Track completion in case library
       const timeSpent = Math.floor(Math.random() * 1800) + 600; // 10-40 minutes (demo)
       markCaseCompleted(currentCase.handCraftedId, stars, timeSpent, wasCorrect);
     }
-  };
+  }, [currentCase]);
 
-  const handleOpenStore = (section = 'case_packs') => {
+  const handleOpenStore = useCallback((section = 'case_packs') => {
     setShowCaseLibrary(false);
     setShowCasePackStore(true);
-  };
+  }, []);
 
-  const handlePurchaseComplete = (result) => {
+  const handlePurchaseComplete = useCallback((result) => {
     showNotification(`Successfully unlocked! ${result.premiumAccess ? 'Full library access granted!' : ''}`, 'success');
-  };
+  }, [showNotification]);
 
   // Scroll utility functions
   const scrollToElement = (elementId) => {
@@ -253,8 +256,8 @@ const DetectiveGame = () => {
     });
   };
 
-  // Calculate theory strength
-  const calculateTheoryStrength = () => {
+  // Calculate theory strength (memoized for performance)
+  const theoryStrength = useMemo(() => {
     if (!currentCase) return { label: 'Unknown', stars: 0, percentage: 0 };
 
     // Prevent division by zero for cases with empty arrays
@@ -273,7 +276,7 @@ const DetectiveGame = () => {
     if (total < 70) return { label: 'Moderate', stars: 3, percentage: total };
     if (total < 90) return { label: 'Strong', stars: 4, percentage: total };
     return { label: 'Very Strong', stars: 5, percentage: total };
-  };
+  }, [currentCase]);
 
   const getRankInfo = (rankLevel) => {
     const ranks = [
@@ -789,7 +792,7 @@ const DetectiveGame = () => {
     const totalSuspects = currentCase.suspects.length;
     const evidencePercentage = Math.round((evidenceCollected / totalEvidence) * 100);
     const interrogationPercentage = Math.round((suspectsInterrogated / totalSuspects) * 100);
-    const theoryStrength = calculateTheoryStrength();
+    // theoryStrength is now a memoized value, no need to call function
 
     return (
       <div className={`investigation-screen screen-enter ${currentCase.isColdCase ? 'cold-case-theme' : ''}`}>
@@ -1589,19 +1592,23 @@ const DetectiveGame = () => {
 
       {/* Case Library Screen */}
       {showCaseLibrary && (
-        <CaseLibraryScreen
-          onStartCase={handleStartCaseFromLibrary}
-          onClose={() => setShowCaseLibrary(false)}
-          onOpenStore={handleOpenStore}
-        />
+        <Suspense fallback={<div className="loading-overlay"><div className="spinner">Loading Case Library...</div></div>}>
+          <CaseLibraryScreen
+            onStartCase={handleStartCaseFromLibrary}
+            onClose={() => setShowCaseLibrary(false)}
+            onOpenStore={handleOpenStore}
+          />
+        </Suspense>
       )}
 
       {/* Case Pack Store */}
       {showCasePackStore && (
-        <CasePackStore
-          onClose={() => setShowCasePackStore(false)}
-          onPurchaseComplete={handlePurchaseComplete}
-        />
+        <Suspense fallback={<div className="loading-overlay"><div className="spinner">Loading Store...</div></div>}>
+          <CasePackStore
+            onClose={() => setShowCasePackStore(false)}
+            onPurchaseComplete={handlePurchaseComplete}
+          />
+        </Suspense>
       )}
 
       {/* Evidence Selection Modal */}

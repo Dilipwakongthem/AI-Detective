@@ -2560,3 +2560,237 @@
     font-size: 2em;
   }
 }
+
+/* ============================================
+   COLD CASE MODE THEME
+   ============================================ */
+
+/* Cold Case Banner */
+.cold-case-banner {
+  background: linear-gradient(135deg, #8B7355, #6B5344);
+  color: #F5DEB3;
+  text-align: center;
+  padding: 15px;
+  font-size: 1.3em;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  border: 3px solid #D2B48C;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.3);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  animation: fadeIn 0.8s ease;
+}
+
+/* Cold Case Theme - Sepia/Aged Aesthetic */
+.cold-case-theme {
+  filter: sepia(0.3) contrast(1.1);
+  background: linear-gradient(135deg, #2C2416, #3D3125) !important;
+}
+
+/* Cold Case Theme - Override backgrounds with aged colors */
+.cold-case-theme .briefing-screen,
+.cold-case-theme .investigation-screen,
+.cold-case-theme .interrogation-screen,
+.cold-case-theme .accusation-screen,
+.cold-case-theme .result-screen {
+  background: linear-gradient(135deg, rgba(44, 36, 22, 0.95), rgba(61, 49, 37, 0.95)) !important;
+  border-color: #8B7355 !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7), inset 0 0 100px rgba(139, 115, 85, 0.1) !important;
+}
+
+/* Cold Case - Muted headers */
+.cold-case-theme h2,
+.cold-case-theme h3 {
+  color: #D2B48C !important;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+/* Cold Case - Evidence and suspect cards */
+.cold-case-theme .evidence-item,
+.cold-case-theme .suspect-card,
+.cold-case-theme .accusation-card {
+  background: rgba(61, 49, 37, 0.6) !important;
+  border-color: #8B7355 !important;
+}
+
+.cold-case-theme .evidence-item:hover,
+.cold-case-theme .suspect-card:hover,
+.cold-case-theme .accusation-card:hover {
+  background: rgba(80, 64, 48, 0.7) !important;
+  border-color: #D2B48C !important;
+}
+
+/* Cold Case - Evidence types and badges */
+.cold-case-theme .evidence-type,
+.cold-case-theme .evidence-type-badge {
+  background: linear-gradient(135deg, #6B5344, #8B7355) !important;
+  color: #F5DEB3 !important;
+}
+
+/* Cold Case - Buttons with aged appearance */
+.cold-case-theme .action-btn,
+.cold-case-theme .menu-btn {
+  background: linear-gradient(135deg, #8B7355, #6B5344) !important;
+  color: #F5DEB3 !important;
+  border: 2px solid #D2B48C !important;
+}
+
+.cold-case-theme .action-btn:hover,
+.cold-case-theme .menu-btn:hover {
+  background: linear-gradient(135deg, #A0826D, #8B7355) !important;
+  box-shadow: 0 6px 20px rgba(139, 115, 85, 0.5) !important;
+}
+
+/* Cold Case - Progress bars with aged colors */
+.cold-case-theme .progress-fill {
+  background: linear-gradient(90deg, #8B7355, #A0826D) !important;
+}
+
+.cold-case-theme .nervousness-fill {
+  background: linear-gradient(90deg, #8B6914, #CD853F) !important;
+}
+
+/* Cold Case - Text colors */
+.cold-case-theme p,
+.cold-case-theme .log-text,
+.cold-case-theme .evidence-desc,
+.cold-case-theme .suspect-details {
+  color: #D2B48C !important;
+}
+
+/* Cold Case - Case header */
+.cold-case-theme .case-header,
+.cold-case-theme .case-type {
+  background: rgba(61, 49, 37, 0.8) !important;
+  border-color: #8B7355 !important;
+  color: #D2B48C !important;
+}
+
+/* Cold Case - Investigation log with paper texture */
+.cold-case-theme .game-log,
+.cold-case-theme .investigation-log {
+  background: linear-gradient(135deg, rgba(61, 49, 37, 0.9), rgba(80, 64, 48, 0.9)) !important;
+  border: 2px solid #8B7355 !important;
+}
+
+.cold-case-theme .log-entry {
+  border-bottom: 1px solid #6B5344 !important;
+}
+
+/* Cold Case - Result header colors */
+.cold-case-theme .result-header.success {
+  background: linear-gradient(135deg, rgba(85, 107, 47, 0.9), rgba(107, 142, 35, 0.9)) !important;
+  border-color: #9ACD32 !important;
+}
+
+.cold-case-theme .result-header.failure {
+  background: linear-gradient(135deg, rgba(80, 0, 0, 0.9), rgba(120, 20, 20, 0.9)) !important;
+  border-color: #8B4513 !important;
+}
+
+/* Cold Case - Section backgrounds */
+.cold-case-theme .briefing-section,
+.cold-case-theme .result-section,
+.cold-case-theme .profile-section {
+  background: rgba(80, 64, 48, 0.4) !important;
+  border-color: #6B5344 !important;
+}
+
+/* Cold Case - Meters and bars */
+.cold-case-theme .meter-bar {
+  background: rgba(30, 24, 18, 0.6) !important;
+  border-color: #6B5344 !important;
+}
+
+.cold-case-theme .trust-fill {
+  background: linear-gradient(90deg, #6B8E23, #8FBC8F) !important;
+}
+
+.cold-case-theme .fear-fill {
+  background: linear-gradient(90deg, #8B4513, #CD853F) !important;
+}
+
+.cold-case-theme .respect-fill {
+  background: linear-gradient(90deg, #DAA520, #F0E68C) !important;
+}
+
+/* Cold Case - Interrogation approach buttons */
+.cold-case-theme .approach-empathy {
+  background: linear-gradient(135deg, rgba(85, 107, 47, 0.8), rgba(107, 142, 35, 0.8)) !important;
+  border-color: #9ACD32 !important;
+}
+
+.cold-case-theme .approach-aggressive {
+  background: linear-gradient(135deg, rgba(139, 69, 19, 0.8), rgba(160, 82, 45, 0.8)) !important;
+  border-color: #D2691E !important;
+}
+
+.cold-case-theme .approach-logical {
+  background: linear-gradient(135deg, rgba(70, 130, 180, 0.7), rgba(100, 149, 237, 0.7)) !important;
+  border-color: #4682B4 !important;
+}
+
+/* Cold Case - Aged paper effect on cards */
+.cold-case-theme .case-details-content,
+.cold-case-theme .suspect-profile,
+.cold-case-theme .evidence-board {
+  background:
+    linear-gradient(135deg, rgba(61, 49, 37, 0.95), rgba(80, 64, 48, 0.95)),
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" /></filter><rect width="100" height="100" filter="url(%23noise)" opacity="0.05"/></svg>') !important;
+  border: 2px solid #8B7355 !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Cold Case - Stats and values */
+.cold-case-theme .stat-value,
+.cold-case-theme .progress-value,
+.cold-case-theme .meter-value {
+  color: #F5DEB3 !important;
+}
+
+/* Cold Case - Critical evidence badge */
+.cold-case-theme .critical-badge,
+.cold-case-theme .critical-indicator {
+  background: linear-gradient(135deg, #8B4513, #A0522D) !important;
+  color: #FFE4B5 !important;
+  border-color: #D2691E !important;
+}
+
+/* Cold Case - Home button */
+.cold-case-theme .home-btn,
+.cold-case-theme .back-btn {
+  background: rgba(61, 49, 37, 0.9) !important;
+  color: #D2B48C !important;
+  border-color: #8B7355 !important;
+}
+
+.cold-case-theme .home-btn:hover,
+.cold-case-theme .back-btn:hover {
+  background: rgba(80, 64, 48, 0.9) !important;
+  border-color: #D2B48C !important;
+}
+
+/* Cold Case - Justification textarea */
+.cold-case-theme .justification-textarea {
+  background: rgba(30, 24, 18, 0.8) !important;
+  color: #D2B48C !important;
+  border-color: #6B5344 !important;
+}
+
+/* Cold Case - Stars and ratings */
+.cold-case-theme .stars {
+  filter: sepia(0.5) hue-rotate(-10deg);
+}
+
+/* Fade in animation for cold case elements */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

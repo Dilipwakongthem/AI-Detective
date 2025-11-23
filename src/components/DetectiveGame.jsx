@@ -740,10 +740,15 @@ const DetectiveGame = () => {
   };
 
   const renderBriefing = () => (
-    <div className="briefing-screen screen-enter">
+    <div className={`briefing-screen screen-enter ${currentCase.isColdCase ? 'cold-case-theme' : ''}`}>
       <button className="home-btn" onClick={handleReturnToMenu} data-tooltip="Return to Main Menu">
         🏠 HOME
       </button>
+      {currentCase.isColdCase && (
+        <div className="cold-case-banner">
+          📁 COLD CASE - REOPENED AFTER YEARS
+        </div>
+      )}
       <div className="case-header">
         <h2>🗂️ CASE #{currentCase.caseNumber}</h2>
         <div className="case-type">{currentCase.crimeType}</div>
@@ -787,10 +792,15 @@ const DetectiveGame = () => {
     const theoryStrength = calculateTheoryStrength();
 
     return (
-      <div className="investigation-screen screen-enter">
+      <div className={`investigation-screen screen-enter ${currentCase.isColdCase ? 'cold-case-theme' : ''}`}>
         <button className="home-btn" onClick={handleReturnToMenu} data-tooltip="Save & Return to Main Menu">
           🏠 HOME
         </button>
+        {currentCase.isColdCase && (
+          <div className="cold-case-banner">
+            📁 COLD CASE - EVIDENCE AGED
+          </div>
+        )}
         <div className="investigation-header">
           <div className="header-content">
             <h2>🔍 INVESTIGATION - Case #{currentCase.caseNumber}</h2>
@@ -971,7 +981,12 @@ const DetectiveGame = () => {
   };
 
   const renderInterrogation = () => (
-    <div className="interrogation-screen screen-enter">
+    <div className={`interrogation-screen screen-enter ${currentCase.isColdCase ? 'cold-case-theme' : ''}`}>
+      {currentCase.isColdCase && (
+        <div className="cold-case-banner">
+          📁 COLD CASE INTERROGATION
+        </div>
+      )}
       <div className="interrogation-header">
         <button className="home-btn" onClick={handleReturnToMenu} title="Save & Return to Main Menu">
           🏠 HOME
@@ -1149,7 +1164,12 @@ const DetectiveGame = () => {
     const selectedForAccusation = currentCase.suspects.find(s => s.id === accusedSuspectId);
 
     return (
-      <div className="accusation-screen screen-enter">
+      <div className={`accusation-screen screen-enter ${currentCase.isColdCase ? 'cold-case-theme' : ''}`}>
+        {currentCase.isColdCase && (
+          <div className="cold-case-banner">
+            📁 COLD CASE - FINAL ACCUSATION
+          </div>
+        )}
         <button className="home-btn" onClick={handleReturnToMenu} data-tooltip="Save & Return to Main Menu">
           🏠 HOME
         </button>
@@ -1245,7 +1265,12 @@ const DetectiveGame = () => {
   };
 
   const renderResult = () => (
-    <div className="result-screen screen-enter">
+    <div className={`result-screen screen-enter ${currentCase.isColdCase ? 'cold-case-theme' : ''}`}>
+      {currentCase.isColdCase && (
+        <div className="cold-case-banner">
+          📁 COLD CASE {accusationResult.correct ? 'SOLVED' : 'REMAINS UNSOLVED'}
+        </div>
+      )}
       <div className={`result-header ${accusationResult.correct ? 'success' : 'failure'}`}>
         <h2>{accusationResult.message}</h2>
         {accusationResult.correct && (

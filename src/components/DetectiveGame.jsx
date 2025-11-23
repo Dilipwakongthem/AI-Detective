@@ -955,6 +955,11 @@ const DetectiveGame = () => {
                 <div className="evidence-type">{evidence.type}</div>
                 <div className="evidence-desc">{evidence.description}</div>
                 <div className="evidence-location">Found at: {evidence.location}</div>
+                {evidence.yearsOld > 0 && (
+                  <div className="evidence-condition">
+                    📅 Evidence Age: {evidence.yearsOld} years old • Condition: {evidence.condition}
+                  </div>
+                )}
                 {evidence.critical && <span className="critical-badge">⚠️ CRITICAL</span>}
               </div>
             ))}
@@ -1583,6 +1588,11 @@ const DetectiveGame = () => {
                     <div className="evidence-type-badge">{evidence.type}</div>
                     <div className="evidence-description">{evidence.description}</div>
                     <div className="evidence-location-tag">📍 {evidence.location}</div>
+                    {evidence.yearsOld > 0 && (
+                      <div className="evidence-age-tag">
+                        📅 {evidence.yearsOld} yrs old • {evidence.condition}
+                      </div>
+                    )}
                     {evidence.critical && <span className="critical-indicator">⚠️ CRITICAL</span>}
                   </div>
                 ))}

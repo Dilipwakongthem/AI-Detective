@@ -2794,3 +2794,28 @@
     transform: translateY(0);
   }
 }
+
+/* Evidence Age and Condition Display */
+.evidence-condition,
+.evidence-age-tag {
+  font-size: 0.85em;
+  color: #CD853F;
+  margin-top: 8px;
+  padding: 5px 10px;
+  background: rgba(139, 115, 85, 0.2);
+  border-radius: 5px;
+  border-left: 3px solid #8B7355;
+}
+
+.cold-case-theme .evidence-condition,
+.cold-case-theme .evidence-age-tag {
+  color: #F5DEB3;
+  background: rgba(139, 115, 85, 0.3);
+  border-left-color: #D2B48C;
+}
+
+.evidence-age-tag {
+  font-size: 0.8em;
+  padding: 4px 8px;
+  margin-top: 5px;
+}

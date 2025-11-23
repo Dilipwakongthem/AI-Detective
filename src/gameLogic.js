@@ -104,15 +104,22 @@ export function generateCase(caseNumber, difficultyConfig = null, isLegendary = 
   // Generate evidence based on configured amount
   const evidence = Array.from({ length: numEvidence }, (_, i) => {
     const isRedHerring = i >= (numEvidence - numRedHerrings);
+    const yearsOld = config === DIFFICULTY_LEVELS.COLD_CASE ? Math.floor(Math.random() * 20) + 5 : 0; // 5-25 years old for cold cases
+    const condition = config === DIFFICULTY_LEVELS.COLD_CASE
+      ? ['Degraded', 'Faded', 'Partially Damaged', 'Weathered', 'Deteriorated'][Math.floor(Math.random() * 5)]
+      : 'Good';
+
     return {
       id: i,
       type: evidenceTypes[Math.floor(Math.random() * evidenceTypes.length)],
-      description: generateEvidenceDescription(i, suspects[guiltyIndex], isRedHerring),
+      description: generateEvidenceDescription(i, suspects[guiltyIndex], isRedHerring, yearsOld),
       location: i < 3 ? 'Crime Scene' : ['Office', 'Storage Room', 'Parking Lot', 'Nearby Street'][Math.floor(Math.random() * 4)],
       connectedTo: isRedHerring ? null : (i % 3 === 0 ? guiltyIndex : null),
       discovered: false,
       critical: !isRedHerring && (i < 3), // First 3 non-red-herrings are critical
-      isRedHerring: isRedHerring
+      isRedHerring: isRedHerring,
+      yearsOld: yearsOld,
+      condition: condition
     };
   });
 
@@ -150,7 +157,9 @@ function generateAlibi(location) {
   return alibis[Math.floor(Math.random() * alibis.length)];
 }
 
-function generateEvidenceDescription(index, guiltySuspect, isRedHerring = false) {
+function generateEvidenceDescription(index, guiltySuspect, isRedHerring = false, yearsOld = 0) {
+  const agePrefix = yearsOld > 0 ? `[${yearsOld} years old] ` : '';
+
   if (isRedHerring) {
     // Red herrings - misleading evidence
     const redHerringDescriptions = [
@@ -165,7 +174,7 @@ function generateEvidenceDescription(index, guiltySuspect, isRedHerring = false)
       `Physical evidence from previous incident`,
       `Inconclusive forensic analysis`
     ];
-    return redHerringDescriptions[index % redHerringDescriptions.length];
+    return agePrefix + redHerringDescriptions[index % redHerringDescriptions.length];
   }
 
   // Real evidence
@@ -181,7 +190,7 @@ function generateEvidenceDescription(index, guiltySuspect, isRedHerring = false)
     `Physical evidence directly links to ${guiltySuspect.name}`,
     `Forensic analysis implicates ${guiltySuspect.name}`
   ];
-  return descriptions[index % descriptions.length];
+  return agePrefix + descriptions[index % descriptions.length];
 }
 
 export function interrogateSuspect(suspect, caseData) {

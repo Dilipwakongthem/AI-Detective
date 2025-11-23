@@ -8,13 +8,15 @@ import {
   isCaseUnlocked,
   searchCases,
   filterCasesByDifficulty,
-  getTutorialCases
+  getTutorialCases,
+  getColdCaseCases
 } from '../utils/caseLibraryManager.js';
 
 const CaseLibraryScreen = ({ onStartCase, onClose, onOpenStore }) => {
   const [activeTab, setActiveTab] = useState('tutorial'); // Start with tutorial tab
   const [tutorialCases, setTutorialCases] = useState([]);
   const [featuredCases, setFeaturedCases] = useState([]);
+  const [coldCases, setColdCases] = useState([]);
   const [dailyCase, setDailyCase] = useState(null);
   const [completedCases, setCompletedCases] = useState({});
   const [stats, setStats] = useState(null);
@@ -29,6 +31,7 @@ const CaseLibraryScreen = ({ onStartCase, onClose, onOpenStore }) => {
   const loadCaseData = () => {
     setTutorialCases(getTutorialCases());
     setFeaturedCases(getFeaturedCases());
+    setColdCases(getColdCaseCases());
     setDailyCase(getDailyCase());
     setCompletedCases(getAllCompletedCases());
     setStats(getCaseLibraryStats());
@@ -365,6 +368,12 @@ const CaseLibraryScreen = ({ onStartCase, onClose, onOpenStore }) => {
             ⭐ Featured Cases
           </button>
           <button
+            className={`tab ${activeTab === 'cold_case' ? 'active' : ''}`}
+            onClick={() => setActiveTab('cold_case')}
+          >
+            📁 Cold Cases
+          </button>
+          <button
             className={`tab ${activeTab === 'procedural' ? 'active' : ''}`}
             onClick={() => setActiveTab('procedural')}
           >
@@ -445,6 +454,55 @@ const CaseLibraryScreen = ({ onStartCase, onClose, onOpenStore }) => {
             </div>
             {renderFeaturedCases()}
           </>
+        )}
+
+        {activeTab === 'cold_case' && (
+          <div className="cold-case-section">
+            <div className="cold-case-intro">
+              <h3>📁 Cold Case Files</h3>
+              <p>Reopen unsolved cases from years past. These complex investigations feature aged evidence, extensive suspect lists, and require meticulous detective work. Success is measured by methodology, not speed.</p>
+            </div>
+            <div className="cold-cases-grid">
+              {coldCases.map((caseData, index) => (
+                <div
+                  key={caseData.id}
+                  className="cold-case-card"
+                  onClick={() => handleStartCase({ ...caseData, type: 'cold_case', case: caseData })}
+                >
+                  <div className="cold-case-header">
+                    <div className="cold-case-age">
+                      <span className="years-badge">{caseData.yearsOld} YEARS OLD</span>
+                    </div>
+                    <div className="cold-case-type">{caseData.crimeType}</div>
+                  </div>
+                  <h4>{caseData.title}</h4>
+                  <p className="cold-case-opening">{caseData.narrative.opening}</p>
+                  <div className="cold-case-details">
+                    <div className="detail-item">
+                      <span className="detail-icon">👥</span>
+                      <span>{caseData.suspects.length} Suspects</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-icon">🔍</span>
+                      <span>{caseData.evidence.length} Evidence</span>
+                    </div>
+                    <div className="detail-item">
+                      <span className="detail-icon">⭐</span>
+                      <span>Difficulty {caseData.difficulty}/10</span>
+                    </div>
+                  </div>
+                  <button className="cold-case-start-btn">
+                    {completedCases[caseData.id] ? '🔄 Reinvestigate' : '📁 Open Case File'}
+                  </button>
+                  {completedCases[caseData.id] && (
+                    <div className="cold-case-completion">
+                      ✅ Solved • {completedCases[caseData.id].stars}⭐ • Methodology: {completedCases[caseData.id].methodologyScore || 'N/A'}/100
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
         {activeTab === 'daily' && renderDailyCase()}

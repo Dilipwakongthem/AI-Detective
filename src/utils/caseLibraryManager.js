@@ -5,6 +5,7 @@
 
 import { HAND_CRAFTED_CASES } from '../handCraftedCases.js';
 import { TUTORIAL_CASES } from '../tutorialCases.js';
+import { COLD_CASE_SCENARIOS } from '../coldCasesHandCrafted.js';
 
 // Simple localStorage helpers
 const saveToStorage = (key, value) => {
@@ -83,6 +84,7 @@ export const CASE_PACKS = {
 export const CASE_CATEGORIES = {
   tutorial: 'Tutorial Cases',
   featured: 'Featured Cases',
+  cold_case: 'Cold Case Files',
   procedural: 'Procedural Cases',
   completed: 'Completed Cases',
   daily: 'Daily Case',
@@ -153,12 +155,26 @@ export const getAllHandCraftedCases = () => {
 };
 
 /**
- * Get all cases (tutorials + hand-crafted)
+ * Get cold case scenarios with metadata
+ */
+export const getColdCaseCases = () => {
+  return COLD_CASE_SCENARIOS.map((caseData, index) => ({
+    ...caseData,
+    index,
+    category: 'cold_case',
+    isPremium: false, // Cold cases are free/unlocked
+    isUnlocked: true  // Cold cases are always available
+  }));
+};
+
+/**
+ * Get all cases (tutorials + hand-crafted + cold cases)
  */
 export const getAllCases = () => {
   return [
     ...getTutorialCases(),
-    ...getAllHandCraftedCases()
+    ...getAllHandCraftedCases(),
+    ...getColdCaseCases()
   ];
 };
 

@@ -611,6 +611,440 @@ export const COLD_CASE_SCENARIOS = [
       'Who had access to Sterling\'s private space?',
       'Phone records link to rival company executives.'
     ]
+  },
+
+  // COLD CASE 4: The Burned Archive (18 years old)
+  {
+    id: 'cold_case_burned_archive',
+    title: 'The Burned Archive',
+    difficulty: 10,
+    isColdCase: true,
+    yearsOld: 18,
+    crimeType: 'Arson',
+    location: 'City Historical Archive',
+    narrative: {
+      opening: 'Eighteen years ago, the City Historical Archive burned down, destroying centuries of documents. One security guard died in the blaze. Arson was suspected but never proven. A deathbed confession has reopened the case.',
+      twist: 'The archive director set the fire to destroy evidence of his family\'s collaboration with enemy forces during WWII, documented in recently acquired papers.',
+      conclusion: 'Security logs and accelerant traces matched the director\'s movements. The guard\'s death was an unintended consequence.'
+    },
+    suspects: [
+      {
+        name: 'Dr. Howard Blackwood',
+        age: 73,
+        occupation: 'Archive Director',
+        personality: 'Evasive',
+        alibi: 'Claims he was at dinner with board members',
+        isGuilty: true,
+        suspicionLevel: 5
+      },
+      {
+        name: 'Margaret Sullivan',
+        age: 67,
+        occupation: 'Senior Archivist',
+        personality: 'Cooperative',
+        alibi: 'Had left building at 6 PM',
+        isGuilty: false,
+        suspicionLevel: 2
+      },
+      {
+        name: 'Frank Donovan',
+        age: 70,
+        occupation: 'Fire Marshal (Retired)',
+        personality: 'Suspicious',
+        alibi: 'Responded to the fire alarm',
+        isGuilty: false,
+        suspicionLevel: 3
+      },
+      {
+        name: 'Elena Martinez',
+        age: 64,
+        occupation: 'Preservation Specialist',
+        personality: 'Calm',
+        alibi: 'Working late in restoration lab',
+        isGuilty: false,
+        suspicionLevel: 2
+      },
+      {
+        name: 'Charles Weatherby',
+        age: 75,
+        occupation: 'Board Member',
+        personality: 'Arrogant',
+        alibi: 'At dinner with other board members',
+        isGuilty: false,
+        suspicionLevel: 1
+      },
+      {
+        name: 'Robert Hayes',
+        age: 68,
+        occupation: 'Building Maintenance',
+        personality: 'Nervous',
+        alibi: 'Claims electrical work was completed earlier',
+        isGuilty: false,
+        suspicionLevel: 4
+      },
+      {
+        name: 'Linda Porter',
+        age: 66,
+        occupation: 'Reference Librarian',
+        personality: 'Cooperative',
+        alibi: 'Left work at 5:30 PM',
+        isGuilty: false,
+        suspicionLevel: 1
+      },
+      {
+        name: 'Victor Chen',
+        age: 62,
+        occupation: 'Security Supervisor',
+        personality: 'Defensive',
+        alibi: 'In security office during fire',
+        isGuilty: false,
+        suspicionLevel: 3
+      },
+      {
+        name: 'Sarah Blackwood',
+        age: 49,
+        occupation: 'Director\'s Daughter',
+        personality: 'Charming',
+        alibi: 'Says she was out of town',
+        isGuilty: false,
+        suspicionLevel: 3
+      },
+      {
+        name: 'Thomas Reed',
+        age: 69,
+        occupation: 'City Historian',
+        personality: 'Calculating',
+        alibi: 'At university giving a lecture',
+        isGuilty: false,
+        suspicionLevel: 2
+      },
+      {
+        name: 'Patricia Morgan',
+        age: 65,
+        occupation: 'Insurance Inspector',
+        personality: 'Suspicious',
+        alibi: 'Claims she inspected building weeks earlier',
+        isGuilty: false,
+        suspicionLevel: 2
+      },
+      {
+        name: 'David Kowalski',
+        age: 71,
+        occupation: 'WWII Historian',
+        personality: 'Calm',
+        alibi: 'Researching at different archive',
+        isGuilty: false,
+        suspicionLevel: 1
+      },
+      {
+        name: 'Angela Foster',
+        age: 63,
+        occupation: 'Document Conservator',
+        personality: 'Cooperative',
+        alibi: 'Home with family',
+        isGuilty: false,
+        suspicionLevel: 1
+      },
+      {
+        name: 'Raymond Cross',
+        age: 67,
+        occupation: 'Electrician',
+        personality: 'Nervous',
+        alibi: 'Says he finished wiring work days before',
+        isGuilty: false,
+        suspicionLevel: 3
+      },
+      {
+        name: 'Katherine Walsh',
+        age: 64,
+        occupation: 'City Council Member',
+        personality: 'Aggressive',
+        alibi: 'At council meeting with witnesses',
+        isGuilty: false,
+        suspicionLevel: 1
+      }
+    ],
+    evidence: [
+      {
+        type: 'Accelerant Traces',
+        description: '[18 years old] Chemical accelerant found in director\'s office area',
+        location: 'Crime Scene',
+        critical: true,
+        yearsOld: 18,
+        condition: 'Degraded'
+      },
+      {
+        type: 'Security Logs',
+        description: '[18 years old] Director accessed building at 9:47 PM, contrary to alibi',
+        location: 'Security Office',
+        critical: true,
+        yearsOld: 18,
+        condition: 'Good'
+      },
+      {
+        type: 'Financial Documents',
+        description: '[18 years old] Director paid large sum to acquire WWII collaboration papers',
+        location: 'Storage Room',
+        critical: true,
+        yearsOld: 18,
+        condition: 'Weathered'
+      },
+      {
+        type: 'Witness Testimony',
+        description: '[18 years old] Janitor saw director\'s car in parking lot at 10 PM',
+        location: 'Office',
+        critical: true,
+        yearsOld: 18,
+        condition: 'Good'
+      },
+      {
+        type: 'Phone Records',
+        description: '[18 years old] Director made calls to chemical supply company',
+        location: 'Office',
+        critical: false,
+        yearsOld: 18,
+        condition: 'Faded'
+      },
+      {
+        type: 'Purchase Receipts',
+        description: '[18 years old] Accelerant chemicals purchased under false name',
+        location: 'Storage Room',
+        critical: false,
+        yearsOld: 18,
+        condition: 'Deteriorated'
+      },
+      {
+        type: 'Deathbed Confession',
+        description: '[Recent] Terminal patient confessed to helping destroy documents',
+        location: 'Office',
+        critical: false,
+        yearsOld: 0,
+        condition: 'Good'
+      }
+    ],
+    hints: [
+      'Check who had motive to destroy specific historical documents.',
+      'Security logs contradict the director\'s alibi.',
+      'Accelerant traces point to planned arson, not electrical fire.',
+      'The director had recently acquired controversial WWII documents.'
+    ]
+  },
+
+  // COLD CASE 5: The Sunken Yacht (10 years old)
+  {
+    id: 'cold_case_sunken_yacht',
+    title: 'The Sunken Yacht',
+    difficulty: 10,
+    isColdCase: true,
+    yearsOld: 10,
+    crimeType: 'Murder',
+    location: 'Pacific Coast Marina',
+    narrative: {
+      opening: 'Ten years ago, billionaire Marcus Reeves disappeared when his yacht sank in calm waters. His body was never found. Recent underwater exploration discovered the yacht\'s hull was deliberately damaged.',
+      twist: 'His business partner sabotaged the yacht to gain control of their tech startup before a major IPO, with help from the yacht captain.',
+      conclusion: 'Text messages and hull damage analysis proved the conspiracy. The captain\'s GPS data contradicted his reported route.'
+    },
+    suspects: [
+      {
+        name: 'Captain James Mitchell',
+        age: 52,
+        occupation: 'Yacht Captain',
+        personality: 'Defensive',
+        alibi: 'Claims mechanical failure caused the sinking',
+        isGuilty: true,
+        suspicionLevel: 5
+      },
+      {
+        name: 'Trevor Reeves',
+        age: 47,
+        occupation: 'Victim\'s Son',
+        personality: 'Aggressive',
+        alibi: 'Says he was at university across country',
+        isGuilty: false,
+        suspicionLevel: 4
+      },
+      {
+        name: 'Amanda Chen',
+        age: 48,
+        occupation: 'Business Partner',
+        personality: 'Calculating',
+        alibi: 'Claims she was preparing IPO documents',
+        isGuilty: false,
+        suspicionLevel: 5
+      },
+      {
+        name: 'Dr. Nicole Warren',
+        age: 51,
+        occupation: 'Victim\'s Ex-Wife',
+        personality: 'Charming',
+        alibi: 'On vacation in Europe with witnesses',
+        isGuilty: false,
+        suspicionLevel: 3
+      },
+      {
+        name: 'Richard Donovan',
+        age: 56,
+        occupation: 'CFO of Victim\'s Company',
+        personality: 'Nervous',
+        alibi: 'Working late at office',
+        isGuilty: false,
+        suspicionLevel: 3
+      },
+      {
+        name: 'Sarah Blake',
+        age: 43,
+        occupation: 'Personal Assistant',
+        personality: 'Cooperative',
+        alibi: 'Coordinating victim\'s schedule from shore',
+        isGuilty: false,
+        suspicionLevel: 2
+      },
+      {
+        name: 'Vincent Caruso',
+        age: 59,
+        occupation: 'Yacht Mechanic',
+        personality: 'Evasive',
+        alibi: 'Claims he serviced yacht day before',
+        isGuilty: false,
+        suspicionLevel: 4
+      },
+      {
+        name: 'Jennifer Park',
+        age: 45,
+        occupation: 'Marine Insurance Agent',
+        personality: 'Calm',
+        alibi: 'In office with documented meetings',
+        isGuilty: false,
+        suspicionLevel: 2
+      },
+      {
+        name: 'Robert Sterling',
+        age: 53,
+        occupation: 'Rival Tech CEO',
+        personality: 'Arrogant',
+        alibi: 'At tech conference with hundreds of witnesses',
+        isGuilty: false,
+        suspicionLevel: 3
+      },
+      {
+        name: 'Linda Martinez',
+        age: 49,
+        occupation: 'Investment Banker',
+        personality: 'Cooperative',
+        alibi: 'Working on IPO preparation',
+        isGuilty: false,
+        suspicionLevel: 2
+      },
+      {
+        name: 'Daniel Cross',
+        age: 50,
+        occupation: 'Coast Guard Officer',
+        personality: 'Cooperative',
+        alibi: 'Responded to distress call',
+        isGuilty: false,
+        suspicionLevel: 1
+      },
+      {
+        name: 'Catherine Lee',
+        age: 46,
+        occupation: 'Marina Manager',
+        personality: 'Calm',
+        alibi: 'Working in marina office',
+        isGuilty: false,
+        suspicionLevel: 1
+      },
+      {
+        name: 'Michael Torres',
+        age: 54,
+        occupation: 'Private Investigator',
+        personality: 'Suspicious',
+        alibi: 'Claims victim hired him weeks before',
+        isGuilty: false,
+        suspicionLevel: 3
+      },
+      {
+        name: 'Emily Foster',
+        age: 44,
+        occupation: 'Tech Journalist',
+        personality: 'Charming',
+        alibi: 'Covering tech event in San Francisco',
+        isGuilty: false,
+        suspicionLevel: 1
+      },
+      {
+        name: 'Gregory Walsh',
+        age: 55,
+        occupation: 'Corporate Lawyer',
+        personality: 'Defensive',
+        alibi: 'Reviewing IPO legal documents',
+        isGuilty: false,
+        suspicionLevel: 2
+      }
+    ],
+    evidence: [
+      {
+        type: 'Hull Damage Analysis',
+        description: '[10 years old] Underwater survey shows deliberate explosive damage',
+        location: 'Crime Scene',
+        critical: true,
+        yearsOld: 10,
+        condition: 'Degraded'
+      },
+      {
+        type: 'Text Messages',
+        description: '[10 years old] Recovered messages between captain and Amanda Chen',
+        location: 'Office',
+        critical: true,
+        yearsOld: 10,
+        condition: 'Good'
+      },
+      {
+        type: 'GPS Data',
+        description: '[10 years old] Captain\'s GPS shows deviation from reported route',
+        location: 'Security Office',
+        critical: true,
+        yearsOld: 10,
+        condition: 'Good'
+      },
+      {
+        type: 'Financial Documents',
+        description: '[10 years old] Large payment to captain after IPO completed',
+        location: 'Office',
+        critical: true,
+        yearsOld: 10,
+        condition: 'Faded'
+      },
+      {
+        type: 'Insurance Records',
+        description: '[10 years old] Policy increased weeks before incident',
+        location: 'Storage Room',
+        critical: false,
+        yearsOld: 10,
+        condition: 'Weathered'
+      },
+      {
+        type: 'Witness Testimony',
+        description: '[10 years old] Dock worker saw captain with unknown equipment',
+        location: 'Office',
+        critical: false,
+        yearsOld: 10,
+        condition: 'Good'
+      },
+      {
+        type: 'Maintenance Logs',
+        description: '[10 years old] Yacht was in excellent condition before trip',
+        location: 'Storage Room',
+        critical: false,
+        yearsOld: 10,
+        condition: 'Faded'
+      }
+    ],
+    hints: [
+      'Hull damage is inconsistent with accidental sinking in calm waters.',
+      'GPS data shows the captain deviated from his reported route.',
+      'Who benefited most from Reeves\' death before the IPO?',
+      'Text messages reveal suspicious communication patterns.'
+    ]
   }
 ];
 

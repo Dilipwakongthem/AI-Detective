@@ -86,6 +86,83 @@ const DetectiveGame = () => {
     localStorage.setItem('reduceMotion', reduceMotion);
   }, [useDyslexiaFont, reduceMotion]);
 
+  // Save Export/Import Functions
+  const exportSaveData = () => {
+    const saveData = {
+      version: '1.0',
+      exportDate: new Date().toISOString(),
+      playerProfile: playerProfile,
+      accessibility: {
+        useDyslexiaFont,
+        reduceMotion
+      },
+      caseLibrary: {
+        unlockedCases: localStorage.getItem('unlockedCases'),
+        completedCases: localStorage.getItem('completedCases'),
+        caseProgress: localStorage.getItem('caseProgress'),
+        purchasedCasePacks: localStorage.getItem('purchasedCasePacks')
+      }
+    };
+
+    const dataStr = JSON.stringify(saveData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `ai-detective-save-${new Date().toISOString().slice(0, 10)}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+
+    showNotification('Save data exported successfully!', 'success');
+  };
+
+  const importSaveData = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const saveData = JSON.parse(e.target.result);
+
+        // Validate save data
+        if (!saveData.version || !saveData.playerProfile) {
+          throw new Error('Invalid save file format');
+        }
+
+        // Import player profile
+        setPlayerProfile(saveData.playerProfile);
+
+        // Import accessibility settings
+        if (saveData.accessibility) {
+          setUseDyslexiaFont(saveData.accessibility.useDyslexiaFont || false);
+          setReduceMotion(saveData.accessibility.reduceMotion || false);
+        }
+
+        // Import case library data
+        if (saveData.caseLibrary) {
+          if (saveData.caseLibrary.unlockedCases) {
+            localStorage.setItem('unlockedCases', saveData.caseLibrary.unlockedCases);
+          }
+          if (saveData.caseLibrary.completedCases) {
+            localStorage.setItem('completedCases', saveData.caseLibrary.completedCases);
+          }
+          if (saveData.caseLibrary.caseProgress) {
+            localStorage.setItem('caseProgress', saveData.caseLibrary.caseProgress);
+          }
+          if (saveData.caseLibrary.purchasedCasePacks) {
+            localStorage.setItem('purchasedCasePacks', saveData.caseLibrary.purchasedCasePacks);
+          }
+        }
+
+        showNotification('Save data imported successfully!', 'success');
+      } catch (error) {
+        showNotification('Failed to import save data: ' + error.message, 'error');
+      }
+    };
+    reader.readAsText(file);
+  };
+
   // Notification system
   const showNotification = (message, type = 'info') => {
     setNotification({ message, type });
@@ -1390,6 +1467,37 @@ const DetectiveGame = () => {
                 </label>
               </div>
             </div>
+          </div>
+
+          {/* Save Management */}
+          <div className="profile-section save-management">
+            <h3>💾 SAVE DATA MANAGEMENT</h3>
+            <div className="save-actions">
+              <button className="save-action-btn export-btn" onClick={exportSaveData}>
+                <span className="btn-icon">📥</span>
+                <span className="btn-content">
+                  <strong>Export Save Data</strong>
+                  <small>Download your progress as a JSON file</small>
+                </span>
+              </button>
+
+              <label className="save-action-btn import-btn">
+                <input
+                  type="file"
+                  accept=".json"
+                  onChange={importSaveData}
+                  style={{ display: 'none' }}
+                />
+                <span className="btn-icon">📤</span>
+                <span className="btn-content">
+                  <strong>Import Save Data</strong>
+                  <small>Restore progress from a backup file</small>
+                </span>
+              </label>
+            </div>
+            <p className="save-warning">
+              ⚠️ Warning: Importing will overwrite your current progress
+            </p>
           </div>
         </div>
       </div>

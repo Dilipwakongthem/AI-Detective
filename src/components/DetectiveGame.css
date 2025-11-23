@@ -2468,3 +2468,95 @@
     font-size: 0.95em;
   }
 }
+
+/* ============================================
+   SAVE DATA MANAGEMENT
+   ============================================ */
+
+.save-management {
+  background: linear-gradient(135deg, rgba(100, 200, 100, 0.1), rgba(50, 150, 50, 0.05));
+  border: 2px solid rgba(100, 200, 100, 0.3);
+}
+
+.save-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.save-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.save-action-btn:hover {
+  background: rgba(0, 0, 0, 0.4);
+  border-color: #FFD700;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
+}
+
+.export-btn:hover {
+  border-color: #00FF00;
+  box-shadow: 0 8px 20px rgba(0, 255, 0, 0.3);
+}
+
+.import-btn:hover {
+  border-color: #1E90FF;
+  box-shadow: 0 8px 20px rgba(30, 144, 255, 0.3);
+}
+
+.btn-icon {
+  font-size: 2.5em;
+  flex-shrink: 0;
+}
+
+.btn-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: left;
+}
+
+.btn-content strong {
+  color: #FFD700;
+  font-size: 1.1em;
+}
+
+.btn-content small {
+  color: #AAA;
+  font-size: 0.85em;
+}
+
+.save-warning {
+  text-align: center;
+  color: #FFA500;
+  font-size: 0.9em;
+  margin: 0;
+  padding: 10px;
+  background: rgba(255, 165, 0, 0.1);
+  border-radius: 5px;
+}
+
+/* Mobile responsiveness for save management */
+@media (max-width: 768px) {
+  .save-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .save-action-btn {
+    padding: 15px;
+  }
+
+  .btn-icon {
+    font-size: 2em;
+  }
+}

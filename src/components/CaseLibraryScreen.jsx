@@ -7,11 +7,13 @@ import {
   getCaseLibraryStats,
   isCaseUnlocked,
   searchCases,
-  filterCasesByDifficulty
+  filterCasesByDifficulty,
+  getTutorialCases
 } from '../utils/caseLibraryManager.js';
 
 const CaseLibraryScreen = ({ onStartCase, onClose, onOpenStore }) => {
-  const [activeTab, setActiveTab] = useState('featured');
+  const [activeTab, setActiveTab] = useState('tutorial'); // Start with tutorial tab
+  const [tutorialCases, setTutorialCases] = useState([]);
   const [featuredCases, setFeaturedCases] = useState([]);
   const [dailyCase, setDailyCase] = useState(null);
   const [completedCases, setCompletedCases] = useState({});
@@ -25,6 +27,7 @@ const CaseLibraryScreen = ({ onStartCase, onClose, onOpenStore }) => {
   }, []);
 
   const loadCaseData = () => {
+    setTutorialCases(getTutorialCases());
     setFeaturedCases(getFeaturedCases());
     setDailyCase(getDailyCase());
     setCompletedCases(getAllCompletedCases());
@@ -344,6 +347,12 @@ const CaseLibraryScreen = ({ onStartCase, onClose, onOpenStore }) => {
 
         <div className="library-tabs">
           <button
+            className={`tab ${activeTab === 'tutorial' ? 'active' : ''}`}
+            onClick={() => setActiveTab('tutorial')}
+          >
+            🎓 Tutorial
+          </button>
+          <button
             className={`tab ${activeTab === 'daily' ? 'active' : ''}`}
             onClick={() => setActiveTab('daily')}
           >
@@ -371,6 +380,43 @@ const CaseLibraryScreen = ({ onStartCase, onClose, onOpenStore }) => {
       </div>
 
       <div className="library-content">
+        {activeTab === 'tutorial' && (
+          <div className="tutorial-section">
+            <div className="tutorial-intro">
+              <h3>📚 Detective Training</h3>
+              <p>Master the fundamentals with these quick learning cases. Progress from 1-minute basics to 3-minute advanced training.</p>
+            </div>
+            <div className="tutorial-cases-grid">
+              {tutorialCases.map((caseData, index) => (
+                <div
+                  key={caseData.id}
+                  className="tutorial-case-card"
+                  onClick={() => handleStartCase({ ...caseData, type: 'tutorial', case: caseData })}
+                >
+                  <div className="tutorial-badge">
+                    <span className="tutorial-number">{index + 1}</span>
+                    <span className="tutorial-time">{caseData.estimatedTime}</span>
+                  </div>
+                  <h4>{caseData.title}</h4>
+                  <p className="tutorial-description">{caseData.narrative.tutorial}</p>
+                  <div className="tutorial-stats">
+                    <span className="tutorial-difficulty">{'⭐'.repeat(caseData.difficulty)}</span>
+                    <span className="tutorial-tag">FREE</span>
+                  </div>
+                  <button className="tutorial-start-btn">
+                    {completedCases[caseData.id] ? '🔄 Replay Tutorial' : '▶️ Start Training'}
+                  </button>
+                  {completedCases[caseData.id] && (
+                    <div className="tutorial-completion">
+                      ✅ Completed • {completedCases[caseData.id].stars}⭐
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {activeTab === 'featured' && (
           <>
             <div className="filters-bar">

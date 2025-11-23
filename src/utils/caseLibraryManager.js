@@ -4,6 +4,7 @@
  */
 
 import { HAND_CRAFTED_CASES } from '../handCraftedCases.js';
+import { TUTORIAL_CASES } from '../tutorialCases.js';
 
 // Simple localStorage helpers
 const saveToStorage = (key, value) => {
@@ -80,6 +81,7 @@ export const CASE_PACKS = {
 
 // Case Categories
 export const CASE_CATEGORIES = {
+  tutorial: 'Tutorial Cases',
   featured: 'Featured Cases',
   procedural: 'Procedural Cases',
   completed: 'Completed Cases',
@@ -126,6 +128,19 @@ export const initializeCaseLibrary = () => {
 };
 
 /**
+ * Get tutorial cases with metadata
+ */
+export const getTutorialCases = () => {
+  return TUTORIAL_CASES.map((caseData, index) => ({
+    ...caseData,
+    index,
+    category: 'tutorial',
+    isPremium: false, // Tutorial cases are always free
+    isUnlocked: true  // Tutorial cases are always unlocked
+  }));
+};
+
+/**
  * Get all available hand-crafted cases with metadata
  */
 export const getAllHandCraftedCases = () => {
@@ -135,6 +150,16 @@ export const getAllHandCraftedCases = () => {
     category: 'featured',
     isPremium: !['stolen_manuscript', 'poisoned_pen', 'insurance_fraud'].includes(caseData.id)
   }));
+};
+
+/**
+ * Get all cases (tutorials + hand-crafted)
+ */
+export const getAllCases = () => {
+  return [
+    ...getTutorialCases(),
+    ...getAllHandCraftedCases()
+  ];
 };
 
 /**

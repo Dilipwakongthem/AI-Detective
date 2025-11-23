@@ -2,14 +2,28 @@
 
 import { HAND_CRAFTED_CASES, convertHandCraftedToGameFormat } from './handCraftedCases.js';
 
-const crimeTypes = ['Murder', 'Theft', 'Fraud', 'Kidnapping', 'Arson'];
-const locations = [
-  'Mansion', 'Gallery', 'Office Building', 'Restaurant', 'Hotel',
-  'Warehouse', 'Park', 'Theater', 'Museum', 'Casino'
+// Expanded crime types with more variety (+180%)
+const crimeTypes = [
+  'Murder', 'Theft', 'Fraud', 'Kidnapping', 'Arson',
+  'Blackmail', 'Embezzlement', 'Art Forgery', 'Corporate Espionage',
+  'Identity Theft', 'Smuggling', 'Extortion', 'Sabotage', 'Conspiracy'
 ];
+
+// Expanded locations with unique characteristics (+150%)
+const locations = [
+  'Mansion', 'Art Gallery', 'Office Building', 'Restaurant', 'Hotel',
+  'Warehouse', 'City Park', 'Theater', 'Museum', 'Casino',
+  'Yacht Club', 'University', 'Hospital', 'Country Club', 'Tech Startup',
+  'Law Firm', 'Investment Bank', 'Auction House', 'Private Estate', 'Penthouse',
+  'Vineyard', 'Research Lab', 'Concert Hall', 'Shopping Mall', 'Airport Lounge'
+];
+
+// Expanded personalities for more diverse suspects (+100%)
 const personalities = [
   'Nervous', 'Calculating', 'Defensive', 'Charming', 'Evasive',
-  'Aggressive', 'Cooperative', 'Suspicious', 'Calm', 'Arrogant'
+  'Aggressive', 'Cooperative', 'Suspicious', 'Calm', 'Arrogant',
+  'Manipulative', 'Paranoid', 'Eccentric', 'Stoic', 'Volatile',
+  'Methodical', 'Impulsive', 'Reserved', 'Flamboyant', 'Cunning'
 ];
 // Expanded name pools for variety
 const firstNames = [
@@ -71,10 +85,16 @@ const occupations = [
   'Social Worker', 'Veterinarian', 'Librarian', 'Event Planner'
 ];
 
+// Expanded evidence types for more variety (+138%)
 const evidenceTypes = [
   'Fingerprints', 'DNA Sample', 'Weapon', 'Blood Stains', 'Footprints',
   'Security Footage', 'Email Records', 'Financial Documents', 'Witness Testimony',
-  'Phone Records', 'Threatening Letter', 'Receipts', 'Toxicology Report'
+  'Phone Records', 'Threatening Letter', 'Receipts', 'Toxicology Report',
+  'Fiber Analysis', 'Audio Recording', 'GPS Data', 'Digital Photo',
+  'Handwriting Sample', 'Surveillance Report', 'Bank Statement', 'Text Messages',
+  'Tire Tracks', 'Ballistics Report', 'Calendar Entry', 'Meeting Notes',
+  'Purchase History', 'Travel Records', 'Social Media Posts', 'Voicemail',
+  'Key Card Access', 'CCTV Timestamp', 'Deleted Files'
 ];
 
 // Physical attributes for indirect evidence
@@ -1307,13 +1327,33 @@ export function generateCase(caseNumber, difficulty = 1, isLegendary = false) {
 }
 
 function generateAlibi(location) {
+  // Expanded alibis for more variety (+317%)
   const alibis = [
     `Claims to have been in the ${location} office at the time`,
     `Says they were outside making phone calls`,
     `States they arrived late and found the victim`,
     `Claims they were with another person`,
     `Says they left early before the incident`,
-    `States they were in a different room entirely`
+    `States they were in a different room entirely`,
+    `Claims to have been getting refreshments`,
+    `Says they were in the restroom`,
+    `States they stepped out for fresh air`,
+    `Claims they were on an important call in their car`,
+    `Says they were checking their vehicle in the parking lot`,
+    `States they were speaking with staff members`,
+    `Claims to have been reviewing documents alone`,
+    `Says they were waiting for someone who never showed`,
+    `States they were taking a walk to clear their head`,
+    `Claims they were having a private conversation`,
+    `Says they were searching for their lost item`,
+    `States they arrived just moments before the discovery`,
+    `Claims they were photographing the ${location}`,
+    `Says they were handling a personal emergency outside`,
+    `States they were meeting with security about an issue`,
+    `Claims they never left the main area`,
+    `Says they were in deep conversation and lost track of time`,
+    `States they were monitoring the event from a distance`,
+    `Claims they were networking with other guests`
   ];
   return alibis[Math.floor(Math.random() * alibis.length)];
 }
@@ -1435,6 +1475,101 @@ function generateEvidenceDescription(evidenceType, targetSuspect, allSuspects, d
       return isSpecific
         ? `Substance traces match rare compound - only accessible to individuals in specific professions or with specialized access`
         : `Chemical analysis reveals unusual substance present at scene`;
+
+    case 'Fiber Analysis':
+      return isSpecific
+        ? `Fabric fibers found matching ${attr.behavioral.drivesExpensiveCar ? 'luxury vehicle interior' : 'common clothing material'} - consistent with ${attr.physical.hairColor.toLowerCase()}-haired person due to secondary transfer`
+        : `Textile fibers recovered from scene - analysis in progress`;
+
+    case 'Audio Recording':
+      return isSpecific
+        ? `Voice recording captures ${attr.behavioral.voiceQuality.toLowerCase()} voice discussing incident details - stress analysis suggests deception`
+        : `Audio evidence obtained - voice analysis pending`;
+
+    case 'GPS Data':
+      return isSpecific
+        ? `GPS coordinates place ${attr.behavioral.drivesExpensiveCar ? 'vehicle' : 'mobile device'} at scene between 8:30-9:15 PM - matches timeframe of incident`
+        : `Location data recovered showing presence near crime scene`;
+
+    case 'Digital Photo':
+      return isSpecific
+        ? `Photo metadata shows ${attr.physical.height}, ${attr.physical.build.toLowerCase()} individual${attr.physical.hasGlasses ? ' wearing glasses' : ''} at location shortly before incident`
+        : `Digital image evidence collected with timestamp data`;
+
+    case 'Handwriting Sample':
+      return isSpecific
+        ? `Handwriting analysis confirms ${attr.physical.handedness.toLowerCase()}-handed writer with distinctive pressure patterns matching threatened documents`
+        : `Handwritten note found - graphology analysis underway`;
+
+    case 'Surveillance Report':
+      return isSpecific
+        ? `Private investigator report documents ${attr.physical.height} individual with ${attr.physical.build.toLowerCase()}, ${attr.behavioral.voiceQuality.toLowerCase()} voice conducting suspicious activities`
+        : `Surveillance documentation shows suspicious behavior patterns`;
+
+    case 'Bank Statement':
+      return isSpecific
+        ? `Banking records reveal ${attr.behavioral.drivesExpensiveCar ? 'large' : 'moderate'} financial transactions to suspicious accounts - pattern suggests motive`
+        : `Financial institution records show unusual account activity`;
+
+    case 'Text Messages':
+      return isSpecific
+        ? `Text exchange from ${attr.behavioral.phoneArea} area code contains incriminating details only perpetrator would know - sent ${attr.physical.handedness === 'Left' ? 'with left thumb typing pattern' : 'with right-hand dominance'}`
+        : `SMS records recovered showing relevant communications`;
+
+    case 'Tire Tracks':
+      return isSpecific
+        ? `Vehicle tire impressions match ${attr.behavioral.drivesExpensiveCar ? 'premium brand tires from luxury vehicle' : 'standard commercial tire pattern'} - tread wear suggests frequent use`
+        : `Tire marks found at scene - vehicle identification in progress`;
+
+    case 'Ballistics Report':
+      return isSpecific
+        ? `Bullet trajectory analysis indicates ${attr.physical.height} shooter with ${attr.physical.handedness.toLowerCase()}-handed firing stance - gunpowder residue pattern consistent`
+        : `Ballistic evidence analyzed - weapon type identified`;
+
+    case 'Calendar Entry':
+      return isSpecific
+        ? `Digital calendar shows meeting scheduled at crime scene location - entry created by ${attr.behavioral.phoneArea} area device, notes suggest premeditation`
+        : `Schedule records indicate planned presence at relevant time`;
+
+    case 'Meeting Notes':
+      return isSpecific
+        ? `Handwritten notes in ${attr.physical.handedness.toLowerCase()}-handed script reference victim by name - tone escalates to threatening language in final entries`
+        : `Written documentation of interactions discovered`;
+
+    case 'Purchase History':
+      return isSpecific
+        ? `Credit card records show purchase of items related to crime - buyer description matches ${attr.physical.height}, ${attr.physical.build.toLowerCase()} individual on security camera`
+        : `Transaction records reveal potentially relevant purchases`;
+
+    case 'Travel Records':
+      return isSpecific
+        ? `Flight/transit logs confirm presence in city during incident window - ${attr.behavioral.drivesExpensiveCar ? 'first-class' : 'economy'} booking under matching name`
+        : `Transportation records document movements during relevant period`;
+
+    case 'Social Media Posts':
+      return isSpecific
+        ? `Online posts from ${attr.behavioral.phoneArea} area contain veiled threats toward victim - posting pattern matches ${attr.physical.handedness === 'Left' ? 'left-handed mobile user' : 'right-handed typing'}`
+        : `Digital footprint shows relevant online activity`;
+
+    case 'Voicemail':
+      return isSpecific
+        ? `Recorded message features ${attr.behavioral.voiceQuality.toLowerCase()} voice making threatening statements - background noise suggests ${attr.behavioral.drivesExpensiveCar ? 'luxury car interior' : 'standard vehicle'}`
+        : `Voice message evidence recovered from victim's phone`;
+
+    case 'Key Card Access':
+      return isSpecific
+        ? `Security badge logs show entry at 8:42 PM by ${attr.physical.height} individual - surveillance confirms ${attr.physical.build.toLowerCase()}${attr.physical.hasGlasses ? ', wearing glasses' : ''}`
+        : `Electronic access records indicate unauthorized entry`;
+
+    case 'CCTV Timestamp':
+      return isSpecific
+        ? `Video timestamp shows ${attr.physical.height}, ${attr.physical.build.toLowerCase()} person${attr.physical.hasLimp ? ' with distinctive limp' : ''} entering restricted area at critical moment`
+        : `Security camera logs reveal suspicious timing patterns`;
+
+    case 'Deleted Files':
+      return isSpecific
+        ? `Recovered digital files show ${attr.physical.handedness.toLowerCase()}-handed typing patterns in incriminating documents - deletion timestamp matches incident aftermath`
+        : `Data recovery reveals intentionally erased information`;
 
     default:
       return `Evidence collected - analysis shows connection to ${attr.physical.height} individual`;

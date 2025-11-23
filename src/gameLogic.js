@@ -40,23 +40,56 @@ export const DIFFICULTY_LEVELS = {
   }
 };
 
-const crimeTypes = ['Murder', 'Theft', 'Fraud', 'Kidnapping', 'Arson'];
-const locations = [
-  'Mansion', 'Gallery', 'Office Building', 'Restaurant', 'Hotel',
-  'Warehouse', 'Park', 'Theater', 'Museum', 'Casino'
+// Expanded crime types with more variety
+const crimeTypes = [
+  'Murder', 'Theft', 'Fraud', 'Kidnapping', 'Arson',
+  'Blackmail', 'Embezzlement', 'Art Forgery', 'Corporate Espionage',
+  'Identity Theft', 'Smuggling', 'Extortion', 'Sabotage', 'Conspiracy'
 ];
+
+// Expanded locations with unique characteristics
+const locations = [
+  'Mansion', 'Art Gallery', 'Office Building', 'Restaurant', 'Hotel',
+  'Warehouse', 'City Park', 'Theater', 'Museum', 'Casino',
+  'Yacht Club', 'University', 'Hospital', 'Country Club', 'Tech Startup',
+  'Law Firm', 'Investment Bank', 'Auction House', 'Private Estate', 'Penthouse',
+  'Vineyard', 'Research Lab', 'Concert Hall', 'Shopping Mall', 'Airport Lounge'
+];
+
+// Expanded personalities for more diverse suspects
 const personalities = [
   'Nervous', 'Calculating', 'Defensive', 'Charming', 'Evasive',
-  'Aggressive', 'Cooperative', 'Suspicious', 'Calm', 'Arrogant'
+  'Aggressive', 'Cooperative', 'Suspicious', 'Calm', 'Arrogant',
+  'Manipulative', 'Paranoid', 'Eccentric', 'Stoic', 'Volatile',
+  'Methodical', 'Impulsive', 'Reserved', 'Flamboyant', 'Cunning'
 ];
+
+// Significantly expanded name pool for more variety
 const names = [
   'Alexander Bennett', 'Charlotte Fisher', 'Daniel Morgan', 'Emma Richardson',
   'Frank Harrison', 'Grace Mitchell', 'Henry Thompson', 'Isabella Crawford',
-  'James Peterson', 'Katherine Walsh', 'Marcus Thornwell', 'Natalie Brooks'
+  'James Peterson', 'Katherine Walsh', 'Marcus Thornwell', 'Natalie Brooks',
+  'Oliver Sterling', 'Sophia Blackwood', 'Lucas Kane', 'Amelia Cross',
+  'Victor Hayes', 'Elena Rossi', 'Sebastian Drake', 'Maya Patel',
+  'Theodore Winters', 'Olivia Sinclair', 'Ethan Frost', 'Clara Montague',
+  'Julian Reed', 'Penelope Hart', 'Maxwell Stone', 'Vivian Lloyd',
+  'Adrian Cole', 'Camilla Reeves', 'Nathaniel Fox', 'Delilah Grant',
+  'Dominic Shaw', 'Scarlett Wolfe', 'Jasper Quinn', 'Genevieve Blair',
+  'Tobias Hunt', 'Felicity Moore', 'Declan Pierce', 'Arabella Chase',
+  'Griffin Montgomery', 'Seraphina Vale', 'Callum Wright', 'Evangeline North',
+  'Magnus Ellis', 'Beatrice Howe', 'Tristan York', 'Cordelia Flynn'
 ];
+
+// Expanded occupations with more diverse professions
 const occupations = [
   'Business Partner', 'Art Collector', 'Former Partner', 'Assistant',
-  'Investor', 'Curator', 'Manager', 'Accountant', 'Consultant', 'Attorney'
+  'Investor', 'Curator', 'Manager', 'Accountant', 'Consultant', 'Attorney',
+  'Tech Entrepreneur', 'Architect', 'Journalist', 'Surgeon', 'Philanthropist',
+  'Interior Designer', 'Venture Capitalist', 'Fashion Designer', 'Chef',
+  'Real Estate Developer', 'Playwright', 'Cryptocurrency Trader', 'Pilot',
+  'Professor', 'Antique Dealer', 'Wine Merchant', 'Gallery Owner',
+  'Music Producer', 'Software Engineer', 'Investment Banker', 'Private Detective',
+  'Event Planner', 'Corporate Lawyer', 'Art Appraiser', 'Security Consultant'
 ];
 
 const evidenceTypes = [
@@ -152,7 +185,26 @@ function generateAlibi(location) {
     `States they arrived late and found the victim`,
     `Claims they were with another person`,
     `Says they left early before the incident`,
-    `States they were in a different room entirely`
+    `States they were in a different room entirely`,
+    `Claims to have been getting refreshments`,
+    `Says they were in the restroom`,
+    `States they stepped out for fresh air`,
+    `Claims they were on an important call in their car`,
+    `Says they were checking their vehicle in the parking lot`,
+    `States they were speaking with staff members`,
+    `Claims to have been reviewing documents alone`,
+    `Says they were waiting for someone who never showed`,
+    `States they were taking a walk to clear their head`,
+    `Claims they were having a private conversation`,
+    `Says they were searching for their lost item`,
+    `States they arrived just moments before the discovery`,
+    `Claims they were photographing the ${location}`,
+    `Says they were handling a personal emergency outside`,
+    `States they were meeting with security about an issue`,
+    `Claims they never left the main area`,
+    `Says they were in deep conversation and lost track of time`,
+    `States they were monitoring the event from a distance`,
+    `Claims they were networking with other guests`
   ];
   return alibis[Math.floor(Math.random() * alibis.length)];
 }
@@ -161,7 +213,7 @@ function generateEvidenceDescription(index, guiltySuspect, isRedHerring = false,
   const agePrefix = yearsOld > 0 ? `[${yearsOld} years old] ` : '';
 
   if (isRedHerring) {
-    // Red herrings - misleading evidence
+    // Expanded red herrings - more misleading evidence variety
     const redHerringDescriptions = [
       `Unidentified fingerprints on unrelated object`,
       `Witness statement later proven unreliable`,
@@ -172,12 +224,22 @@ function generateEvidenceDescription(index, guiltySuspect, isRedHerring = false,
       `Old threatening message from years ago`,
       `Timeline discrepancy due to clock error`,
       `Physical evidence from previous incident`,
-      `Inconclusive forensic analysis`
+      `Inconclusive forensic analysis`,
+      `Anonymous tip that led nowhere`,
+      `Suspicious vehicle seen blocks away`,
+      `Circumstantial connection to similar case`,
+      `Partial alibi with missing hours`,
+      `Deleted email later recovered as spam`,
+      `Hair sample from unknown third party`,
+      `Tool marks that don't match suspect's equipment`,
+      `Background check reveals minor past offense`,
+      `Unusual purchase made weeks before incident`,
+      `Overheard conversation taken out of context`
     ];
     return agePrefix + redHerringDescriptions[index % redHerringDescriptions.length];
   }
 
-  // Real evidence
+  // Expanded real evidence with more variety
   const descriptions = [
     `Fingerprints found on key object - matches ${guiltySuspect.name}`,
     `Witness saw someone matching ${guiltySuspect.name}'s description`,
@@ -188,26 +250,53 @@ function generateEvidenceDescription(index, guiltySuspect, isRedHerring = false,
     `Threatening message written by ${guiltySuspect.name} discovered`,
     `Timeline contradicts ${guiltySuspect.name}'s alibi`,
     `Physical evidence directly links to ${guiltySuspect.name}`,
-    `Forensic analysis implicates ${guiltySuspect.name}`
+    `Forensic analysis implicates ${guiltySuspect.name}`,
+    `Digital trail traces back to ${guiltySuspect.name}'s devices`,
+    `Surveillance shows ${guiltySuspect.name} purchasing suspicious items`,
+    `Bank transfer from ${guiltySuspect.name} to unknown account`,
+    `Fiber evidence matches ${guiltySuspect.name}'s clothing`,
+    `Voice analysis confirms ${guiltySuspect.name} made threatening call`,
+    `GPS data places ${guiltySuspect.name} at scene during crime`,
+    `Search history on ${guiltySuspect.name}'s computer is incriminating`,
+    `Handwriting expert confirms ${guiltySuspect.name} wrote note`,
+    `Chemical residue found on ${guiltySuspect.name}'s belongings`,
+    `Metadata from photo implicates ${guiltySuspect.name}`
   ];
   return agePrefix + descriptions[index % descriptions.length];
 }
 
 export function interrogateSuspect(suspect, caseData) {
-  const responses = suspect.isGuilty ? [
+  const guiltyResponses = [
     `I... I was just doing what I had to do. ${suspect.name} looks away nervously.`,
     `Why are you asking me this? I already told you! ${suspect.name} becomes defensive.`,
     `Look, I don't know anything about this. ${suspect.name} crosses arms.`,
     `You have no proof! ${suspect.name} voice raises.`,
-    `I wasn't even there... well, not at that exact time. ${suspect.name} hesitates.`
-  ] : [
+    `I wasn't even there... well, not at that exact time. ${suspect.name} hesitates.`,
+    `This is ridiculous. I refuse to answer any more questions. ${suspect.name} stands abruptly.`,
+    `You're wasting your time with me, detective. ${suspect.name} avoids eye contact.`,
+    `I need to speak with my lawyer before saying anything else. ${suspect.name} taps fingers nervously.`,
+    `Why would I do something like that? It doesn't make sense. ${suspect.name} voice cracks slightly.`,
+    `There are things you don't understand about the situation... ${suspect.name} trails off.`,
+    `Fine, yes I was there, but I didn't do anything wrong! ${suspect.name} admits reluctantly.`,
+    `Everyone makes mistakes, detective. ${suspect.name} looks regretful.`
+  ];
+
+  const innocentResponses = [
     `I've told you everything I know. ${suspect.name} maintains eye contact.`,
     `I have nothing to hide, detective. ${suspect.name} speaks calmly.`,
     `I was nowhere near when it happened. ${suspect.name} provides details.`,
     `Check my alibi, it's solid. ${suspect.name} seems confident.`,
-    `I want to help catch whoever did this. ${suspect.name} appears cooperative.`
+    `I want to help catch whoever did this. ${suspect.name} appears cooperative.`,
+    `Ask anyone who was there, they'll confirm what I'm saying. ${suspect.name} gestures openly.`,
+    `I can provide phone records, credit card receipts, anything you need. ${suspect.name} volunteers information.`,
+    `This is absurd. I had no reason to do this. ${suspect.name} seems genuinely offended.`,
+    `I barely knew the victim. Why would I be involved? ${suspect.name} asks reasonably.`,
+    `I've been completely transparent with you from the start. ${suspect.name} remains composed.`,
+    `Check the security footage. You'll see I'm telling the truth. ${suspect.name} suggests confidently.`,
+    `I understand you have to ask these questions, detective. ${suspect.name} shows patience.`
   ];
 
+  const responses = suspect.isGuilty ? guiltyResponses : innocentResponses;
   const response = responses[Math.floor(Math.random() * responses.length)];
   const nervousness = suspect.isGuilty ?
     Math.min(suspect.nervousness + 10, 100) :

@@ -222,36 +222,90 @@ export function interrogateSuspect(suspect, caseData) {
   };
 }
 
-export function evaluateAccusation(accusedId, caseData, hintsUsed = 0) {
+export function evaluateAccusation(accusedId, caseData, hintsUsed = 0, contradictionsFound = 0) {
   const correct = accusedId === caseData.guiltyIndex;
   const guiltyName = caseData.suspects[caseData.guiltyIndex].name;
   const accusedName = caseData.suspects[accusedId].name;
 
   const evidenceFound = caseData.evidence.filter(e => e.discovered).length;
   const criticalEvidence = caseData.evidence.filter(e => e.critical && e.discovered).length;
+  const isColdCase = caseData.isColdCase;
 
   let stars = 0;
-  if (correct) {
-    stars = 1;
-    if (criticalEvidence >= 1) stars++;
-    if (evidenceFound >= caseData.evidence.length * 0.6) stars++;
-    if (caseData.interrogationCount >= caseData.suspects.length) stars++;
-    if (criticalEvidence === 2) stars++;
+  let methodologyScore = 0; // For cold cases
 
-    // Reduce stars for using hints (max reduction of 2 stars)
-    const hintPenalty = Math.min(Math.floor(hintsUsed / 2), 2);
-    stars = Math.max(1, stars - hintPenalty);
+  if (correct) {
+    if (isColdCase) {
+      // Cold Case Methodology Scoring - Focus on thoroughness, not speed
+      stars = 1; // Base star
+
+      // Evidence completeness (up to 2 stars)
+      const evidenceRatio = evidenceFound / caseData.evidence.length;
+      if (evidenceRatio >= 0.9) {
+        stars += 2;
+        methodologyScore += 40;
+      } else if (evidenceRatio >= 0.7) {
+        stars += 1;
+        methodologyScore += 25;
+      } else if (evidenceRatio >= 0.5) {
+        methodologyScore += 15;
+      }
+
+      // Critical evidence (up to 1 star)
+      if (criticalEvidence >= 2) {
+        stars += 1;
+        methodologyScore += 20;
+      } else if (criticalEvidence >= 1) {
+        methodologyScore += 10;
+      }
+
+      // Interrogation thoroughness (up to 1 star)
+      const interrogationRatio = caseData.interrogationCount / caseData.suspects.length;
+      if (interrogationRatio >= 1.5) { // Multiple rounds of questioning
+        stars += 1;
+        methodologyScore += 30;
+      } else if (interrogationRatio >= 1.0) {
+        methodologyScore += 15;
+      }
+
+      // Contradictions found (bonus - can exceed 5 stars for methodology display)
+      if (contradictionsFound >= 3) {
+        methodologyScore += 20;
+      } else if (contradictionsFound >= 1) {
+        methodologyScore += 10;
+      }
+
+      // Hints penalty is minimal for cold cases (methodology focus)
+      const hintPenalty = Math.min(Math.floor(hintsUsed / 4), 1);
+      stars = Math.max(1, Math.min(5, stars - hintPenalty));
+      methodologyScore = Math.max(0, Math.min(100, methodologyScore - (hintsUsed * 5)));
+    } else {
+      // Standard scoring for non-cold cases
+      stars = 1;
+      if (criticalEvidence >= 1) stars++;
+      if (evidenceFound >= caseData.evidence.length * 0.6) stars++;
+      if (caseData.interrogationCount >= caseData.suspects.length) stars++;
+      if (criticalEvidence === 2) stars++;
+
+      // Reduce stars for using hints (max reduction of 2 stars)
+      const hintPenalty = Math.min(Math.floor(hintsUsed / 2), 2);
+      stars = Math.max(1, stars - hintPenalty);
+    }
   }
 
   return {
     correct,
     stars,
+    methodologyScore: isColdCase ? methodologyScore : null,
     message: correct ?
-      `🎯 CORRECT! ${guiltyName} was indeed the culprit. Excellent work, Detective!` :
+      (isColdCase ? `🎯 COLD CASE SOLVED! ${guiltyName} was indeed the culprit. Outstanding detective work!` :
+       `🎯 CORRECT! ${guiltyName} was indeed the culprit. Excellent work, Detective!`) :
       `❌ WRONG! ${accusedName} was innocent. The real culprit was ${guiltyName}.`,
     feedback: correct ?
-      `You successfully identified the perpetrator using ${evidenceFound} pieces of evidence.${hintsUsed > 0 ? ` (${hintsUsed} hint${hintsUsed > 1 ? 's' : ''} used)` : ''}` :
+      (isColdCase ?
+        `You solved this cold case using ${evidenceFound}/${caseData.evidence.length} pieces of evidence, ${contradictionsFound} contradictions found. Methodology Score: ${methodologyScore}/100${hintsUsed > 0 ? ` (${hintsUsed} hint${hintsUsed > 1 ? 's' : ''} used)` : ''}` :
+        `You successfully identified the perpetrator using ${evidenceFound} pieces of evidence.${hintsUsed > 0 ? ` (${hintsUsed} hint${hintsUsed > 1 ? 's' : ''} used)` : ''}`) :
       `You missed key evidence. ${guiltyName} had the motive and opportunity.`,
-    reputation: correct ? stars * 200 : 50
+    reputation: correct ? (isColdCase ? stars * 300 : stars * 200) : 50
   };
 }

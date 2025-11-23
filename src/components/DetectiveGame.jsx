@@ -542,7 +542,7 @@ const DetectiveGame = () => {
   };
 
   const makeAccusation = (suspectId) => {
-    const result = evaluateAccusation(suspectId, currentCase, hintsUsed);
+    const result = evaluateAccusation(suspectId, currentCase, hintsUsed, contradictionsFound.length);
     setAccusationResult(result);
 
     if (result.correct) {
@@ -1318,6 +1318,42 @@ const DetectiveGame = () => {
           <h3>💭 EVALUATION</h3>
           <p>{accusationResult.feedback}</p>
         </div>
+
+        {currentCase.isColdCase && accusationResult.methodologyScore !== null && accusationResult.correct && (
+          <div className="result-section methodology-section">
+            <h3>📊 COLD CASE METHODOLOGY ANALYSIS</h3>
+            <div className="methodology-breakdown">
+              <p className="methodology-score-display">
+                <strong>Methodology Score:</strong>
+                <span className={`score-value ${
+                  accusationResult.methodologyScore >= 80 ? 'excellent' :
+                  accusationResult.methodologyScore >= 60 ? 'good' :
+                  accusationResult.methodologyScore >= 40 ? 'average' : 'poor'
+                }`}>
+                  {accusationResult.methodologyScore}/100
+                </span>
+              </p>
+              <div className="methodology-bar">
+                <div
+                  className={`methodology-fill ${
+                    accusationResult.methodologyScore >= 80 ? 'excellent' :
+                    accusationResult.methodologyScore >= 60 ? 'good' :
+                    accusationResult.methodologyScore >= 40 ? 'average' : 'poor'
+                  }`}
+                  style={{ width: `${accusationResult.methodologyScore}%` }}
+                />
+              </div>
+              <p className="methodology-note">
+                <em>
+                  {accusationResult.methodologyScore >= 80 ? '⭐ Exceptional detective work! Thorough and methodical.' :
+                   accusationResult.methodologyScore >= 60 ? '✅ Solid investigation. Good attention to detail.' :
+                   accusationResult.methodologyScore >= 40 ? '📝 Adequate work, but could be more thorough.' :
+                   '📌 Investigation lacked depth. More evidence needed.'}
+                </em>
+              </p>
+            </div>
+          </div>
+        )}
 
         <div className="result-section">
           <h3>🏆 REWARDS</h3>

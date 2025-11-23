@@ -152,7 +152,17 @@ const CaseLibraryScreen = ({ onStartCase, onClose, onOpenStore }) => {
   };
 
   const renderDailyCase = () => {
-    if (!dailyCase) return null;
+    if (!dailyCase || !dailyCase.case) {
+      return (
+        <div className="daily-case-section">
+          <div className="empty-state">
+            <span className="empty-icon">📅</span>
+            <h3>No Daily Case Available</h3>
+            <p>Check back later for a new daily challenge!</p>
+          </div>
+        </div>
+      );
+    }
 
     const caseData = dailyCase.case;
     const difficulty = getDifficultyLabel(caseData.difficulty);

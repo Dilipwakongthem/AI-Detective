@@ -51,7 +51,11 @@ export function generateCase(caseNumber, difficulty = 1, isLegendary = false) {
     nervousness: i === guiltyIndex ?
       (70 - difficulty * 3) : // Guilty party calmer at higher difficulties
       Math.floor(Math.random() * 40) + 10,
-    questioned: false
+    questioned: false,
+    // Trust/Fear/Respect system
+    trust: 0,      // -50 to +50
+    fear: 0,       // 0 to 100
+    respect: 0     // -25 to +25
   }));
 
   // More evidence at higher difficulty

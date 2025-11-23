@@ -38,6 +38,12 @@ const DetectiveGame = () => {
   const [showCasePackStore, setShowCasePackStore] = useState(false);
   const [selectedCaseType, setSelectedCaseType] = useState(null); // 'procedural', 'hand-crafted', 'daily'
 
+  // Contradiction system state
+  const [showEvidenceModal, setShowEvidenceModal] = useState(false);
+  const [contradictionsFound, setContradictionsFound] = useState([]);
+  const [showContradictionReveal, setShowContradictionReveal] = useState(false);
+  const [currentContradiction, setCurrentContradiction] = useState(null);
+
   // Initialize systems on mount
   useEffect(() => {
     initializeCaseLibrary();
@@ -81,7 +87,11 @@ const DetectiveGame = () => {
         ...s,
         questioned: false,
         nervousness: 50,
-        lastResponse: null
+        lastResponse: null,
+        // Trust/Fear/Respect system
+        trust: 0,      // -50 to +50
+        fear: 0,       // 0 to 100
+        respect: 0     // -25 to +25
       })),
       evidence: handCraftedCase.evidence.map(e => ({
         ...e,
@@ -304,6 +314,7 @@ const DetectiveGame = () => {
     const result = interrogateSuspect(selectedSuspect, currentCase);
     selectedSuspect.questioned = true;
     selectedSuspect.nervousness = result.nervousness;
+    selectedSuspect.lastBodyLanguage = result.bodyLanguage; // Store for emotion display
 
     setCurrentCase({
       ...currentCase,
@@ -313,6 +324,105 @@ const DetectiveGame = () => {
     addLog(`❓ You: "Can you explain your whereabouts?"`);
     addLog(`💬 ${selectedSuspect.name}: "${result.response}"`);
     addLog(`👁️ Body Language: ${result.bodyLanguage} | Nervousness: ${result.nervousness}%`);
+  };
+
+  // Contradiction System - Detect if evidence contradicts suspect's statement
+  const detectContradiction = (evidence, suspect) => {
+    const contradictions = [];
+
+    // Timeline contradictions - check alibi vs evidence
+    if (evidence.type === 'Security Footage' || evidence.type === 'Phone Records') {
+      if (suspect.alibi.toLowerCase().includes('elsewhere') ||
+          suspect.alibi.toLowerCase().includes('different room') ||
+          suspect.alibi.toLowerCase().includes('outside')) {
+        contradictions.push({
+          type: 'temporal',
+          title: 'Timeline Impossibility',
+          description: `${evidence.description} contradicts ${suspect.name}'s claim of being elsewhere!`
+        });
+      }
+    }
+
+    // Physical contradictions - fingerprints, DNA
+    if ((evidence.type === 'Fingerprints' || evidence.type === 'DNA Sample') &&
+        evidence.description.toLowerCase().includes(suspect.name.toLowerCase())) {
+      if (suspect.alibi.toLowerCase().includes('never') ||
+          suspect.alibi.toLowerCase().includes('wasn\'t there')) {
+        contradictions.push({
+          type: 'physical',
+          title: 'Physical Evidence Contradiction',
+          description: `${suspect.name} claims they weren't there, but their ${evidence.type.toLowerCase()} were found at the scene!`
+        });
+      }
+    }
+
+    // Alibi contradictions - witness testimony vs suspect claims
+    if (evidence.type === 'Witness Testimony' &&
+        evidence.description.toLowerCase().includes(suspect.name.toLowerCase())) {
+      contradictions.push({
+        type: 'logical',
+        title: 'Witness Statement Contradiction',
+        description: `A witness contradicts ${suspect.name}'s version of events!`
+      });
+    }
+
+    // Location contradictions
+    if (evidence.location && suspect.alibi.toLowerCase().includes('different') &&
+        !suspect.alibi.toLowerCase().includes(evidence.location.toLowerCase())) {
+      contradictions.push({
+        type: 'spatial',
+        title: 'Location Inconsistency',
+        description: `Evidence from ${evidence.location} contradicts ${suspect.name}'s stated location!`
+      });
+    }
+
+    return contradictions;
+  };
+
+  // Present evidence to suspect
+  const presentEvidence = (evidence) => {
+    if (!selectedSuspect || !evidence) return;
+
+    setShowEvidenceModal(false);
+
+    const contradictions = detectContradiction(evidence, selectedSuspect);
+
+    if (contradictions.length > 0) {
+      // Found a contradiction!
+      const contradiction = contradictions[0];
+      setCurrentContradiction({
+        evidence,
+        suspect: selectedSuspect,
+        ...contradiction
+      });
+      setShowContradictionReveal(true);
+
+      // Increase nervousness significantly
+      selectedSuspect.nervousness = Math.min(selectedSuspect.nervousness + 25, 100);
+
+      // Track this contradiction
+      setContradictionsFound([...contradictionsFound, contradiction]);
+
+      // Add dramatic log entry
+      addLog(`⚡ OBJECTION! You present "${evidence.description}"`);
+      addLog(`🎯 CONTRADICTION FOUND: ${contradiction.title}`);
+      addLog(`📢 ${contradiction.description}`);
+      addLog(`😰 ${selectedSuspect.name} becomes visibly shaken! Nervousness: ${selectedSuspect.nervousness}%`);
+
+      // Auto-close contradiction reveal after 4 seconds
+      setTimeout(() => setShowContradictionReveal(false), 4000);
+    } else {
+      // No contradiction, normal evidence presentation
+      addLog(`📄 You present "${evidence.description}" to ${selectedSuspect.name}.`);
+      if (selectedSuspect.isGuilty) {
+        addLog(`😟 ${selectedSuspect.name} looks uncomfortable but maintains their story.`);
+        selectedSuspect.nervousness = Math.min(selectedSuspect.nervousness + 5, 100);
+      } else {
+        addLog(`🤔 ${selectedSuspect.name} examines the evidence and appears confused about its relevance.`);
+      }
+    }
+
+    setCurrentCase({...currentCase});
   };
 
   const makeAccusation = (suspectId) => {
@@ -760,6 +870,31 @@ const DetectiveGame = () => {
         <div className="interrogation-content">
           <div className="suspect-profile">
             <h3>{selectedSuspect.name}</h3>
+
+            {/* Emotional State Indicator */}
+            <div className="emotion-display">
+              <div className="emotion-icon">
+                {selectedSuspect.nervousness >= 80 ? '😰' :
+                 selectedSuspect.nervousness >= 60 ? '😟' :
+                 selectedSuspect.nervousness >= 40 ? '😐' :
+                 selectedSuspect.nervousness >= 20 ? '🙂' : '😌'}
+              </div>
+              <div className="emotion-label">
+                {selectedSuspect.nervousness >= 80 ? 'PANICKED' :
+                 selectedSuspect.nervousness >= 60 ? 'NERVOUS' :
+                 selectedSuspect.nervousness >= 40 ? 'CAUTIOUS' :
+                 selectedSuspect.nervousness >= 20 ? 'CALM' : 'RELAXED'}
+              </div>
+            </div>
+
+            {/* Body Language Display */}
+            {selectedSuspect.lastBodyLanguage && (
+              <div className="body-language-display">
+                <span className="body-language-icon">👁️</span>
+                <span className="body-language-text">{selectedSuspect.lastBodyLanguage}</span>
+              </div>
+            )}
+
             <div className="profile-details">
               <p><strong>Age:</strong> {selectedSuspect.age}</p>
               <p><strong>Occupation:</strong> {selectedSuspect.occupation}</p>
@@ -768,27 +903,117 @@ const DetectiveGame = () => {
               <p><strong>Nervousness Level:</strong> {selectedSuspect.nervousness}%</p>
               <div className="nervousness-bar">
                 <div
-                  className="nervousness-fill"
+                  className={`nervousness-fill ${
+                    selectedSuspect.nervousness >= 80 ? 'critical' :
+                    selectedSuspect.nervousness >= 60 ? 'high' :
+                    selectedSuspect.nervousness >= 40 ? 'medium' : 'low'
+                  }`}
                   style={{ width: `${selectedSuspect.nervousness}%` }}
                 />
+              </div>
+
+              {/* Trust/Fear/Respect Meters */}
+              <div className="relationship-meters">
+                <div className="meter-row">
+                  <span className="meter-label">💚 Trust:</span>
+                  <div className="meter-bar trust-meter">
+                    <div
+                      className="meter-fill trust-fill"
+                      style={{
+                        width: `${((selectedSuspect.trust + 50) / 100) * 100}%`,
+                        marginLeft: selectedSuspect.trust < 0 ? `${((50 + selectedSuspect.trust) / 100) * 100}%` : '0'
+                      }}
+                    />
+                    <div className="meter-center-mark" />
+                  </div>
+                  <span className="meter-value">{selectedSuspect.trust}</span>
+                </div>
+
+                <div className="meter-row">
+                  <span className="meter-label">😨 Fear:</span>
+                  <div className="meter-bar fear-meter">
+                    <div
+                      className="meter-fill fear-fill"
+                      style={{ width: `${selectedSuspect.fear}%` }}
+                    />
+                  </div>
+                  <span className="meter-value">{selectedSuspect.fear}</span>
+                </div>
+
+                <div className="meter-row">
+                  <span className="meter-label">⭐ Respect:</span>
+                  <div className="meter-bar respect-meter">
+                    <div
+                      className="meter-fill respect-fill"
+                      style={{
+                        width: `${((selectedSuspect.respect + 25) / 50) * 100}%`,
+                        marginLeft: selectedSuspect.respect < 0 ? `${((25 + selectedSuspect.respect) / 50) * 100}%` : '0'
+                      }}
+                    />
+                    <div className="meter-center-mark" />
+                  </div>
+                  <span className="meter-value">{selectedSuspect.respect}</span>
+                </div>
               </div>
             </div>
           </div>
 
           <div className="interrogation-actions">
-            <button className="action-btn" onClick={askQuestion}>
-              ❓ Ask Question
-            </button>
-            <button className="action-btn" onClick={() => addLog(`📄 You show evidence to ${selectedSuspect.name}. They seem ${selectedSuspect.isGuilty ? 'uncomfortable' : 'confused'}.`)}>
-              📄 Present Evidence
-            </button>
-            <button className="action-btn" onClick={() => {
-              addLog(`⚠️ You apply pressure to ${selectedSuspect.name}. ${selectedSuspect.isGuilty ? 'They become more nervous!' : 'They maintain composure.'}`);
+            <button className="action-btn approach-empathy" onClick={() => {
+              // Empathetic approach - builds trust, reduces fear
+              selectedSuspect.trust = Math.min(selectedSuspect.trust + 10, 50);
+              selectedSuspect.fear = Math.max(selectedSuspect.fear - 5, 0);
+              selectedSuspect.respect = Math.min(selectedSuspect.respect + 3, 25);
+              addLog(`💚 You show empathy towards ${selectedSuspect.name}.`);
               if (selectedSuspect.isGuilty) {
-                selectedSuspect.nervousness = Math.min(selectedSuspect.nervousness + 15, 100);
+                addLog(`They seem to appreciate your kindness but remain guarded.`);
+              } else {
+                addLog(`They open up more, feeling understood.`);
               }
-            }}>
-              ⚠️ Apply Pressure
+              setCurrentCase({...currentCase});
+            }} data-tooltip="Build rapport through empathy (+Trust, -Fear, +Respect)">
+              💚 Show Empathy
+            </button>
+
+            <button className="action-btn approach-aggressive" onClick={() => {
+              // Aggressive approach - increases fear, reduces trust
+              selectedSuspect.fear = Math.min(selectedSuspect.fear + 15, 100);
+              selectedSuspect.trust = Math.max(selectedSuspect.trust - 10, -50);
+              selectedSuspect.respect = Math.max(selectedSuspect.respect - 5, -25);
+              if (selectedSuspect.isGuilty) {
+                selectedSuspect.nervousness = Math.min(selectedSuspect.nervousness + 20, 100);
+                addLog(`⚠️ You aggressively confront ${selectedSuspect.name}. They become visibly shaken!`);
+              } else {
+                addLog(`⚠️ You raise your voice at ${selectedSuspect.name}. They look offended but hold their ground.`);
+              }
+              setCurrentCase({...currentCase});
+            }} data-tooltip="Intimidate the suspect (+Fear, -Trust, -Respect)">
+              ⚠️ Intimidate
+            </button>
+
+            <button className="action-btn approach-logical" onClick={() => {
+              // Logical approach - builds respect
+              selectedSuspect.respect = Math.min(selectedSuspect.respect + 8, 25);
+              selectedSuspect.trust = Math.min(selectedSuspect.trust + 5, 50);
+              addLog(`🧠 You present a logical argument to ${selectedSuspect.name}.`);
+              if (selectedSuspect.isGuilty) {
+                selectedSuspect.nervousness = Math.min(selectedSuspect.nervousness + 10, 100);
+                addLog(`They struggle to counter your reasoning.`);
+              } else {
+                addLog(`They nod in agreement with your deductive approach.`);
+              }
+              setCurrentCase({...currentCase});
+            }} data-tooltip="Use logic and deduction (+Respect, +Trust)">
+              🧠 Use Logic
+            </button>
+
+            <button
+              className="action-btn approach-evidence"
+              onClick={() => setShowEvidenceModal(true)}
+              disabled={currentCase.evidence.filter(e => e.discovered).length === 0}
+              data-tooltip={currentCase.evidence.filter(e => e.discovered).length === 0 ? "No evidence collected yet" : "Present evidence to find contradictions"}
+            >
+              📄 Present Evidence
             </button>
           </div>
 
@@ -1061,6 +1286,65 @@ const DetectiveGame = () => {
           onClose={() => setShowCasePackStore(false)}
           onPurchaseComplete={handlePurchaseComplete}
         />
+      )}
+
+      {/* Evidence Selection Modal */}
+      {showEvidenceModal && currentCase && (
+        <div className="modal-overlay" onClick={() => setShowEvidenceModal(false)}>
+          <div className="modal-content evidence-selection-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>📄 SELECT EVIDENCE TO PRESENT</h2>
+              <button className="modal-close" onClick={() => setShowEvidenceModal(false)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <p className="modal-subtitle">Choose which evidence to present to {selectedSuspect?.name}</p>
+              <div className="evidence-selection-grid">
+                {currentCase.evidence.filter(e => e.discovered).map(evidence => (
+                  <div
+                    key={evidence.id}
+                    className="evidence-selection-card"
+                    onClick={() => presentEvidence(evidence)}
+                  >
+                    <div className="evidence-type-badge">{evidence.type}</div>
+                    <div className="evidence-description">{evidence.description}</div>
+                    <div className="evidence-location-tag">📍 {evidence.location}</div>
+                    {evidence.critical && <span className="critical-indicator">⚠️ CRITICAL</span>}
+                  </div>
+                ))}
+              </div>
+              {currentCase.evidence.filter(e => e.discovered).length === 0 && (
+                <p className="no-evidence-message">No evidence collected yet. Investigate locations first!</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Contradiction Reveal Modal */}
+      {showContradictionReveal && currentContradiction && (
+        <div className="modal-overlay contradiction-overlay">
+          <div className="contradiction-reveal screen-shake">
+            <div className="objection-banner">
+              <h1>⚡ OBJECTION! ⚡</h1>
+            </div>
+            <div className="contradiction-content">
+              <h2 className="contradiction-type">{currentContradiction.type.toUpperCase()} CONTRADICTION</h2>
+              <h3 className="contradiction-title">{currentContradiction.title}</h3>
+              <div className="contradiction-details">
+                <div className="evidence-presented">
+                  <strong>Evidence:</strong> {currentContradiction.evidence.description}
+                </div>
+                <div className="contradiction-arrow">⬇️</div>
+                <div className="contradiction-explanation">
+                  {currentContradiction.description}
+                </div>
+              </div>
+              <div className="suspect-reaction">
+                <p>😰 {currentContradiction.suspect.name}'s nervousness increased to {currentContradiction.suspect.nervousness}%!</p>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

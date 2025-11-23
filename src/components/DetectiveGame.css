@@ -1569,3 +1569,571 @@
     display: none;
   }
 }
+
+/* ============================================
+   CONTRADICTION SYSTEM STYLES
+   ============================================ */
+
+/* Evidence Selection Modal */
+.evidence-selection-modal {
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.evidence-selection-modal .modal-subtitle {
+  text-align: center;
+  color: #888;
+  margin-bottom: 20px;
+  font-size: 1em;
+}
+
+.evidence-selection-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+  padding: 10px 0;
+}
+
+.evidence-selection-card {
+  background: linear-gradient(135deg, rgba(30, 144, 255, 0.1), rgba(0, 100, 200, 0.05));
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.evidence-selection-card:hover {
+  transform: translateY(-5px);
+  border-color: #FFD700;
+  box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
+}
+
+.evidence-type-badge {
+  background: rgba(30, 144, 255, 0.3);
+  color: #FFF;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.8em;
+  font-weight: bold;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.evidence-description {
+  color: #FFF;
+  font-size: 1em;
+  margin: 10px 0;
+  line-height: 1.4;
+}
+
+.evidence-location-tag {
+  color: #888;
+  font-size: 0.85em;
+  margin-top: 8px;
+}
+
+.critical-indicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 0, 0, 0.3);
+  color: #FFD700;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 0.75em;
+  font-weight: bold;
+}
+
+.no-evidence-message {
+  text-align: center;
+  color: #888;
+  font-size: 1.1em;
+  padding: 40px 20px;
+}
+
+/* Contradiction Reveal Modal */
+.contradiction-overlay {
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.9);
+  animation: fadeIn 0.3s ease;
+}
+
+.contradiction-reveal {
+  background: linear-gradient(135deg, #8B0000, #DC143C);
+  border: 5px solid #FFD700;
+  border-radius: 15px;
+  padding: 30px;
+  max-width: 700px;
+  margin: 100px auto;
+  box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+  animation: slideDown 0.5s ease;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.screen-shake {
+  animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+  20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+.objection-banner {
+  text-align: center;
+  margin-bottom: 20px;
+  animation: pulse 0.8s infinite;
+}
+
+.objection-banner h1 {
+  font-size: 3em;
+  color: #FFD700;
+  text-shadow:
+    0 0 10px #FFD700,
+    0 0 20px #FFD700,
+    0 0 30px #FF0000,
+    3px 3px 5px rgba(0, 0, 0, 0.8);
+  font-weight: bold;
+  letter-spacing: 5px;
+  margin: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.contradiction-content {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  padding: 25px;
+}
+
+.contradiction-type {
+  text-align: center;
+  color: #FFD700;
+  font-size: 1.3em;
+  font-weight: bold;
+  letter-spacing: 3px;
+  margin: 0 0 15px 0;
+  text-transform: uppercase;
+}
+
+.contradiction-title {
+  text-align: center;
+  color: #FFF;
+  font-size: 1.8em;
+  margin: 0 0 25px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.contradiction-details {
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 215, 0, 0.5);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.evidence-presented {
+  color: #FFF;
+  font-size: 1.1em;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.evidence-presented strong {
+  color: #FFD700;
+}
+
+.contradiction-arrow {
+  text-align: center;
+  font-size: 2em;
+  margin: 15px 0;
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.contradiction-explanation {
+  color: #FF6B6B;
+  font-size: 1.15em;
+  font-weight: bold;
+  line-height: 1.6;
+  padding: 15px;
+  background: rgba(255, 0, 0, 0.2);
+  border-left: 4px solid #FFD700;
+  border-radius: 5px;
+}
+
+.suspect-reaction {
+  text-align: center;
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(255, 165, 0, 0.2);
+  border-radius: 8px;
+}
+
+.suspect-reaction p {
+  color: #FFF;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 0;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* Mobile responsiveness for contradiction system */
+@media (max-width: 768px) {
+  .evidence-selection-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contradiction-reveal {
+    margin: 20px;
+    padding: 20px;
+    max-width: 95%;
+  }
+
+  .objection-banner h1 {
+    font-size: 2em;
+  }
+
+  .contradiction-title {
+    font-size: 1.3em;
+  }
+}
+
+/* ============================================
+   INTERROGATION EMOTION DISPLAY SYSTEM
+   ============================================ */
+
+/* Emotion Display */
+.emotion-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 15px;
+  margin: 15px 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  animation: emotionPulse 2s ease-in-out infinite;
+}
+
+@keyframes emotionPulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+  }
+}
+
+.emotion-icon {
+  font-size: 3em;
+  animation: emotionBounce 1s ease-in-out infinite;
+}
+
+@keyframes emotionBounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.emotion-label {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  letter-spacing: 2px;
+}
+
+/* Body Language Display */
+.body-language-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
+  margin: 10px 0;
+  background: rgba(30, 144, 255, 0.15);
+  border-left: 4px solid #1E90FF;
+  border-radius: 5px;
+  animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.body-language-icon {
+  font-size: 1.5em;
+}
+
+.body-language-text {
+  color: #FFF;
+  font-size: 1em;
+  font-style: italic;
+}
+
+/* Enhanced Nervousness Bar with Color States */
+.nervousness-bar {
+  position: relative;
+  width: 100%;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.nervousness-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.8s ease, background 0.5s ease;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.nervousness-fill.low {
+  background: linear-gradient(90deg, #00FF00, #7FFF00);
+}
+
+.nervousness-fill.medium {
+  background: linear-gradient(90deg, #FFD700, #FFA500);
+}
+
+.nervousness-fill.high {
+  background: linear-gradient(90deg, #FF8C00, #FF4500);
+  animation: nervousPulse 1s infinite;
+}
+
+.nervousness-fill.critical {
+  background: linear-gradient(90deg, #FF0000, #8B0000);
+  animation: criticalFlash 0.5s infinite;
+}
+
+@keyframes nervousPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes criticalFlash {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 20px #FF0000;
+  }
+  50% {
+    opacity: 0.8;
+    box-shadow: 0 0 30px #FF0000;
+  }
+}
+
+/* Mobile responsiveness for emotion display */
+@media (max-width: 768px) {
+  .emotion-display {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .emotion-icon {
+    font-size: 2.5em;
+  }
+
+  .emotion-label {
+    font-size: 1.1em;
+  }
+
+  .body-language-display {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* ============================================
+   TRUST/FEAR/RESPECT TRACKING SYSTEM
+   ============================================ */
+
+/* Relationship Meters Container */
+.relationship-meters {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.meter-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.meter-row:last-child {
+  margin-bottom: 0;
+}
+
+.meter-label {
+  font-size: 0.95em;
+  font-weight: bold;
+  min-width: 80px;
+  color: #FFF;
+}
+
+.meter-bar {
+  position: relative;
+  flex: 1;
+  height: 16px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  overflow: visible;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.meter-fill {
+  height: 100%;
+  border-radius: 8px;
+  transition: all 0.8s ease;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.meter-center-mark {
+  position: absolute;
+  left: 50%;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.5);
+  z-index: 1;
+}
+
+/* Trust Meter (Green for positive, Red for negative) */
+.trust-fill {
+  background: linear-gradient(90deg, #00FF00, #7FFF00);
+}
+
+.trust-meter .meter-fill {
+  background: linear-gradient(90deg, #00FF00, #7FFF00);
+}
+
+/* Fear Meter (Orange to Red) */
+.fear-fill {
+  background: linear-gradient(90deg, #FFA500, #FF4500);
+}
+
+/* Respect Meter (Gold for positive, Gray for negative) */
+.respect-fill {
+  background: linear-gradient(90deg, #FFD700, #FFA500);
+}
+
+.meter-value {
+  font-size: 0.9em;
+  font-weight: bold;
+  min-width: 30px;
+  text-align: right;
+  color: #FFD700;
+}
+
+/* Interrogation Approach Buttons */
+.approach-empathy {
+  background: linear-gradient(135deg, rgba(0, 255, 0, 0.2), rgba(0, 200, 0, 0.1));
+  border-color: rgba(0, 255, 0, 0.5);
+}
+
+.approach-empathy:hover {
+  background: linear-gradient(135deg, rgba(0, 255, 0, 0.3), rgba(0, 200, 0, 0.2));
+  border-color: #00FF00;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
+
+.approach-aggressive {
+  background: linear-gradient(135deg, rgba(255, 0, 0, 0.2), rgba(200, 0, 0, 0.1));
+  border-color: rgba(255, 0, 0, 0.5);
+}
+
+.approach-aggressive:hover {
+  background: linear-gradient(135deg, rgba(255, 0, 0, 0.3), rgba(200, 0, 0, 0.2));
+  border-color: #FF0000;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+}
+
+.approach-logical {
+  background: linear-gradient(135deg, rgba(30, 144, 255, 0.2), rgba(0, 100, 200, 0.1));
+  border-color: rgba(30, 144, 255, 0.5);
+}
+
+.approach-logical:hover {
+  background: linear-gradient(135deg, rgba(30, 144, 255, 0.3), rgba(0, 100, 200, 0.2));
+  border-color: #1E90FF;
+  box-shadow: 0 0 15px rgba(30, 144, 255, 0.5);
+}
+
+.approach-evidence {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
+  border-color: rgba(255, 215, 0, 0.5);
+}
+
+.approach-evidence:hover {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 165, 0, 0.2));
+  border-color: #FFD700;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+}
+
+/* Mobile responsiveness for relationship meters */
+@media (max-width: 768px) {
+  .meter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .meter-label {
+    min-width: auto;
+    margin-bottom: 5px;
+  }
+
+  .meter-value {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .interrogation-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+}

@@ -2225,3 +2225,246 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================
+   ACCESSIBILITY FEATURES
+   ============================================ */
+
+/* Accessibility Settings Panel */
+.accessibility-settings {
+  background: linear-gradient(135deg, rgba(100, 150, 255, 0.1), rgba(50, 100, 200, 0.05));
+  border: 2px solid rgba(100, 150, 255, 0.3);
+}
+
+.settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.setting-item {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.setting-item:hover {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.setting-label {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.setting-label input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.setting-text {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.setting-text strong {
+  color: #FFD700;
+  font-size: 1.1em;
+}
+
+.setting-text small {
+  color: #AAA;
+  font-size: 0.9em;
+}
+
+/* Dyslexia-Friendly Font */
+.dyslexia-font,
+.dyslexia-font * {
+  font-family: 'Comic Sans MS', 'Arial', sans-serif !important;
+  letter-spacing: 0.12em !important;
+  word-spacing: 0.16em !important;
+  line-height: 1.8 !important;
+}
+
+/* Reduce Motion */
+.reduce-motion * {
+  animation: none !important;
+  transition: none !important;
+}
+
+.reduce-motion .screen-enter {
+  animation: none !important;
+}
+
+.reduce-motion .nervousness-fill,
+.reduce-motion .meter-fill {
+  transition: width 0.1s linear !important;
+}
+
+/* Mobile responsiveness for accessibility settings */
+@media (max-width: 768px) {
+  .setting-label {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .setting-text {
+    flex: 1;
+  }
+}
+
+/* ============================================
+   ACCUSATION JUSTIFICATION SYSTEM
+   ============================================ */
+
+.justification-section {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+}
+
+.accused-summary {
+  background: linear-gradient(135deg, rgba(255, 0, 0, 0.15), rgba(200, 0, 0, 0.1));
+  border: 2px solid rgba(255, 0, 0, 0.4);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.accused-summary h3 {
+  color: #FFD700;
+  font-size: 1.8em;
+  margin: 0 0 10px 0;
+}
+
+.alibi-text {
+  margin-top: 15px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  font-style: italic;
+}
+
+.justification-form {
+  margin-bottom: 25px;
+}
+
+.justification-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 15px;
+  color: #FFF;
+}
+
+.justification-form strong {
+  font-size: 1.2em;
+  color: #FFD700;
+}
+
+.justification-form small {
+  color: #AAA;
+  font-size: 0.9em;
+}
+
+.justification-textarea {
+  width: 100%;
+  min-height: 200px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #FFF;
+  font-size: 1em;
+  font-family: inherit;
+  line-height: 1.6;
+  resize: vertical;
+  transition: border-color 0.3s ease;
+}
+
+.justification-textarea:focus {
+  outline: none;
+  border-color: #FFD700;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.justification-textarea::placeholder {
+  color: #666;
+}
+
+.char-count {
+  text-align: right;
+  color: #AAA;
+  font-size: 0.9em;
+  margin-top: 8px;
+}
+
+.char-count .warning {
+  color: #FFA500;
+  font-weight: bold;
+}
+
+.justification-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.final-accuse-btn {
+  background: linear-gradient(135deg, #DC143C, #8B0000);
+  color: #FFF;
+  border: 2px solid #FFD700;
+  padding: 15px 30px;
+  font-size: 1.2em;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1;
+  text-align: center;
+}
+
+.final-accuse-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #FF1744, #C20000);
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);
+  transform: translateY(-3px);
+}
+
+.final-accuse-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.justification-actions .back-btn {
+  flex: 0.3;
+}
+
+/* Mobile responsiveness for justification system */
+@media (max-width: 768px) {
+  .justification-section {
+    padding: 15px;
+  }
+
+  .justification-actions {
+    flex-direction: column;
+  }
+
+  .justification-actions .back-btn {
+    flex: 1;
+  }
+
+  .justification-textarea {
+    min-height: 150px;
+    font-size: 0.95em;
+  }
+}

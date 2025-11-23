@@ -48,10 +48,43 @@ const DetectiveGame = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState(DIFFICULTY_LEVELS.NORMAL);
   const [showDifficultySelector, setShowDifficultySelector] = useState(false);
 
+  // Accessibility settings state
+  const [useDyslexiaFont, setUseDyslexiaFont] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  // Accusation justification state
+  const [accusedSuspectId, setAccusedSuspectId] = useState(null);
+  const [accusationJustification, setAccusationJustification] = useState('');
+
   // Initialize systems on mount
   useEffect(() => {
     initializeCaseLibrary();
+
+    // Load accessibility preferences from localStorage
+    const savedDyslexiaFont = localStorage.getItem('useDyslexiaFont') === 'true';
+    const savedReduceMotion = localStorage.getItem('reduceMotion') === 'true';
+    setUseDyslexiaFont(savedDyslexiaFont);
+    setReduceMotion(savedReduceMotion);
   }, []);
+
+  // Apply accessibility settings
+  useEffect(() => {
+    // Apply dyslexia font
+    if (useDyslexiaFont) {
+      document.body.classList.add('dyslexia-font');
+    } else {
+      document.body.classList.remove('dyslexia-font');
+    }
+    localStorage.setItem('useDyslexiaFont', useDyslexiaFont);
+
+    // Apply reduced motion
+    if (reduceMotion) {
+      document.body.classList.add('reduce-motion');
+    } else {
+      document.body.classList.remove('reduce-motion');
+    }
+    localStorage.setItem('reduceMotion', reduceMotion);
+  }, [useDyslexiaFont, reduceMotion]);
 
   // Notification system
   const showNotification = (message, type = 'info') => {
@@ -276,6 +309,8 @@ const DetectiveGame = () => {
     setHintsUsed(0);
     setHintLevel(0);
     setShowDifficultySelector(false);
+    setAccusedSuspectId(null);
+    setAccusationJustification('');
   };
 
   const startInvestigation = () => {
@@ -1033,35 +1068,104 @@ const DetectiveGame = () => {
     </div>
   );
 
-  const renderAccusation = () => (
-    <div className="accusation-screen screen-enter">
-      <button className="home-btn" onClick={handleReturnToMenu} data-tooltip="Save & Return to Main Menu">
-        🏠 HOME
-      </button>
-      <div className="accusation-header">
-        <h2>⚖️ MAKE YOUR ACCUSATION</h2>
-        <p>Choose the suspect you believe is guilty:</p>
-      </div>
+  const renderAccusation = () => {
+    const selectedForAccusation = currentCase.suspects.find(s => s.id === accusedSuspectId);
 
-      <div className="accusation-suspects">
-        {currentCase.suspects.map(suspect => (
-          <div key={suspect.id} className="accusation-card" onClick={() => makeAccusation(suspect.id)}>
-            <h3>{suspect.name}</h3>
-            <p>{suspect.occupation}</p>
-            <div className="accusation-details">
-              <div>Suspicion: {'⭐'.repeat(suspect.suspicionLevel)}</div>
-              {suspect.questioned && <div>Nervousness: {suspect.nervousness}%</div>}
+    return (
+      <div className="accusation-screen screen-enter">
+        <button className="home-btn" onClick={handleReturnToMenu} data-tooltip="Save & Return to Main Menu">
+          🏠 HOME
+        </button>
+
+        {!accusedSuspectId ? (
+          // Step 1: Select Suspect
+          <>
+            <div className="accusation-header">
+              <h2>⚖️ MAKE YOUR ACCUSATION</h2>
+              <p>Choose the suspect you believe is guilty:</p>
             </div>
-            <button className="accuse-btn">ACCUSE</button>
-          </div>
-        ))}
-      </div>
 
-      <button className="back-btn" onClick={() => setGameState('investigation')}>
-        ← Continue Investigation
-      </button>
-    </div>
-  );
+            <div className="accusation-suspects">
+              {currentCase.suspects.map(suspect => (
+                <div
+                  key={suspect.id}
+                  className="accusation-card"
+                  onClick={() => setAccusedSuspectId(suspect.id)}
+                >
+                  <h3>{suspect.name}</h3>
+                  <p>{suspect.occupation}</p>
+                  <div className="accusation-details">
+                    <div>Suspicion: {'⭐'.repeat(suspect.suspicionLevel)}</div>
+                    {suspect.questioned && <div>Nervousness: {suspect.nervousness}%</div>}
+                  </div>
+                  <button className="accuse-btn">SELECT</button>
+                </div>
+              ))}
+            </div>
+
+            <button className="back-btn" onClick={() => setGameState('investigation')}>
+              ← Continue Investigation
+            </button>
+          </>
+        ) : (
+          // Step 2: Provide Justification
+          <>
+            <div className="accusation-header">
+              <h2>📝 JUSTIFY YOUR ACCUSATION</h2>
+              <p>Explain why you believe <strong>{selectedForAccusation.name}</strong> is guilty:</p>
+            </div>
+
+            <div className="justification-section">
+              <div className="accused-summary">
+                <h3>{selectedForAccusation.name}</h3>
+                <p>{selectedForAccusation.occupation}</p>
+                <p className="alibi-text"><strong>Alibi:</strong> {selectedForAccusation.alibi}</p>
+              </div>
+
+              <div className="justification-form">
+                <label htmlFor="justification-text">
+                  <strong>Your Reasoning:</strong>
+                  <small>(Explain the evidence, contradictions, and deductions that led to this conclusion)</small>
+                </label>
+                <textarea
+                  id="justification-text"
+                  className="justification-textarea"
+                  value={accusationJustification}
+                  onChange={(e) => setAccusationJustification(e.target.value)}
+                  placeholder="Example: The fingerprints on the weapon match this suspect, and their alibi contradicts the security footage timing. Additionally, their nervousness during questioning and the threatening letter discovered in their office provide strong evidence..."
+                  rows={8}
+                />
+                <p className="char-count">
+                  {accusationJustification.length} characters
+                  {accusationJustification.length < 50 && <span className="warning"> (Consider providing more detail)</span>}
+                </p>
+              </div>
+
+              <div className="justification-actions">
+                <button
+                  className="back-btn"
+                  onClick={() => {
+                    setAccusedSuspectId(null);
+                    setAccusationJustification('');
+                  }}
+                >
+                  ← Change Suspect
+                </button>
+                <button
+                  className="final-accuse-btn"
+                  onClick={() => makeAccusation(accusedSuspectId)}
+                  disabled={accusationJustification.length < 20}
+                  data-tooltip={accusationJustification.length < 20 ? "Please provide at least 20 characters of justification" : "Make final accusation"}
+                >
+                  ⚖️ MAKE FINAL ACCUSATION
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    );
+  };
 
   const renderResult = () => (
     <div className="result-screen screen-enter">
@@ -1253,6 +1357,40 @@ const DetectiveGame = () => {
               })()}
             </div>
           )}
+
+          {/* Accessibility Settings */}
+          <div className="profile-section accessibility-settings">
+            <h3>♿ ACCESSIBILITY SETTINGS</h3>
+            <div className="settings-list">
+              <div className="setting-item">
+                <label className="setting-label">
+                  <input
+                    type="checkbox"
+                    checked={useDyslexiaFont}
+                    onChange={(e) => setUseDyslexiaFont(e.target.checked)}
+                  />
+                  <span className="setting-text">
+                    <strong>Dyslexia-Friendly Font</strong>
+                    <small>Use OpenDyslexic font for better readability</small>
+                  </span>
+                </label>
+              </div>
+
+              <div className="setting-item">
+                <label className="setting-label">
+                  <input
+                    type="checkbox"
+                    checked={reduceMotion}
+                    onChange={(e) => setReduceMotion(e.target.checked)}
+                  />
+                  <span className="setting-text">
+                    <strong>Reduce Motion</strong>
+                    <small>Minimize animations and transitions</small>
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );

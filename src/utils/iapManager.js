@@ -20,15 +20,15 @@ import {
   isFirstTimeBundleAvailable
 } from './storageManager';
 
-// Product Catalog (Indian Rupees)
+// Product Catalog (US Dollars)
 export const PRODUCTS = {
   // Case Files
   case_files_5: {
     id: 'case_files_5',
     name: '5 Case Files',
     description: 'Perfect for trying out!',
-    price: 29,
-    currency: '₹',
+    price: 0.99,
+    currency: '$',
     type: 'consumable',
     items: { caseFiles: 5 },
     category: 'cases'
@@ -37,8 +37,8 @@ export const PRODUCTS = {
     id: 'case_files_12',
     name: '12 Case Files',
     description: 'Most chosen by detectives!',
-    price: 49,
-    currency: '₹',
+    price: 1.99,
+    currency: '$',
     type: 'consumable',
     items: { caseFiles: 12 },
     category: 'cases',
@@ -48,13 +48,13 @@ export const PRODUCTS = {
     id: 'case_files_30',
     name: '30 Case Files',
     description: 'Maximum savings!',
-    price: 99,
-    currency: '₹',
+    price: 3.99,
+    currency: '$',
     type: 'consumable',
     items: { caseFiles: 30 },
     category: 'cases',
     badge: 'BEST VALUE',
-    savings: 'Save ₹75 vs buying 5-packs'
+    savings: 'Save $2.50 vs buying 5-packs'
   },
 
   // Hint Tokens
@@ -62,8 +62,8 @@ export const PRODUCTS = {
     id: 'hint_tokens_5',
     name: '5 Hint Tokens',
     description: 'Get unstuck when you need it!',
-    price: 29,
-    currency: '₹',
+    price: 0.99,
+    currency: '$',
     type: 'consumable',
     items: { hintTokens: 5 },
     category: 'hints'
@@ -72,8 +72,8 @@ export const PRODUCTS = {
     id: 'hint_tokens_15',
     name: '15 Hint Tokens',
     description: 'Never get stuck again!',
-    price: 49,
-    currency: '₹',
+    price: 1.99,
+    currency: '$',
     type: 'consumable',
     items: { hintTokens: 15 },
     category: 'hints',
@@ -83,13 +83,13 @@ export const PRODUCTS = {
     id: 'hint_tokens_40',
     name: '40 Hint Tokens',
     description: 'Ultimate hint package!',
-    price: 99,
-    currency: '₹',
+    price: 3.99,
+    currency: '$',
     type: 'consumable',
     items: { hintTokens: 40 },
     category: 'hints',
     badge: 'BEST VALUE',
-    savings: 'Save ₹133 vs buying 5-packs'
+    savings: 'Save $4.00 vs buying 5-packs'
   },
 
   // Bundles
@@ -97,9 +97,9 @@ export const PRODUCTS = {
     id: 'starter_bundle',
     name: 'Starter Detective Pack',
     description: 'One-time exclusive deal for new detectives!',
-    price: 79,
-    originalPrice: 199,
-    currency: '₹',
+    price: 2.99,
+    originalPrice: 6.99,
+    currency: '$',
     type: 'consumable',
     items: {
       caseFiles: 20,
@@ -108,14 +108,14 @@ export const PRODUCTS = {
     category: 'featured',
     badge: 'FIRST PURCHASE - 60% OFF!',
     oneTimeOnly: true,
-    savings: 'Save ₹120 (60% OFF)'
+    savings: 'Save $4.00 (60% OFF)'
   },
   detective_essentials: {
     id: 'detective_essentials',
     name: 'Detective Essentials',
     description: 'Everything you need!',
-    price: 79,
-    currency: '₹',
+    price: 2.99,
+    currency: '$',
     type: 'consumable',
     items: {
       caseFiles: 12,
@@ -123,7 +123,7 @@ export const PRODUCTS = {
     },
     category: 'featured',
     badge: 'MOST POPULAR',
-    savings: 'Save ₹19'
+    savings: 'Save $1.00'
   },
 
   // Premium Features
@@ -131,8 +131,8 @@ export const PRODUCTS = {
     id: 'ad_removal',
     name: 'Remove All Ads Forever',
     description: 'Enjoy uninterrupted detective work!',
-    price: 149,
-    currency: '₹',
+    price: 4.99,
+    currency: '$',
     type: 'non_consumable',
     category: 'premium',
     badge: 'ONE-TIME PAYMENT'
@@ -141,8 +141,8 @@ export const PRODUCTS = {
     id: 'detective_notebook',
     name: 'Detective\'s Notebook',
     description: 'Professional investigation tool',
-    price: 99,
-    currency: '₹',
+    price: 3.99,
+    currency: '$',
     type: 'non_consumable',
     category: 'premium'
   },
@@ -150,8 +150,8 @@ export const PRODUCTS = {
     id: 'premium_themes',
     name: 'Premium Themes Pack',
     description: 'Customize your detective experience!',
-    price: 99,
-    currency: '₹',
+    price: 4.99,
+    currency: '$',
     type: 'non_consumable',
     category: 'premium',
     items: {

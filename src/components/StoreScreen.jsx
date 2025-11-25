@@ -29,9 +29,10 @@ const StoreScreen = ({ onBack, onPurchaseComplete, showNotification }) => {
 
       if (result.success) {
         const pack = result.pack;
+        const caseCount = pack.caseIds === 'ALL' ? 15 : pack.caseIds.length;
         const message = result.premiumAccess
-          ? '✅ Complete Collection purchased!\n\nYou now have access to ALL 15 hand-crafted cases + future releases!'
-          : `✅ ${pack.name} purchased!\n\nUnlocked ${pack.caseIds.length} cases!`;
+          ? `✅ Complete Collection purchased!\n\nYou now have access to ALL 15 hand-crafted cases + future releases!`
+          : `✅ ${pack.name} purchased!\n\nUnlocked ${caseCount} cases!`;
 
         showNotification(message, 'success');
 
@@ -40,7 +41,12 @@ const StoreScreen = ({ onBack, onPurchaseComplete, showNotification }) => {
           window.location.reload();
         }, 2000);
       } else {
-        showNotification('Purchase failed: ' + result.error, 'error');
+        // Check if user cancelled
+        if (result.error === 'Purchase cancelled by user') {
+          showNotification('Purchase cancelled', 'info');
+        } else {
+          showNotification('Purchase failed: ' + result.error, 'error');
+        }
       }
     } catch (error) {
       showNotification('Purchase error: ' + error.message, 'error');
@@ -331,7 +337,7 @@ const StoreScreen = ({ onBack, onPurchaseComplete, showNotification }) => {
           </div>
           <div className="store-item-footer">
             <div className="store-item-price">
-              ₹{pack.price.toFixed(2)}
+              ${pack.price.toFixed(2)}
             </div>
             {isPurchased ? (
               <button className="store-item-button owned" disabled>

@@ -45,7 +45,7 @@ export const CASE_PACKS = {
     id: 'starter_pack',
     name: 'Starter Detective Pack',
     description: '5 beginner-friendly cases to sharpen your skills',
-    price: 2.99,
+    price: 4.99,
     caseIds: ['stolen_manuscript', 'poisoned_pen', 'insurance_fraud', 'art_forgery', 'missing_heir'],
     difficulty: 1,
     icon: '🔍'
@@ -54,7 +54,7 @@ export const CASE_PACKS = {
     id: 'mystery_pack',
     name: 'Mystery Masters Collection',
     description: '6 intermediate cases with clever twists',
-    price: 4.99,
+    price: 7.99,
     caseIds: ['gallery_heist', 'restaurant_murder', 'digital_alibi', 'locked_room', 'corporate_spy', 'vanishing_act'],
     difficulty: 2,
     icon: '🕵️'
@@ -63,7 +63,7 @@ export const CASE_PACKS = {
     id: 'elite_pack',
     name: 'Elite Detective Bundle',
     description: '4 expert-level cases that will test your limits',
-    price: 5.99,
+    price: 9.99,
     caseIds: ['tech_fraud', 'perfect_alibi', 'seven_suspects', 'impossible_murder'],
     difficulty: 3,
     icon: '⭐'
@@ -72,7 +72,7 @@ export const CASE_PACKS = {
     id: 'complete_collection',
     name: 'Complete Case Collection',
     description: 'All 15 hand-crafted cases + future releases',
-    price: 9.99,
+    price: 14.99,
     caseIds: 'ALL', // Special flag for all cases
     difficulty: 'all',
     icon: '🎁',
@@ -235,6 +235,26 @@ export const purchaseCasePack = (packId) => {
   // Check if already purchased
   if (purchased.includes(packId)) {
     return { success: false, error: 'Already purchased' };
+  }
+
+  // Get case count for display
+  const caseCount = pack.caseIds === 'ALL' ? 15 : pack.caseIds.length;
+
+  // Show purchase confirmation dialog
+  const confirmed = window.confirm(
+    `🔍 PURCHASE CONFIRMATION\n\n` +
+    `Pack: ${pack.name}\n` +
+    `Price: $${pack.price.toFixed(2)}\n` +
+    `Cases: ${caseCount} hand-crafted detective cases\n` +
+    `Difficulty: ${pack.difficulty === 'all' ? 'All Levels' : `Level ${pack.difficulty}`}\n\n` +
+    `${pack.description}\n\n` +
+    `This will unlock the cases permanently.\n\n` +
+    `Click OK to confirm purchase.\n` +
+    `Click Cancel to go back.`
+  );
+
+  if (!confirmed) {
+    return { success: false, error: 'Purchase cancelled by user' };
   }
 
   // Add to purchased packs

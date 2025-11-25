@@ -1026,7 +1026,7 @@ function calculateNervousness(personality, isGuilty, isRedHerring, difficulty, s
 
 // Helper: Calculate dynamic nervousness during interrogation
 function calculateDynamicNervousness(suspect, context) {
-  const personalityData = personalityNervousness[suspect.personality];
+  const personalityData = personalityNervousness[suspect.personality] || { base: 40, range: 20 }; // Default fallback
   let nervousness = 0;
 
   // 1. Base personality (30%)

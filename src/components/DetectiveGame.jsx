@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { generateCase, interrogateSuspect, evaluateAccusation, checkEvidenceStrength, calculateEvidenceMatch, getEvidenceMatchingSummary } from '../gameLogic';
+import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
+import { generateCase, interrogateSuspect, evaluateAccusation, checkEvidenceStrength, calculateEvidenceMatch, getEvidenceMatchingSummary, DIFFICULTY_LEVELS } from '../gameLogic';
 import StoreScreen from './StoreScreen';
 import NotebookModal from './NotebookModal';
 import ThemeSelectorModal from './ThemeSelectorModal';
@@ -46,6 +46,16 @@ import {
 
 import { initializeIAP } from '../utils/iapManager';
 
+
+// Additional imports from gameplay features
+import { initializeCaseLibrary, getDailyCase, isCaseUnlocked, markCaseCompleted } from '../utils/caseLibraryManager';
+import { HAND_CRAFTED_CASES } from '../handCraftedCases';
+
+// Code splitting: Lazy load heavy components
+const CaseLibraryScreen = lazy(() => import('./CaseLibraryScreen'));
+const CasePackStore = lazy(() => import('./CasePackStore'));
+
+
 const DetectiveGame = () => {
   const [gameState, setGameState] = useState('menu'); // menu, briefing, investigation, interrogation, accusation, result, profile, store
   const [currentCase, setCurrentCase] = useState(null);
@@ -90,6 +100,29 @@ const DetectiveGame = () => {
 
   // Tutorial state
   const [tutorialActive, setTutorialActive] = useState(false);
+
+  // Gameplay features state (from player-agency branch)
+  const [showCaseLibrary, setShowCaseLibrary] = useState(false);
+  const [showCasePackStore, setShowCasePackStore] = useState(false);
+  const [selectedCaseType, setSelectedCaseType] = useState(null); // 'procedural', 'hand-crafted', 'daily'
+
+  // Contradiction system state
+  const [showEvidenceModal, setShowEvidenceModal] = useState(false);
+  const [contradictionsFound, setContradictionsFound] = useState([]);
+  const [showContradictionReveal, setShowContradictionReveal] = useState(false);
+  const [currentContradiction, setCurrentContradiction] = useState(null);
+
+  // Difficulty system state
+  const [selectedDifficulty, setSelectedDifficulty] = useState(DIFFICULTY_LEVELS ? DIFFICULTY_LEVELS.NORMAL : 2);
+  const [showDifficultySelector, setShowDifficultySelector] = useState(false);
+
+  // Accessibility settings state
+  const [useDyslexiaFont, setUseDyslexiaFont] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  // Accusation justification state
+  const [accusedSuspectId, setAccusedSuspectId] = useState(null);
+  const [accusationJustification, setAccusationJustification] = useState('');
   const [currentTutorialStep, setCurrentTutorialStep] = useState(null);
 
   // Initialize monetization systems on mount

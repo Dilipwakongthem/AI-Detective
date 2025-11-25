@@ -2,6 +2,47 @@
 
 import { HAND_CRAFTED_CASES, convertHandCraftedToGameFormat } from './handCraftedCases.js';
 
+
+// Difficulty Configuration
+export const DIFFICULTY_LEVELS = {
+  EASY: {
+    name: 'Easy',
+    suspects: 5,
+    evidence: 10,
+    redHerrings: 1,
+    freeHints: Infinity,
+    contradictionsObvious: true,
+    description: 'Perfect for beginners'
+  },
+  NORMAL: {
+    name: 'Normal',
+    suspects: 8,
+    evidence: 15,
+    redHerrings: 3,
+    freeHints: 3,
+    contradictionsObvious: false,
+    description: 'Balanced challenge'
+  },
+  HARD: {
+    name: 'Hard',
+    suspects: 12,
+    evidence: 20,
+    redHerrings: 5,
+    freeHints: 0,
+    contradictionsObvious: false,
+    description: 'For experienced detectives'
+  },
+  COLD_CASE: {
+    name: 'Cold Case',
+    suspects: 15,
+    evidence: 25,
+    redHerrings: 7,
+    freeHints: 0,
+    contradictionsObvious: false,
+    description: 'Ultimate challenge - no time limits'
+  }
+};
+
 // Expanded crime types with more variety (+180%)
 const crimeTypes = [
   'Murder', 'Theft', 'Fraud', 'Kidnapping', 'Arson',

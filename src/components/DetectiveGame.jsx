@@ -3,8 +3,6 @@ import { generateCase, interrogateSuspect, evaluateAccusation, DIFFICULTY_LEVELS
 import './DetectiveGame.css';
 import { initializeCaseLibrary, getDailyCase, isCaseUnlocked, markCaseCompleted } from '../utils/caseLibraryManager';
 import { HAND_CRAFTED_CASES } from '../handCraftedCases';
-import { initializeNotebook } from '../utils/notebookManager';
-import NotebookModal from './NotebookModal';
 
 // Code splitting: Lazy load heavy components
 const CaseLibraryScreen = lazy(() => import('./CaseLibraryScreen'));
@@ -41,7 +39,6 @@ const DetectiveGame = () => {
   const [showCaseLibrary, setShowCaseLibrary] = useState(false);
   const [showCasePackStore, setShowCasePackStore] = useState(false);
   const [selectedCaseType, setSelectedCaseType] = useState(null); // 'procedural', 'hand-crafted', 'daily'
-  const [showNotebook, setShowNotebook] = useState(false);
 
   // Contradiction system state
   const [showEvidenceModal, setShowEvidenceModal] = useState(false);
@@ -64,7 +61,6 @@ const DetectiveGame = () => {
   // Initialize systems on mount
   useEffect(() => {
     initializeCaseLibrary();
-    initializeNotebook();
 
     // Load accessibility preferences from localStorage
     const savedDyslexiaFont = localStorage.getItem('useDyslexiaFont') === 'true';
@@ -947,13 +943,6 @@ const DetectiveGame = () => {
             {hintCost > 0 && <span className="hint-cost"> ({hintCost})</span>}
             {hintsRemaining > 0 && <span className="hint-free"> (Free)</span>}
           </button>
-          <button
-            className="action-btn notebook-btn"
-            onClick={() => setShowNotebook(true)}
-            data-tooltip="Open your detective's notebook to take notes"
-          >
-            📓 Detective's Notebook
-          </button>
           <button className="action-btn accusation-btn" onClick={() => setGameState('accusation')} data-tooltip="Accuse a suspect of the crime">
             ⚖️ MAKE ACCUSATION
           </button>
@@ -1721,16 +1710,6 @@ const DetectiveGame = () => {
             </div>
           </div>
         </div>
-      )}
-
-      {/* Detective's Notebook Modal */}
-      {showNotebook && currentCase && (
-        <NotebookModal
-          caseId={currentCase.id || currentCase.title}
-          currentCase={currentCase}
-          onClose={() => setShowNotebook(false)}
-          showNotification={showNotification}
-        />
       )}
     </div>
   );

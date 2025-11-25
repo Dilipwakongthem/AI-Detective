@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PRODUCTS, purchaseProduct, formatPrice, isProductAvailable, restorePurchases } from '../utils/iapManager';
 import { getCaseFiles, getHintTokens, hasAdRemoval, hasNotebook, hasPremiumThemes } from '../utils/storageManager';
+import { CASE_PACKS, purchaseCasePack, isPackPurchased } from '../utils/caseLibraryManager';
 
 /**
  * Store Screen Component
@@ -16,6 +17,37 @@ const StoreScreen = ({ onBack, onPurchaseComplete, showNotification }) => {
   const adRemoval = hasAdRemoval();
   const notebook = hasNotebook();
   const themes = hasPremiumThemes();
+
+  /**
+   * Handle case pack purchase
+   */
+  const handleCasePackPurchase = async (packId) => {
+    setPurchasing(true);
+
+    try {
+      const result = purchaseCasePack(packId);
+
+      if (result.success) {
+        const pack = result.pack;
+        const message = result.premiumAccess
+          ? '✅ Complete Collection purchased!\n\nYou now have access to ALL 15 hand-crafted cases + future releases!'
+          : `✅ ${pack.name} purchased!\n\nUnlocked ${pack.caseIds.length} cases!`;
+
+        showNotification(message, 'success');
+
+        // Reload page to reflect changes
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      } else {
+        showNotification('Purchase failed: ' + result.error, 'error');
+      }
+    } catch (error) {
+      showNotification('Purchase error: ' + error.message, 'error');
+    } finally {
+      setPurchasing(false);
+    }
+  };
 
   /**
    * Handle purchase click
@@ -276,22 +308,61 @@ const StoreScreen = ({ onBack, onPurchaseComplete, showNotification }) => {
    * Render Cases Tab
    */
   const renderCasesTab = () => {
-    const caseProducts = [
-      PRODUCTS.case_files_5,
-      PRODUCTS.case_files_12,
-      PRODUCTS.case_files_30
-    ];
+    // Render case pack card
+    const renderCasePackCard = (pack) => {
+      const isPurchased = isPackPurchased(pack.id);
+      const caseCount = pack.caseIds === 'ALL' ? 15 : pack.caseIds.length;
+
+      return (
+        <div key={pack.id} className={`store-item-card ${isPurchased ? 'owned' : ''} ${pack.bestValue ? 'featured' : ''}`}>
+          {pack.bestValue && !isPurchased && (
+            <div className="badge badge-best-value">🏆 BEST VALUE</div>
+          )}
+          <div className="store-item-header">
+            <span className="store-item-icon">{pack.icon}</span>
+            <div>
+              <h3 className="store-item-name">{pack.name}</h3>
+              <p className="store-item-description">{pack.description}</p>
+            </div>
+          </div>
+          <div className="store-item-details">
+            <p><strong>Includes:</strong> {caseCount} hand-crafted cases</p>
+            <p><strong>Difficulty:</strong> {pack.difficulty === 'all' ? 'All Levels' : `Level ${pack.difficulty}`}</p>
+          </div>
+          <div className="store-item-footer">
+            <div className="store-item-price">
+              ₹{pack.price.toFixed(2)}
+            </div>
+            {isPurchased ? (
+              <button className="store-item-button owned" disabled>
+                ✓ OWNED
+              </button>
+            ) : (
+              <button
+                className="store-item-button"
+                onClick={() => handleCasePackPurchase(pack.id)}
+                disabled={purchasing}
+              >
+                {purchasing ? 'PROCESSING...' : 'UNLOCK'}
+              </button>
+            )}
+          </div>
+        </div>
+      );
+    };
 
     return (
       <div className="store-tab-content">
         <div className="store-section">
-          <h2 className="store-section-title">💼 CASE FILE BUNDLES</h2>
+          <h2 className="store-section-title">📚 PREMIUM CASE PACKS</h2>
           <p className="store-section-subtitle">
-            You currently have: <strong>{caseFiles} case files</strong>
+            Unlock curated collections of hand-crafted detective cases
           </p>
-          {caseProducts.map(product => renderProductCard(product))}
+          <div className="store-items-grid">
+            {Object.values(CASE_PACKS).map(pack => renderCasePackCard(pack))}
+          </div>
           <p className="store-info-text">
-            ℹ️ Case Files never expire and can be used anytime after your daily limit.
+            ℹ️ Once purchased, cases remain unlocked forever. Play anytime, replay anytime!
           </p>
         </div>
       </div>

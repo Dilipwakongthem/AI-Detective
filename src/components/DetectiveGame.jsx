@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
 import { interrogateSuspect, evaluateAccusation, checkEvidenceStrength, calculateEvidenceMatch, getEvidenceMatchingSummary, DIFFICULTY_LEVELS } from '../gameLogic';
+import StoreScreen from './StoreScreen';
 import NotebookModal from './NotebookModal';
 import ThemeSelectorModal from './ThemeSelectorModal';
 import ThemeWelcomeModal from './ThemeWelcomeModal';
@@ -16,6 +17,7 @@ import { initializeNotebook } from '../utils/notebookManager';
 import { initializeTheme, getCurrentThemeObject } from '../utils/themeManager';
 import soundEngine from '../utils/soundEngine';
 import { initializeAccessibility } from '../utils/accessibilityManager';
+import { initializeCaseLibrary } from '../utils/caseLibraryManager';
 
 // Hand-crafted cases
 import { HAND_CRAFTED_CASES } from '../handCraftedCases';
@@ -85,6 +87,7 @@ const DetectiveGame = () => {
     initializeNotebook();
     initializeTheme();
     initializeAccessibility();
+    initializeCaseLibrary();
   }, []);
 
   // Save player profile whenever it changes
@@ -699,6 +702,10 @@ const DetectiveGame = () => {
 
         <button className="menu-btn-secondary" onClick={() => setGameState('profile')} data-tooltip="View your detective statistics and progression">
           👤 DETECTIVE PROFILE
+        </button>
+
+        <button className="menu-btn store-button" onClick={() => setGameState('store')} data-tooltip="Purchase premium case packs and themes">
+          🛍️ STORE
         </button>
 
         <button className="menu-btn-secondary" onClick={() => setShowSettings(true)} data-tooltip="Sound, Accessibility, and Game Settings">
@@ -1424,17 +1431,38 @@ const DetectiveGame = () => {
       {gameState === 'accusation' && renderAccusation()}
       {gameState === 'result' && renderResult()}
       {gameState === 'profile' && renderProfile()}
+      {gameState === 'store' && (
+        <StoreScreen
+          onBack={() => setGameState('menu')}
+          onPurchaseComplete={(result) => {
+            // Check if premium themes were purchased
+            if (result.granted && result.granted.premium && result.granted.premium.includes('themes')) {
+              // Show welcome modal for theme selection
+              setTimeout(() => {
+                setShowThemeWelcome(true);
+              }, 500);
+            }
+            // Refresh UI after purchase
+            showNotification('Purchase complete! Thank you for your support!', 'success');
+          }}
+          showNotification={showNotification}
+        />
+      )}
 
       {/* Case Library Screen */}
       {showCaseLibrary && (
         <Suspense fallback={<div className="loading-screen">Loading Case Library...</div>}>
           <CaseLibraryScreen
-            onBack={() => setShowCaseLibrary(false)}
-            onSelectCase={(caseData) => {
+            onClose={() => setShowCaseLibrary(false)}
+            onStartCase={(caseData) => {
               // Start the selected hand-crafted case
               setShowCaseLibrary(false);
               startHandCraftedCase(caseData);
               showNotification(`Starting case: ${caseData.title}`, 'info');
+            }}
+            onOpenStore={(section) => {
+              setShowCaseLibrary(false);
+              setGameState('store');
             }}
             playerProfile={playerProfile}
             showNotification={showNotification}

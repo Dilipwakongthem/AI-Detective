@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
-import { generateCase, interrogateSuspect, evaluateAccusation, checkEvidenceStrength, calculateEvidenceMatch, getEvidenceMatchingSummary, DIFFICULTY_LEVELS } from '../gameLogic';
-import StoreScreen from './StoreScreen';
+import { interrogateSuspect, evaluateAccusation, checkEvidenceStrength, calculateEvidenceMatch, getEvidenceMatchingSummary, DIFFICULTY_LEVELS } from '../gameLogic';
 import NotebookModal from './NotebookModal';
 import ThemeSelectorModal from './ThemeSelectorModal';
 import ThemeWelcomeModal from './ThemeWelcomeModal';
@@ -10,54 +9,23 @@ import EvidenceBoard from './EvidenceBoard';
 import './DetectiveGame.css';
 import interactiveTutorial from '../utils/interactiveTutorial';
 
-// Import monetization utilities
-import {
-  initializeStorage,
-  checkAndResetDailyCases,
-  formatTimeUntilReset,
-  canStartCase,
-  useDailyCase,
-  useBonusCase,
-  addBonusCase,
-  useCaseFile,
-  getCaseFiles,
-  getHintTokens,
-  useHintToken,
-  getAdCounter,
-  canWatchAd,
-  hasAdRemoval,
-  hasNotebook,
-  savePlayerProfile,
-  loadPlayerProfile
-} from '../utils/storageManager';
+// Keep only essential storage utilities for player profile
+import { savePlayerProfile, loadPlayerProfile } from '../utils/storageManager';
 
 import { initializeNotebook } from '../utils/notebookManager';
 import { initializeTheme, getCurrentThemeObject } from '../utils/themeManager';
 import soundEngine from '../utils/soundEngine';
 import { initializeAccessibility } from '../utils/accessibilityManager';
 
-import {
-  initializeAds,
-  requestHintWithAd,
-  requestBonusCaseWithAd,
-  offerReputationDoubler,
-  getRemainingAdWatches
-} from '../utils/adManager';
-
-import { initializeIAP } from '../utils/iapManager';
-
-
-// Additional imports from gameplay features
-import { initializeCaseLibrary, getDailyCase, isCaseUnlocked, markCaseCompleted } from '../utils/caseLibraryManager';
+// Hand-crafted cases
 import { HAND_CRAFTED_CASES } from '../handCraftedCases';
 
-// Code splitting: Lazy load heavy components
+// Code splitting: Lazy load case library
 const CaseLibraryScreen = lazy(() => import('./CaseLibraryScreen'));
-const CasePackStore = lazy(() => import('./CasePackStore'));
 
 
 const DetectiveGame = () => {
-  const [gameState, setGameState] = useState('menu'); // menu, briefing, investigation, interrogation, accusation, result, profile, store
+  const [gameState, setGameState] = useState('menu'); // menu, briefing, investigation, interrogation, accusation, result, profile
   const [currentCase, setCurrentCase] = useState(null);
   const [selectedSuspect, setSelectedSuspect] = useState(null);
   const [playerProfile, setPlayerProfile] = useState({
@@ -85,13 +53,7 @@ const DetectiveGame = () => {
   const [loadingAction, setLoadingAction] = useState('');
   const [notification, setNotification] = useState(null);
 
-  // Monetization state
-  const [timeUntilReset, setTimeUntilReset] = useState('');
-  const [showCaseLimitModal, setShowCaseLimitModal] = useState(false);
-  const [showReputationDoublerModal, setShowReputationDoublerModal] = useState(false);
-  const [baseReputationEarned, setBaseReputationEarned] = useState(0);
-
-  // Premium features state
+  // Features state
   const [showNotebook, setShowNotebook] = useState(false);
   const [showThemeSelector, setShowThemeSelector] = useState(false);
   const [showThemeWelcome, setShowThemeWelcome] = useState(false);
@@ -101,71 +63,28 @@ const DetectiveGame = () => {
   // Tutorial state
   const [tutorialActive, setTutorialActive] = useState(false);
 
-  // Gameplay features state (from player-agency branch)
+  // Case Library state
   const [showCaseLibrary, setShowCaseLibrary] = useState(false);
-  const [showCasePackStore, setShowCasePackStore] = useState(false);
-  const [selectedCaseType, setSelectedCaseType] = useState(null); // 'procedural', 'hand-crafted', 'daily'
-
-  // Contradiction system state
-  const [showEvidenceModal, setShowEvidenceModal] = useState(false);
-  const [contradictionsFound, setContradictionsFound] = useState([]);
-  const [showContradictionReveal, setShowContradictionReveal] = useState(false);
-  const [currentContradiction, setCurrentContradiction] = useState(null);
-
-  // Difficulty system state
-  const [selectedDifficulty, setSelectedDifficulty] = useState(DIFFICULTY_LEVELS ? DIFFICULTY_LEVELS.NORMAL : 2);
-  const [showDifficultySelector, setShowDifficultySelector] = useState(false);
 
   // Accessibility settings state
   const [useDyslexiaFont, setUseDyslexiaFont] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
 
-  // Accusation justification state
-  const [accusedSuspectId, setAccusedSuspectId] = useState(null);
-  const [accusationJustification, setAccusationJustification] = useState('');
+  // Tutorial step state
   const [currentTutorialStep, setCurrentTutorialStep] = useState(null);
 
-  // Initialize monetization systems on mount
+  // Initialize game systems on mount
   useEffect(() => {
-    // Initialize storage
-    initializeStorage();
-
     // Load saved player profile
     const savedProfile = loadPlayerProfile();
     if (savedProfile) {
       setPlayerProfile(savedProfile);
     }
 
-    // Initialize ads and IAP
-    initializeAds();
-    initializeIAP();
-
-    // Initialize premium features
+    // Initialize features
     initializeNotebook();
     initializeTheme();
     initializeAccessibility();
-
-    // Check and reset daily cases
-    const resetResult = checkAndResetDailyCases();
-    if (resetResult.reset && resetResult.message) {
-      showNotification(resetResult.message, 'success');
-    }
-
-    // Update time until reset every minute
-    const timer = setInterval(() => {
-      setTimeUntilReset(formatTimeUntilReset());
-
-      // Check for daily reset
-      const result = checkAndResetDailyCases();
-      if (result.reset && result.message) {
-        showNotification(result.message, 'success');
-      }
-    }, 60000); // Every minute
-
-    // Initial time update
-    setTimeUntilReset(formatTimeUntilReset());
-
-    return () => clearInterval(timer);
   }, []);
 
   // Save player profile whenever it changes
@@ -317,20 +236,6 @@ const DetectiveGame = () => {
     return 0; // Hard cases (7-10) get no free hints
   };
 
-  const getHintCost = () => {
-    // Cost increases with each hint used beyond free hints
-    const freeHints = getFreeHints(currentCase?.difficulty || 1);
-    if (hintsUsed < freeHints) return 0;
-
-    // Check if player has hint tokens
-    const hintTokens = getHintTokens();
-    if (hintTokens > 0) {
-      return 0; // Free if they have tokens
-    }
-
-    return 100 * (hintsUsed - freeHints + 1); // 100, 200, 300, etc.
-  };
-
   const generateHint = () => {
     if (!currentCase) return '';
 
@@ -354,10 +259,8 @@ const DetectiveGame = () => {
 
   const requestHint = () => {
     const freeHints = getFreeHints(currentCase?.difficulty || 1);
-    const hintTokens = getHintTokens();
-    const cost = getHintCost();
 
-    // Check if free hints are available
+    // Simplified: All hints are free based on case difficulty
     if (hintsUsed < freeHints) {
       // Grant free hint
       const hint = generateHint();
@@ -369,114 +272,34 @@ const DetectiveGame = () => {
       return;
     }
 
-    // Check if player has hint tokens
-    if (hintTokens > 0) {
-      if (window.confirm(`💡 Use Hint Token?\n\nYou have ${hintTokens} hint tokens.\n\nUse 1 token to get a hint?\n\nThis will reduce your star rating for this case.`)) {
-        const result = useHintToken();
-        if (result.success) {
-          const hint = generateHint();
-          setHintsUsed(hintsUsed + 1);
-          setHintLevel(hintLevel + 1);
-          addLog(hint);
-          soundEngine.play('hintUsed');
-          showNotification(`${hint}\n\nHint tokens remaining: ${result.remaining}`, 'info');
-        }
-      }
-      return;
-    }
-
-    // Check if can watch ad for hint
-    if (canWatchAd('hints')) {
-      const watchAd = window.confirm(`💡 No Free Hints Remaining\n\nYou've used all free hints for this case.\n\nOptions:\n1. Watch a 30-second ad to get 1 free hint\n2. Buy hint tokens in the store\n3. Pay ${cost} reputation\n\nWatch ad for free hint?`);
-
-      if (watchAd) {
-        // Request hint with ad
-        requestHintWithAd(
-          (result) => {
-            // Ad watched successfully, grant hint
-            const hint = generateHint();
-            setHintsUsed(hintsUsed + 1);
-            setHintLevel(hintLevel + 1);
-            addLog(hint);
-            soundEngine.play('hintUsed');
-            showNotification(`✅ ${hint}\n\nHint earned via ad!`, 'success');
-          },
-          (error) => {
-            showNotification(`Ad failed: ${error.message}`, 'error');
-          }
-        );
-      }
-      return;
-    }
-
-    // No free hints, no tokens, no ads left - must pay reputation
-    if (cost > 0 && playerProfile.reputation < cost) {
-      showNotification(`⚠️ Insufficient Reputation!\n\nYou need ${cost} reputation to purchase this hint.\nYour current reputation: ${playerProfile.reputation}\n\nBuy hint tokens in the store!`, 'error');
-      return;
-    }
-
-    if (cost > 0) {
-      if (window.confirm(`💡 Purchase Hint?\n\nCost: ${cost} Reputation\nCurrent Reputation: ${playerProfile.reputation}\n\nThis will reduce your star rating for this case.\n\nProceed?`)) {
-        setPlayerProfile({
-          ...playerProfile,
-          reputation: playerProfile.reputation - cost
-        });
-        const hint = generateHint();
-        setHintsUsed(hintsUsed + 1);
-        setHintLevel(hintLevel + 1);
-        addLog(hint);
-        showNotification(hint, 'info');
-      }
-    }
+    // No more free hints available
+    showNotification(`⚠️ No more free hints available for this case.\n\nYou've used all ${freeHints} hints.`, 'info');
   };
 
-  const startNewCase = (isLegendary = false, suppressNotification = false) => {
-    // Tutorial cases are free - skip case availability check
-    const isTutorialCase = interactiveTutorial.isActive();
+  // Simplified: Start a hand-crafted case (called from CaseLibraryScreen)
+  const startHandCraftedCase = (caseData) => {
+    // Prepare the case with proper structure
+    const preparedCase = {
+      ...caseData,
+      caseNumber: playerProfile.casesSolved + 1,
+      cluesFound: 0,
+      interrogationCount: 0,
+      evidence: caseData.evidence.map((e, i) => ({
+        ...e,
+        id: i,
+        discovered: false
+      })),
+      suspects: caseData.suspects.map((s, i) => ({
+        ...s,
+        id: i,
+        questioned: false,
+        nervousness: s.isGuilty ? 60 : Math.random() * 40 + 20,
+        secretRevealed: false
+      })),
+      guiltyIndex: caseData.suspects.findIndex(s => s.isGuilty)
+    };
 
-    if (!isTutorialCase) {
-      // Check if player can start a case (only for non-tutorial cases)
-      const caseAvailability = canStartCase();
-
-      if (!caseAvailability.canStart) {
-        // No cases available - show modal
-        setShowCaseLimitModal(true);
-        return;
-      }
-
-      // Determine which case source to use and deduct
-      let caseSource = 'daily';
-
-      if (caseAvailability.dailyRemaining > 0) {
-        const result = useDailyCase();
-        caseSource = 'daily';
-        if (!suppressNotification) {
-          showNotification(`Daily case used. ${result.remaining} free cases remaining today.`, 'info');
-        }
-      } else if (caseAvailability.bonusRemaining > 0) {
-        const result = useBonusCase();
-        caseSource = 'bonus';
-        if (!suppressNotification) {
-          showNotification(`Bonus case used. ${result.remaining} bonus cases remaining today.`, 'info');
-        }
-      } else if (caseAvailability.caseFilesRemaining > 0) {
-        const result = useCaseFile();
-        caseSource = 'purchased';
-        if (!suppressNotification) {
-          showNotification(`Case file used. ${result.remaining} case files remaining.`, 'success');
-        }
-      }
-    } else {
-      // Tutorial case - show tutorial notification
-      if (!suppressNotification) {
-        showNotification('📚 Tutorial case - Play for FREE!', 'info');
-      }
-    }
-
-    // Generate and start the case
-    const difficulty = isLegendary ? 10 : getCaseDifficulty();
-    const newCase = generateCase(playerProfile.casesSolved + 1, difficulty, isLegendary);
-    setCurrentCase(newCase);
+    setCurrentCase(preparedCase);
     setGameState('briefing');
     setGameLog([]);
     setAccusationResult(null);
@@ -687,9 +510,6 @@ const DetectiveGame = () => {
       const isPerfect = result.stars === 5;
       const elitePoints = calculateElitePoints(result, currentCase);
 
-      // Store base reputation for doubler offer
-      setBaseReputationEarned(result.reputation);
-
       const updatedProfile = {
         ...playerProfile,
         casesSolved: playerProfile.casesSolved + 1,
@@ -713,11 +533,6 @@ const DetectiveGame = () => {
       }
 
       setPlayerProfile(updatedProfile);
-
-      // Offer reputation doubler (after a short delay)
-      setTimeout(() => {
-        setShowReputationDoublerModal(true);
-      }, 2000);
 
     } else {
       // Wrong accusation
@@ -820,191 +635,10 @@ const DetectiveGame = () => {
     showNotification('🎉 Tutorial completed! Great detective work!', 'success');
   };
 
-  const renderCaseLimitModal = () => {
-    const caseAvailability = canStartCase();
-    const adWatches = getRemainingAdWatches();
-    const caseFiles = getCaseFiles();
-
-    return (
-      <div className="modal-overlay" onClick={() => setShowCaseLimitModal(false)}>
-        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          <h2>⏰ DAILY CASE LIMIT REACHED</h2>
-          <p>You've completed your 5 free cases today!</p>
-          <p>Great detective work! 🎯</p>
-
-          <div className="modal-section">
-            <h3>PLAY MORE CASES TODAY:</h3>
-
-            {/* Bonus cases via ads */}
-            {adWatches.cases > 0 && (
-              <div className="modal-option featured">
-                <h4>📺 WATCH AD FOR BONUS CASE</h4>
-                <p>• Watch 30-second video</p>
-                <p>• Play 1 more case (FREE)</p>
-                <p>• {adWatches.cases} bonus cases available today</p>
-                <p className="bonus-indicator">Bonus used: {adWatches.casesUsed}/3</p>
-                <button
-                  className="modal-btn primary"
-                  onClick={() => {
-                    // Don't close modal yet - wait for ad to complete
-                    requestBonusCaseWithAd(
-                      (result) => {
-                        // Ad watched successfully - add bonus case
-                        const bonusResult = addBonusCase();
-                        // Close modal and start case
-                        setShowCaseLimitModal(false);
-                        showNotification('✅ Bonus case unlocked! Starting case...', 'success');
-                        startNewCase(false, true); // suppressNotification = true
-                      },
-                      (error) => {
-                        // Ad failed - show error but keep modal open
-                        showNotification(`❌ ${error.message}`, 'error');
-                      }
-                    );
-                  }}
-                >
-                  WATCH AD - GET BONUS CASE
-                </button>
-              </div>
-            )}
-
-            {/* Use case file */}
-            <div className="modal-option">
-              <h4>💼 USE CASE FILE</h4>
-              <p>You have: {caseFiles} case files</p>
-              {caseFiles > 0 ? (
-                <button
-                  className="modal-btn"
-                  onClick={() => {
-                    setShowCaseLimitModal(false);
-                    startNewCase(false);
-                  }}
-                >
-                  USE CASE FILE
-                </button>
-              ) : (
-                <button
-                  className="modal-btn"
-                  onClick={() => {
-                    setShowCaseLimitModal(false);
-                    setGameState('store');
-                  }}
-                >
-                  BUY CASE FILES
-                </button>
-              )}
-            </div>
-
-            {/* Come back tomorrow */}
-            <div className="modal-option">
-              <h4>⏰ COME BACK TOMORROW</h4>
-              <p>5 fresh cases reset at midnight</p>
-              <p>Resets in: {timeUntilReset}</p>
-              <button className="modal-btn secondary" onClick={() => setShowCaseLimitModal(false)}>
-                CLOSE
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const renderReputationDoublerModal = () => {
-    if (!showReputationDoublerModal || !accusationResult || !accusationResult.correct) {
-      return null;
-    }
-
-    const isPremium = hasAdRemoval();
-
-    return (
-      <div className="modal-overlay" onClick={() => setShowReputationDoublerModal(false)}>
-        <div className="modal-content reputation-doubler" onClick={(e) => e.stopPropagation()}>
-          <h2>🎯 EXCELLENT WORK!</h2>
-          <p>You earned {baseReputationEarned} reputation points!</p>
-
-          {isPremium ? (
-            <>
-              <div className="modal-section featured">
-                <h3>✨ PREMIUM BONUS ✨</h3>
-                <p>As a premium member, your reputation is automatically doubled!</p>
-                <p className="reputation-display">
-                  <span className="old-rep">{baseReputationEarned}</span>
-                  →
-                  <span className="new-rep">{baseReputationEarned * 2}</span>
-                </p>
-                <button
-                  className="modal-btn primary"
-                  onClick={() => {
-                    // Double the reputation
-                    setPlayerProfile({
-                      ...playerProfile,
-                      reputation: playerProfile.reputation + baseReputationEarned
-                    });
-                    showNotification(`✅ Reputation doubled! +${baseReputationEarned} bonus!`, 'success');
-                    setShowReputationDoublerModal(false);
-                  }}
-                >
-                  CLAIM BONUS
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="modal-section">
-                <h3>📺 WATCH AD TO DOUBLE REPUTATION?</h3>
-                <p>Watch 30 seconds, get +{baseReputationEarned} extra!</p>
-                <p>Total: +{baseReputationEarned * 2} reputation</p>
-                <button
-                  className="modal-btn primary"
-                  onClick={() => {
-                    setShowReputationDoublerModal(false);
-                    offerReputationDoubler(
-                      baseReputationEarned,
-                      (result) => {
-                        // Double the reputation
-                        setPlayerProfile({
-                          ...playerProfile,
-                          reputation: playerProfile.reputation + baseReputationEarned
-                        });
-                        showNotification(`✅ Reputation doubled! +${baseReputationEarned} bonus!`, 'success');
-                      },
-                      () => {
-                        // User declined
-                        showNotification('Reputation doubler declined', 'info');
-                      },
-                      (error) => {
-                        showNotification(`Ad failed: ${error.message}`, 'error');
-                      }
-                    );
-                  }}
-                >
-                  WATCH AD - DOUBLE REWARD
-                </button>
-              </div>
-            </>
-          )}
-
-          <button className="modal-btn secondary" onClick={() => setShowReputationDoublerModal(false)}>
-            NO THANKS - CONTINUE
-          </button>
-        </div>
-      </div>
-    );
-  };
-
   const renderMenu = () => {
     const currentRank = getRankInfo(playerProfile.rankLevel);
     const nextRank = playerProfile.rankLevel < 6 ? getRankInfo(playerProfile.rankLevel + 1) : null;
     const isChiefDetective = playerProfile.rankLevel >= 6;
-    const legendaryChance = Math.random() < 0.1; // 10% chance
-
-    // Get case availability
-    const caseAvailability = canStartCase();
-    const caseFiles = getCaseFiles();
-    const hintTokens = getHintTokens();
-    const isPremium = hasAdRemoval();
-    const adWatches = getRemainingAdWatches();
 
     return (
       <div className="menu-screen screen-enter">
@@ -1013,13 +647,6 @@ const DetectiveGame = () => {
           <h2>CRIME SCENE</h2>
           <p className="tagline">Solve Crimes with AI-Powered Interrogation</p>
         </div>
-
-        {/* Premium Badge */}
-        {isPremium && (
-          <div className="premium-badge-menu">
-            🚫 Premium (Ad-Free)
-          </div>
-        )}
 
         <div className="player-stats">
           <div className="stat">
@@ -1052,42 +679,6 @@ const DetectiveGame = () => {
           )}
         </div>
 
-        {/* Case Counter */}
-        <div className="case-counter">
-          <h3>📁 DAILY CASES</h3>
-          <div className="case-circles">
-            Free: {Array.from({ length: 5 }).map((_, i) => (
-              <span key={i}>{i < caseAvailability.dailyRemaining ? '🔵' : '⚪'}</span>
-            ))} {caseAvailability.dailyRemaining}/5
-          </div>
-          <div className="bonus-cases">
-            Bonus: {Array.from({ length: 3 }).map((_, i) => (
-              <span key={i}>{i < adWatches.cases ? '📺' : '⚪'}</span>
-            ))} {adWatches.cases} ads available
-          </div>
-          {caseAvailability.bonusRemaining > 0 && (
-            <div className="bonus-cases">
-              Earned: 🎁 {caseAvailability.bonusRemaining} bonus cases ready
-            </div>
-          )}
-          {caseFiles > 0 && (
-            <div className="owned-cases">
-              Owned: 💼 {caseFiles} case files ready
-            </div>
-          )}
-          <div className="reset-timer">
-            Resets in: {timeUntilReset}
-          </div>
-        </div>
-
-        {/* Inventory Display */}
-        {(caseFiles > 0 || hintTokens > 0) && (
-          <div className="inventory-display">
-            {caseFiles > 0 && <span>💼 {caseFiles} Case Files</span>}
-            {hintTokens > 0 && <span>💡 {hintTokens} Hint Tokens</span>}
-          </div>
-        )}
-
         {!isChiefDetective && nextRank && (
           <div className="rank-progress">
             <p><strong>Next Rank: {nextRank.name}</strong></p>
@@ -1102,22 +693,7 @@ const DetectiveGame = () => {
           </div>
         )}
 
-        <button
-          className="menu-btn"
-          onClick={() => startNewCase(false)}
-          data-tooltip="Begin investigating a new case"
-          data-tutorial="new-case-btn"
-        >
-          {isChiefDetective ? '⭐ NEW ELITE CASE' : '🔍 NEW CASE'}
-        </button>
-
-        {isChiefDetective && legendaryChance && (
-          <button className="legendary-btn" onClick={() => startNewCase(true)} data-tooltip="Take on an extremely difficult legendary case">
-            🌟 LEGENDARY CASE AVAILABLE 🌟
-          </button>
-        )}
-
-        <button className="menu-btn" onClick={() => setShowCaseLibrary(true)} data-tooltip="Browse and select from hand-crafted, cold cases, and tutorial cases">
+        <button className="menu-btn" onClick={() => setShowCaseLibrary(true)} data-tooltip="Browse and select from hand-crafted cases">
           📚 CASE LIBRARY
         </button>
 
@@ -1125,16 +701,15 @@ const DetectiveGame = () => {
           👤 DETECTIVE PROFILE
         </button>
 
-        <button className="store-button" onClick={() => setGameState('store')} data-tooltip="Visit the Detective Store">
-          🛍️ STORE
-        </button>
-
-        <button className="menu-btn-secondary" onClick={() => setShowSettings(true)} data-tooltip="Account, Sound, and Game Settings">
+        <button className="menu-btn-secondary" onClick={() => setShowSettings(true)} data-tooltip="Sound, Accessibility, and Game Settings">
           ⚙️ SETTINGS
         </button>
 
         <div className="menu-info">
           <p>Your mission: Investigate crime scenes, interrogate suspects, and solve the case!</p>
+          <p style={{marginTop: '10px', fontSize: '0.9em', color: '#94a3b8'}}>
+            {HAND_CRAFTED_CASES.length} hand-crafted cases available
+          </p>
         </div>
         <div className="version-info">
           Version 1.0 | © 2025
@@ -1149,10 +724,21 @@ const DetectiveGame = () => {
         🏠 HOME
       </button>
       <div className="case-header">
-        <h2>🗂️ CASE #{currentCase.caseNumber}</h2>
+        <h2>{currentCase.title || `🗂️ CASE #${currentCase.caseNumber}`}</h2>
         <div className="case-type">{currentCase.crimeType}</div>
+        {currentCase.difficulty && (
+          <div className="case-difficulty">
+            Difficulty: {'⭐'.repeat(Math.min(currentCase.difficulty, 5))}
+          </div>
+        )}
       </div>
       <div className="briefing-content">
+        {currentCase.narrative?.opening && (
+          <div className="briefing-section">
+            <h3>📖 CASE BRIEFING</h3>
+            <p>{currentCase.narrative.opening}</p>
+          </div>
+        )}
         <div className="briefing-section">
           <h3>📍 LOCATION</h3>
           <p>{currentCase.location}</p>
@@ -1160,12 +746,11 @@ const DetectiveGame = () => {
         <div className="briefing-section">
           <h3>👤 VICTIM</h3>
           <p>{currentCase.victim.name} - {currentCase.victim.occupation}</p>
-        </div>
-        <div className="briefing-section">
-          <h3>📋 SITUATION</h3>
-          <p>A {currentCase.crimeType.toLowerCase()} has occurred at {currentCase.location}.
-             {currentCase.suspects.length} suspects are being held for questioning.
-             Your task is to identify the perpetrator.</p>
+          {currentCase.victim.background && (
+            <p style={{marginTop: '8px', fontSize: '0.9em', color: '#94a3b8'}}>
+              {currentCase.victim.background}
+            </p>
+          )}
         </div>
         <div className="briefing-section">
           <h3>🎯 OBJECTIVE</h3>
@@ -1184,9 +769,7 @@ const DetectiveGame = () => {
 
   const renderInvestigation = () => {
     const freeHints = getFreeHints(currentCase?.difficulty || 1);
-    const hintCost = getHintCost();
     const hintsRemaining = Math.max(0, freeHints - hintsUsed);
-    const hintTokens = getHintTokens();
     const evidenceCollected = currentCase.evidence.filter(e => e.discovered).length;
     const totalEvidence = currentCase.evidence.length;
     const suspectsInterrogated = currentCase.suspects.filter(s => s.questioned).length;
@@ -1206,7 +789,7 @@ const DetectiveGame = () => {
             <div className="case-progress">
               <span>Evidence: {evidenceCollected}/{totalEvidence}</span>
               <span>Interrogations: {currentCase.interrogationCount}</span>
-              {hintTokens > 0 && <span>💡 {hintTokens} tokens</span>}
+              <span>Hints: {hintsRemaining}/{freeHints}</span>
             </div>
           </div>
         </div>
@@ -1355,27 +938,19 @@ const DetectiveGame = () => {
             data-tooltip={
               hintsRemaining > 0
                 ? `Get free hint (${hintsRemaining} remaining)`
-                : hintTokens > 0
-                  ? `Use hint token (${hintTokens} available)`
-                  : hintCost > 0
-                    ? `Purchase hint for ${hintCost} reputation`
-                    : `Get help with investigation`
+                : `No more hints available for this case`
             }
           >
             💡 Request Hint
-            {hintsRemaining > 0 && <span className="hint-free"> (Free)</span>}
-            {hintsRemaining === 0 && hintTokens > 0 && <span className="hint-token"> ({hintTokens} 💡)</span>}
-            {hintsRemaining === 0 && hintTokens === 0 && hintCost > 0 && <span className="hint-cost"> ({hintCost})</span>}
+            {hintsRemaining > 0 && <span className="hint-free"> ({hintsRemaining} free)</span>}
           </button>
-          {hasNotebook() && (
-            <button
-              className="action-btn notebook-btn"
-              onClick={() => setShowNotebook(true)}
-              data-tooltip="Open Detective's Notebook - Take notes during your investigation"
-            >
-              📓 DETECTIVE'S NOTEBOOK
-            </button>
-          )}
+          <button
+            className="action-btn notebook-btn"
+            onClick={() => setShowNotebook(true)}
+            data-tooltip="Open Detective's Notebook - Take notes during your investigation"
+          >
+            📓 DETECTIVE'S NOTEBOOK
+          </button>
           <button
             className="action-btn evidence-board-btn"
             onClick={() => setShowEvidenceBoard(true)}
@@ -1849,23 +1424,6 @@ const DetectiveGame = () => {
       {gameState === 'accusation' && renderAccusation()}
       {gameState === 'result' && renderResult()}
       {gameState === 'profile' && renderProfile()}
-      {gameState === 'store' && (
-        <StoreScreen
-          onBack={() => setGameState('menu')}
-          onPurchaseComplete={(result) => {
-            // Check if premium themes were purchased
-            if (result.granted && result.granted.premium && result.granted.premium.includes('themes')) {
-              // Show welcome modal for theme selection
-              setTimeout(() => {
-                setShowThemeWelcome(true);
-              }, 500);
-            }
-            // Refresh UI after purchase
-            showNotification('Purchase complete! Thank you for your support!', 'success');
-          }}
-          showNotification={showNotification}
-        />
-      )}
 
       {/* Case Library Screen */}
       {showCaseLibrary && (
@@ -1873,46 +1431,16 @@ const DetectiveGame = () => {
           <CaseLibraryScreen
             onBack={() => setShowCaseLibrary(false)}
             onSelectCase={(caseData) => {
-              // Start the selected case
-              setCurrentCase(caseData);
-              setGameState('briefing');
-              setGameLog([]);
-              setAccusationResult(null);
-              setHintsUsed(0);
-              setHintLevel(0);
+              // Start the selected hand-crafted case
               setShowCaseLibrary(false);
-              soundEngine.play('caseStart');
+              startHandCraftedCase(caseData);
               showNotification(`Starting case: ${caseData.title}`, 'info');
-            }}
-            onOpenStore={() => {
-              setShowCaseLibrary(false);
-              setShowCasePackStore(true);
             }}
             playerProfile={playerProfile}
             showNotification={showNotification}
           />
         </Suspense>
       )}
-
-      {/* Case Pack Store */}
-      {showCasePackStore && (
-        <Suspense fallback={<div className="loading-screen">Loading Store...</div>}>
-          <CasePackStore
-            onBack={() => setShowCasePackStore(false)}
-            onPurchaseComplete={(pack) => {
-              showNotification(`Purchased: ${pack.name}!`, 'success');
-              setShowCasePackStore(false);
-            }}
-            showNotification={showNotification}
-          />
-        </Suspense>
-      )}
-
-      {/* Case Limit Modal */}
-      {showCaseLimitModal && renderCaseLimitModal()}
-
-      {/* Reputation Doubler Modal */}
-      {renderReputationDoublerModal()}
 
       {/* Detective's Notebook Modal */}
       {showNotebook && currentCase && (

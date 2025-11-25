@@ -1117,6 +1117,10 @@ const DetectiveGame = () => {
           </button>
         )}
 
+        <button className="menu-btn" onClick={() => setShowCaseLibrary(true)} data-tooltip="Browse and select from hand-crafted, cold cases, and tutorial cases">
+          📚 CASE LIBRARY
+        </button>
+
         <button className="menu-btn-secondary" onClick={() => setGameState('profile')} data-tooltip="View your detective statistics and progression">
           👤 DETECTIVE PROFILE
         </button>
@@ -1861,6 +1865,47 @@ const DetectiveGame = () => {
           }}
           showNotification={showNotification}
         />
+      )}
+
+      {/* Case Library Screen */}
+      {showCaseLibrary && (
+        <Suspense fallback={<div className="loading-screen">Loading Case Library...</div>}>
+          <CaseLibraryScreen
+            onBack={() => setShowCaseLibrary(false)}
+            onSelectCase={(caseData) => {
+              // Start the selected case
+              setCurrentCase(caseData);
+              setGameState('briefing');
+              setGameLog([]);
+              setAccusationResult(null);
+              setHintsUsed(0);
+              setHintLevel(0);
+              setShowCaseLibrary(false);
+              soundEngine.play('caseStart');
+              showNotification(`Starting case: ${caseData.title}`, 'info');
+            }}
+            onOpenStore={() => {
+              setShowCaseLibrary(false);
+              setShowCasePackStore(true);
+            }}
+            playerProfile={playerProfile}
+            showNotification={showNotification}
+          />
+        </Suspense>
+      )}
+
+      {/* Case Pack Store */}
+      {showCasePackStore && (
+        <Suspense fallback={<div className="loading-screen">Loading Store...</div>}>
+          <CasePackStore
+            onBack={() => setShowCasePackStore(false)}
+            onPurchaseComplete={(pack) => {
+              showNotification(`Purchased: ${pack.name}!`, 'success');
+              setShowCasePackStore(false);
+            }}
+            showNotification={showNotification}
+          />
+        </Suspense>
       )}
 
       {/* Case Limit Modal */}

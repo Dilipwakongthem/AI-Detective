@@ -287,6 +287,12 @@ const DetectiveGame = () => {
       caseNumber: playerProfile.casesSolved + 1,
       cluesFound: 0,
       interrogationCount: 0,
+      // Ensure victim exists with default if not present
+      victim: caseData.victim || {
+        name: 'Unknown',
+        occupation: 'Unknown',
+        background: 'Details unavailable'
+      },
       evidence: caseData.evidence.map((e, i) => ({
         ...e,
         id: i,
@@ -750,15 +756,17 @@ const DetectiveGame = () => {
           <h3>📍 LOCATION</h3>
           <p>{currentCase.location}</p>
         </div>
-        <div className="briefing-section">
-          <h3>👤 VICTIM</h3>
-          <p>{currentCase.victim.name} - {currentCase.victim.occupation}</p>
-          {currentCase.victim.background && (
-            <p style={{marginTop: '8px', fontSize: '0.9em', color: '#94a3b8'}}>
-              {currentCase.victim.background}
-            </p>
-          )}
-        </div>
+        {currentCase.victim && (
+          <div className="briefing-section">
+            <h3>👤 VICTIM</h3>
+            <p>{currentCase.victim.name} - {currentCase.victim.occupation}</p>
+            {currentCase.victim.background && (
+              <p style={{marginTop: '8px', fontSize: '0.9em', color: '#94a3b8'}}>
+                {currentCase.victim.background}
+              </p>
+            )}
+          </div>
+        )}
         <div className="briefing-section">
           <h3>🎯 OBJECTIVE</h3>
           <p>Gather evidence, interrogate suspects, and make your accusation.</p>

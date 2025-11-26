@@ -274,51 +274,6 @@ const CaseLibraryScreen = ({ onStartCase, onClose, onOpenStore }) => {
     );
   };
 
-  const renderProceduralInfo = () => {
-    return (
-      <div className="procedural-section">
-        <div className="procedural-header">
-          <h2>🎲 Procedural Cases</h2>
-          <p>Infinite randomly generated mysteries</p>
-        </div>
-
-        <div className="procedural-info-card">
-          <h3>Endless Detective Work</h3>
-          <p>
-            Procedural cases are dynamically generated using advanced algorithms,
-            ensuring no two cases are ever the same. Perfect for practicing your
-            detective skills!
-          </p>
-
-          <div className="procedural-features">
-            <div className="feature">
-              <span className="feature-icon">♾️</span>
-              <h4>Infinite Cases</h4>
-              <p>Never run out of mysteries to solve</p>
-            </div>
-            <div className="feature">
-              <span className="feature-icon">🎯</span>
-              <h4>Scalable Difficulty</h4>
-              <p>Difficulty adapts to your skill level</p>
-            </div>
-            <div className="feature">
-              <span className="feature-icon">🔀</span>
-              <h4>Unique Every Time</h4>
-              <p>Different suspects, evidence, and motives</p>
-            </div>
-          </div>
-
-          <button
-            className="procedural-play-btn"
-            onClick={() => onStartCase({ type: 'procedural' })}
-          >
-            ▶ Start Random Case
-          </button>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className="case-library-screen">
       <div className="library-header">
@@ -372,12 +327,6 @@ const CaseLibraryScreen = ({ onStartCase, onClose, onOpenStore }) => {
             onClick={() => setActiveTab('cold_case')}
           >
             📁 Cold Cases
-          </button>
-          <button
-            className={`tab ${activeTab === 'procedural' ? 'active' : ''}`}
-            onClick={() => setActiveTab('procedural')}
-          >
-            🎲 Procedural
           </button>
           <button
             className={`tab ${activeTab === 'completed' ? 'active' : ''}`}
@@ -506,7 +455,6 @@ const CaseLibraryScreen = ({ onStartCase, onClose, onOpenStore }) => {
         )}
 
         {activeTab === 'daily' && renderDailyCase()}
-        {activeTab === 'procedural' && renderProceduralInfo()}
         {activeTab === 'completed' && renderCompletedCases()}
       </div>
 

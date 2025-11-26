@@ -111,9 +111,11 @@ const EvidenceBoard = ({
 
   /**
    * Load board state from localStorage
+   * Uses case ID (not case number) for unique identification
    */
   const loadBoardState = () => {
-    const savedState = localStorage.getItem(`evidence_board_${caseData.caseNumber}`);
+    const caseId = caseData.id || `case_${caseData.caseNumber}`;
+    const savedState = localStorage.getItem(`evidence_board_${caseId}`);
 
     if (savedState) {
       try {
@@ -124,16 +126,21 @@ const EvidenceBoard = ({
         setTimelineEvents(parsed.timelineEvents || []);
         setZoomLevel(parsed.zoomLevel || 100);
         setPanOffset(parsed.panOffset || { x: 0, y: 0 });
+        console.log(`[Evidence Board] Loaded state for case: ${caseId}`);
       } catch (error) {
         console.error('Error loading board state:', error);
       }
+    } else {
+      console.log(`[Evidence Board] No saved state for case: ${caseId} - starting fresh`);
     }
   };
 
   /**
    * Save board state to localStorage
+   * Uses case ID (not case number) for unique identification
    */
   const saveBoardState = useCallback(() => {
+    const caseId = caseData.id || `case_${caseData.caseNumber}`;
     const state = {
       cards: boardCards,
       connections,
@@ -141,11 +148,13 @@ const EvidenceBoard = ({
       timelineEvents,
       zoomLevel,
       panOffset,
+      caseId: caseId, // Store case ID in state for verification
       lastModified: new Date().toISOString()
     };
 
-    localStorage.setItem(`evidence_board_${caseData.caseNumber}`, JSON.stringify(state));
-  }, [boardCards, connections, hypotheses, timelineEvents, zoomLevel, panOffset, caseData.caseNumber]);
+    localStorage.setItem(`evidence_board_${caseId}`, JSON.stringify(state));
+    console.log(`[Evidence Board] Saved state for case: ${caseId}`);
+  }, [boardCards, connections, hypotheses, timelineEvents, zoomLevel, panOffset, caseData.id, caseData.caseNumber]);
 
   /**
    * Auto-save every 30 seconds

@@ -798,8 +798,14 @@ const DetectiveGame = () => {
       backgroundImage: `url(${currentCase.backgroundImage})`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat'
+      backgroundRepeat: 'no-repeat',
+      backgroundAttachment: 'fixed'
     } : {};
+
+    // Debug log
+    if (currentCase.backgroundImage) {
+      console.log('[Background] Image URL:', currentCase.backgroundImage);
+    }
 
     return (
       <div

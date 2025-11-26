@@ -294,17 +294,63 @@ const StoreScreen = ({ onBack, onPurchaseComplete, showNotification }) => {
    * Render Featured Tab
    */
   const renderFeaturedTab = () => {
-    const featured = [
-      PRODUCTS.starter_bundle,
-      PRODUCTS.case_files_30,
-      PRODUCTS.detective_essentials
-    ].filter(p => isProductAvailable(p.id));
+    // Show hand-crafted case packs instead of case files
+    const renderCasePackCard = (pack) => {
+      const isPurchased = isPackPurchased(pack.id);
+      const caseCount = pack.caseIds === 'ALL' ? 15 : pack.caseIds.length;
+
+      return (
+        <div key={pack.id} className={`store-item-card ${isPurchased ? 'owned' : ''} ${pack.bestValue ? 'featured' : ''}`}>
+          {pack.bestValue && !isPurchased && (
+            <div className="badge badge-best-value">🏆 BEST VALUE</div>
+          )}
+          <div className="store-item-header">
+            <span className="store-item-icon">{pack.icon}</span>
+            <div>
+              <h3 className="store-item-name">{pack.name}</h3>
+              <p className="store-item-description">{pack.description}</p>
+            </div>
+          </div>
+          <div className="store-item-details">
+            <p><strong>Includes:</strong> {caseCount} hand-crafted cases</p>
+            <p><strong>Difficulty:</strong> {pack.difficulty === 'all' ? 'All Levels' : `Level ${pack.difficulty}`}</p>
+          </div>
+          <div className="store-item-footer">
+            <div className="store-item-price">
+              ${pack.price.toFixed(2)}
+            </div>
+            {isPurchased ? (
+              <button className="store-item-button owned" disabled>
+                ✓ OWNED
+              </button>
+            ) : (
+              <button
+                className="store-item-button"
+                onClick={() => handleCasePackPurchase(pack.id)}
+                disabled={purchasing}
+              >
+                {purchasing ? 'PROCESSING...' : 'UNLOCK'}
+              </button>
+            )}
+          </div>
+        </div>
+      );
+    };
 
     return (
       <div className="store-tab-content">
         <div className="store-section">
-          <h2 className="store-section-title">🎁 SPECIAL OFFERS</h2>
-          {featured.map(product => renderProductCard(product, true))}
+          <h2 className="store-section-title">🎁 FEATURED CASE PACKS</h2>
+          <p className="store-section-subtitle">
+            Premium hand-crafted detective cases - unlock permanent access
+          </p>
+          <div className="store-items-grid">
+            {/* Show best value pack first, then others */}
+            {[CASE_PACKS.complete, CASE_PACKS.mystery, CASE_PACKS.elite].map(pack => renderCasePackCard(pack))}
+          </div>
+          <p className="store-info-text">
+            ℹ️ Once purchased, cases remain unlocked forever. Play anytime, replay anytime!
+          </p>
         </div>
       </div>
     );
@@ -409,9 +455,8 @@ const StoreScreen = ({ onBack, onPurchaseComplete, showNotification }) => {
    */
   const renderPremiumTab = () => {
     const premiumProducts = [
-      PRODUCTS.ad_removal,
-      PRODUCTS.detective_notebook,
       PRODUCTS.premium_themes
+      // Note: ad_removal and detective_notebook removed (no ads, notebook not functional)
     ];
 
     return (
@@ -420,7 +465,7 @@ const StoreScreen = ({ onBack, onPurchaseComplete, showNotification }) => {
           <h2 className="store-section-title">💎 PREMIUM FEATURES</h2>
           {premiumProducts.map(product => renderProductCard(product))}
           <p className="store-info-text">
-            ℹ️ All premium features are one-time purchases and never expire.
+            ℹ️ Premium themes are a one-time purchase and never expire.
           </p>
         </div>
       </div>

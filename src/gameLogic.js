@@ -862,7 +862,18 @@ const personalityNervousness = {
   'Cooperative': { base: 30, range: 15 },    // 30-45: calm helper
   'Suspicious': { base: 65, range: 15 },     // 65-80: paranoid
   'Calm': { base: 20, range: 15 },           // 20-35: composed
-  'Arrogant': { base: 15, range: 15 }        // 15-30: overconfident
+  'Arrogant': { base: 15, range: 15 },       // 15-30: overconfident
+  // Additional personalities
+  'Manipulative': { base: 35, range: 20 },   // 35-55: scheming
+  'Paranoid': { base: 70, range: 15 },       // 70-85: very anxious
+  'Eccentric': { base: 40, range: 25 },      // 40-65: unpredictable
+  'Stoic': { base: 15, range: 10 },          // 15-25: emotionless
+  'Volatile': { base: 60, range: 25 },       // 60-85: unstable
+  'Methodical': { base: 20, range: 15 },     // 20-35: controlled
+  'Impulsive': { base: 50, range: 20 },      // 50-70: erratic
+  'Reserved': { base: 35, range: 15 },       // 35-50: quiet
+  'Flamboyant': { base: 30, range: 20 },     // 30-50: dramatic
+  'Cunning': { base: 25, range: 20 }         // 25-45: clever
 };
 
 // Helper: Generate unique name avoiding recent repetition
@@ -997,7 +1008,7 @@ function generateSituationalReasons(suspect, difficulty) {
 
 // Helper: Calculate initial nervousness based on personality and other factors
 function calculateNervousness(personality, isGuilty, isRedHerring, difficulty, situationalReasons = []) {
-  const personalityData = personalityNervousness[personality];
+  const personalityData = personalityNervousness[personality] || { base: 40, range: 20 }; // Fallback for missing personalities
   let baseNervousness = personalityData.base + Math.floor(Math.random() * personalityData.range);
 
   if (isGuilty) {

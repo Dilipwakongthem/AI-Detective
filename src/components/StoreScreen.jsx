@@ -455,8 +455,9 @@ const StoreScreen = ({ onBack, onPurchaseComplete, showNotification }) => {
    */
   const renderPremiumTab = () => {
     const premiumProducts = [
+      PRODUCTS.detective_notebook,
       PRODUCTS.premium_themes
-      // Note: ad_removal and detective_notebook removed (no ads, notebook not functional)
+      // Note: ad_removal removed (no ads in game)
     ];
 
     return (
@@ -465,7 +466,7 @@ const StoreScreen = ({ onBack, onPurchaseComplete, showNotification }) => {
           <h2 className="store-section-title">💎 PREMIUM FEATURES</h2>
           {premiumProducts.map(product => renderProductCard(product))}
           <p className="store-info-text">
-            ℹ️ Premium themes are a one-time purchase and never expire.
+            ℹ️ All premium features are one-time purchases and never expire.
           </p>
         </div>
       </div>

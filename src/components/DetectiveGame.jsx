@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react';
-import { interrogateSuspect, evaluateAccusation, checkEvidenceStrength, calculateEvidenceMatch, getEvidenceMatchingSummary, DIFFICULTY_LEVELS } from '../gameLogic';
+import { interrogateSuspect, evaluateAccusation, checkEvidenceStrength, calculateEvidenceMatch, getEvidenceMatchingSummary, DIFFICULTY_LEVELS, generateCase } from '../gameLogic';
 import StoreScreen from './StoreScreen';
 import NotebookModal from './NotebookModal';
 import ThemeSelectorModal from './ThemeSelectorModal';
@@ -1480,10 +1480,19 @@ const DetectiveGame = () => {
           <CaseLibraryScreen
             onClose={() => setShowCaseLibrary(false)}
             onStartCase={(caseData) => {
-              // Start the selected hand-crafted case
               setShowCaseLibrary(false);
-              startHandCraftedCase(caseData);
-              showNotification(`Starting case: ${caseData.title}`, 'info');
+
+              if (caseData.type === 'procedural') {
+                // Generate a random procedural case
+                const proceduralCase = generateCase(playerProfile.casesSolved + 1, playerProfile.rank || 1);
+                setCurrentCase(proceduralCase);
+                setGameState('briefing');
+                showNotification(`Starting random case: ${proceduralCase.title}`, 'info');
+              } else {
+                // Start hand-crafted or tutorial case
+                startHandCraftedCase(caseData);
+                showNotification(`Starting case: ${caseData.title}`, 'info');
+              }
             }}
             onOpenStore={(section) => {
               setShowCaseLibrary(false);
@@ -1499,6 +1508,7 @@ const DetectiveGame = () => {
       {showNotebook && currentCase && (
         <NotebookModal
           caseId={currentCase.caseNumber}
+          caseData={currentCase}
           onClose={() => setShowNotebook(false)}
           showNotification={showNotification}
         />

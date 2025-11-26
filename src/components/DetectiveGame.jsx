@@ -785,12 +785,12 @@ const DetectiveGame = () => {
   const renderInvestigation = () => {
     const freeHints = getFreeHints(currentCase?.difficulty || 1);
     const hintsRemaining = Math.max(0, freeHints - hintsUsed);
-    const evidenceCollected = currentCase.evidence.filter(e => e.discovered).length;
-    const totalEvidence = currentCase.evidence.length;
-    const suspectsInterrogated = currentCase.suspects.filter(s => s.questioned).length;
-    const totalSuspects = currentCase.suspects.length;
-    const evidencePercentage = Math.round((evidenceCollected / totalEvidence) * 100);
-    const interrogationPercentage = Math.round((suspectsInterrogated / totalSuspects) * 100);
+    const evidenceCollected = currentCase.evidence?.filter(e => e.discovered).length || 0;
+    const totalEvidence = currentCase.evidence?.length || 0;
+    const suspectsInterrogated = currentCase.suspects?.filter(s => s.questioned).length || 0;
+    const totalSuspects = currentCase.suspects?.length || 0;
+    const evidencePercentage = totalEvidence > 0 ? Math.round((evidenceCollected / totalEvidence) * 100) : 0;
+    const interrogationPercentage = totalSuspects > 0 ? Math.round((suspectsInterrogated / totalSuspects) * 100) : 0;
     const theoryStrength = calculateTheoryStrength();
 
     // Build background style if backgroundImage exists
@@ -1484,10 +1484,40 @@ const DetectiveGame = () => {
 
               if (caseData.type === 'procedural') {
                 // Generate a random procedural case
-                const proceduralCase = generateCase(playerProfile.casesSolved + 1, playerProfile.rank || 1);
-                setCurrentCase(proceduralCase);
-                setGameState('briefing');
-                showNotification(`Starting random case: ${proceduralCase.title}`, 'info');
+                try {
+                  const proceduralCase = generateCase(playerProfile.casesSolved + 1, playerProfile.rank || 1);
+
+                  // Verify case has required data
+                  if (!proceduralCase.suspects || proceduralCase.suspects.length === 0) {
+                    console.error('[Procedural] Generated case has no suspects!', proceduralCase);
+                    showNotification('Error generating case - no suspects', 'error');
+                    return;
+                  }
+
+                  if (!proceduralCase.evidence || proceduralCase.evidence.length === 0) {
+                    console.error('[Procedural] Generated case has no evidence!', proceduralCase);
+                    showNotification('Error generating case - no evidence', 'error');
+                    return;
+                  }
+
+                  console.log('[Procedural] Generated case:', {
+                    title: proceduralCase.title,
+                    suspects: proceduralCase.suspects.length,
+                    evidence: proceduralCase.evidence.length,
+                    guiltyIndex: proceduralCase.guiltyIndex
+                  });
+
+                  setCurrentCase(proceduralCase);
+                  setGameState('briefing');
+                  setGameLog([]);
+                  setAccusationResult(null);
+                  setHintsUsed(0);
+                  setHintLevel(0);
+                  showNotification(`Starting random case: ${proceduralCase.title}`, 'info');
+                } catch (error) {
+                  console.error('[Procedural] Error generating case:', error);
+                  showNotification(`Failed to generate case: ${error.message}`, 'error');
+                }
               } else {
                 // Start hand-crafted or tutorial case
                 startHandCraftedCase(caseData);

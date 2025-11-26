@@ -793,8 +793,19 @@ const DetectiveGame = () => {
     const interrogationPercentage = Math.round((suspectsInterrogated / totalSuspects) * 100);
     const theoryStrength = calculateTheoryStrength();
 
+    // Build background style if backgroundImage exists
+    const backgroundStyle = currentCase.backgroundImage ? {
+      backgroundImage: `url(${currentCase.backgroundImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
+    } : {};
+
     return (
-      <div className="investigation-screen screen-enter">
+      <div
+        className="investigation-screen screen-enter"
+        style={backgroundStyle}
+      >
         <button className="home-btn" onClick={handleReturnToMenu} data-tooltip="Save & Return to Main Menu">
           🏠 HOME
         </button>

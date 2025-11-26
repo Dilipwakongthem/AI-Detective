@@ -369,6 +369,26 @@
   overflow-y: auto;
 }
 
+/* Background image overlay for readability */
+.investigation-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(22, 33, 62, 0.85);
+  border-radius: 12px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ensure content appears above overlay */
+.investigation-screen > * {
+  position: relative;
+  z-index: 1;
+}
+
 .investigation-header {
   display: flex;
   justify-content: space-between;

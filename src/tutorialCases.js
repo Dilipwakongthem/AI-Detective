@@ -1,6 +1,9 @@
 // Tutorial Cases - Learning Cases for New Players
 // Progressive difficulty: 1-minute, 2-minute, 3-minute cases
 
+// Import background images
+import CrimeSceneImg from './Assets/Background/CrimeScene.png';
+
 export const TUTORIAL_CASES = [
   // TUTORIAL 1: 1-Minute Case - Basic Mechanics
   {
@@ -11,7 +14,7 @@ export const TUTORIAL_CASES = [
     estimatedTime: '1 min',
     crimeType: 'Theft',
     location: 'Office Break Room',
-    backgroundImage: '/src/Assets/Background/CrimeScene.png',
+    backgroundImage: CrimeSceneImg,
     narrative: {
       opening: 'Welcome, Detective! Let\'s start with something simple. Someone stole the boss\'s favorite coffee mug. Your job is to find evidence and identify the culprit.',
       tutorial: 'TUTORIAL: Click on locations to search for evidence. Question suspects to learn more about them. When you\'re ready, make your accusation!',

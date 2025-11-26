@@ -227,13 +227,20 @@ export const unlockCases = (caseIds) => {
  * Purchase a case pack
  */
 export const purchaseCasePack = (packId) => {
-  const pack = CASE_PACKS[packId];
+  // Find pack by ID (supports both key format and id property)
+  let pack = CASE_PACKS[packId];
+
+  // If not found by key, try finding by pack.id property
+  if (!pack) {
+    pack = Object.values(CASE_PACKS).find(p => p.id === packId);
+  }
+
   if (!pack) return { success: false, error: 'Invalid pack' };
 
   const purchased = loadFromStorage(LIBRARY_KEYS.purchasedCasePacks, []);
 
-  // Check if already purchased
-  if (purchased.includes(packId)) {
+  // Check if already purchased (check both formats for compatibility)
+  if (purchased.includes(packId) || purchased.includes(pack.id)) {
     return { success: false, error: 'Already purchased' };
   }
 
@@ -257,8 +264,8 @@ export const purchaseCasePack = (packId) => {
     return { success: false, error: 'Purchase cancelled by user' };
   }
 
-  // Add to purchased packs
-  purchased.push(packId);
+  // Add to purchased packs (use pack.id for consistency)
+  purchased.push(pack.id);
   saveToStorage(LIBRARY_KEYS.purchasedCasePacks, purchased);
 
   // Unlock cases
@@ -283,7 +290,15 @@ export const purchaseCasePack = (packId) => {
  */
 export const isPackPurchased = (packId) => {
   const purchased = loadFromStorage(LIBRARY_KEYS.purchasedCasePacks, []);
-  return purchased.includes(packId);
+
+  // Check both packId directly and pack.id property for compatibility
+  if (purchased.includes(packId)) return true;
+
+  // Try finding pack by id property
+  const pack = Object.values(CASE_PACKS).find(p => p.id === packId);
+  if (pack && purchased.includes(pack.id)) return true;
+
+  return false;
 };
 
 /**

@@ -1338,15 +1338,27 @@ export function generateCase(caseNumber, difficulty = 1, isLegendary = false) {
     };
   });
 
+  // Generate victim information
+  const victimName = generateUniqueName();
+  const victimOccupation = occupations[Math.floor(Math.random() * occupations.length)];
+
+  // Generate title and narrative for procedural cases
+  const title = `The ${location} ${crimeType}`;
+  const narrative = {
+    opening: `A ${crimeType.toLowerCase()} has been reported at the ${location}. ${victimName}, a local ${victimOccupation.toLowerCase()}, is the victim. You've been assigned to investigate this case. Gather evidence, interrogate ${numSuspects} suspects, and identify the perpetrator.`
+  };
+
   return {
     caseNumber,
     difficulty,
     isLegendary,
+    title,
+    narrative,
     crimeType: isLegendary ? `⭐ LEGENDARY: ${crimeType}` : crimeType,
     location,
     victim: {
-      name: generateUniqueName(),
-      occupation: occupations[Math.floor(Math.random() * occupations.length)]
+      name: victimName,
+      occupation: victimOccupation
     },
     suspects,
     evidence,

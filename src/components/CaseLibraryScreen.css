@@ -333,12 +333,12 @@
 }
 
 .unlock-btn {
-  background: #ff9800;
+  background: #4caf50;
   color: white;
 }
 
 .unlock-btn:hover {
-  background: #ffa726;
+  background: #66bb6a;
   transform: scale(1.02);
 }
 

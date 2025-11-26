@@ -260,6 +260,28 @@ const EvidenceBoard = ({
     }
 
     // Adding new card from sidebar
+    // Check if this evidence/suspect is already on the board (duplicate detection)
+    const existingCard = boardCards.find(c =>
+      c.type === item.type && c.dataId === item.id
+    );
+
+    if (existingCard) {
+      // Highlight existing card instead of adding duplicate
+      setSelectedCard(existingCard.id);
+
+      // Flash animation to draw attention
+      const cardElement = document.querySelector(`[data-card-id="${existingCard.id}"]`);
+      if (cardElement) {
+        cardElement.classList.add('highlight-flash');
+        setTimeout(() => {
+          cardElement.classList.remove('highlight-flash');
+        }, 1500);
+      }
+
+      showNotification(`This ${item.type} is already on the board`, 'info');
+      return { alreadyExists: true, cardId: existingCard.id };
+    }
+
     // Check if position is occupied
     const occupied = boardCards.some(c =>
       c.position.x === gridPosition.x && c.position.y === gridPosition.y

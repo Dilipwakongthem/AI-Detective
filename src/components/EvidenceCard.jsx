@@ -92,6 +92,7 @@ const EvidenceCard = ({
   return (
     <div
       ref={drag}
+      data-card-id={card.id}
       className={`
         evidence-card
         evidence-card-${card.type}
